@@ -1,3 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">Cashie</string>
+
+    <!-- Balance card -->
+    <string name="label_current_balance">Số dư hiện tại</string>
+    <string name="label_income">Thu nhập</string>
+    <string name="label_expense">Chi tiêu</string>
+    <string name="symbol_arrow_up">↑</string>
+    <string name="symbol_arrow_down">↓</string>
+
+    <!-- Filter chips -->
+    <string name="filter_all">Tất cả</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_prev_month">Tháng trước</string>
+    <string name="cd_next_month">Tháng sau</string>
+    <string name="cd_account">Tài khoản</string>
+    <string name="cd_add_transaction">Thêm giao dịch</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_stats">Thống kê</string>
+    <string name="nav_budget">Ngân sách</string>
+    <string name="nav_settings">Cài đặt</string>
+
+    <!-- Month/year display format: e.g. "Tháng 6, 2026" -->
+    <string name="month_year_format">%s, %d</string>
+
+    <!-- Month names -->
+    <string-array name="months">
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
+        <item>Tháng 8</item>
+        <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
+    </string-array>
 </resources>
