@@ -22,7 +22,7 @@
     <!-- Bottom navigation -->
     <string name="nav_home">Trang chủ</string>
     <string name="nav_stats">Thống kê</string>
-    <string name="nav_budget">Ngân sách</string>
+    <string name="nav_categories">Danh mục</string>
     <string name="nav_settings">Cài đặt</string>
 
     <!-- Month/year display format: e.g. "Tháng 6, 2026" -->

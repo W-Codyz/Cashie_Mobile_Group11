@@ -90,7 +90,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingBottom="70dp">
+            android:paddingBottom="96dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -290,6 +290,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:layout_marginBottom="200dp"
                     android:nestedScrollingEnabled="false"
                     android:clipToPadding="false"
                     tools:listitem="@layout/item_transaction" />
@@ -307,7 +308,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="96dp"
         android:src="@drawable/ic_add"
         android:contentDescription="@string/cd_add_transaction"
         app:backgroundTint="@color/green_primary"
@@ -315,16 +316,32 @@
         app:elevation="6dp" />
 
     <!-- ══════════════════════════════════════
-         Bottom Navigation
+         Bottom Navigation — floating pill style
     ══════════════════════════════════════ -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardBottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/bg_card"
-        app:itemIconTint="@color/nav_item_selector"
-        app:itemTextColor="@color/nav_item_selector"
-        app:menu="@menu/bottom_nav_menu" />
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="@color/bg_card"
+        app:strokeColor="@color/green_primary"
+        app:strokeWidth="1.5dp">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:itemIconTint="@color/nav_item_selector"
+            app:itemTextColor="@color/nav_item_selector"
+            app:labelVisibilityMode="selected"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
