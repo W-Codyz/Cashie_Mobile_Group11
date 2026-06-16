@@ -1,7 +1,9 @@
 package com.uth.cashie
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
@@ -110,6 +112,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNav() {
+        binding.bottomNav.itemActiveIndicatorColor =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_container))
         binding.bottomNav.setOnItemSelectedListener { true }
     }
 }
