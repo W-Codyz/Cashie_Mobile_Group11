@@ -1,5 +1,6 @@
 package com.uth.cashie
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -112,8 +113,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNav() {
+        binding.bottomNav.selectedItemId = R.id.nav_home
         binding.bottomNav.itemActiveIndicatorColor =
             ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_container))
-        binding.bottomNav.setOnItemSelectedListener { true }
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> true
+                R.id.nav_stats -> {
+                    val intent = Intent(this, StatsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_categories -> {
+                    // TODO: mở màn hình categories
+                    true
+                }
+                R.id.nav_settings -> {
+                    // TODO: mở màn hình settings
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }

@@ -22,6 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".StatsActivity"
+            android:exported="false"
+            android:label="@string/stats_title"
+            android:theme="@style/Theme.Cashie" />
     </application>
 
 </manifest>
