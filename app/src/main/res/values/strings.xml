@@ -27,7 +27,7 @@
     <string name="nav_settings">Cài đặt</string>
 
     <!-- Month/year display format: e.g. "Tháng 6, 2026" -->
-    <string name="month_year_format">%s, %d</string>
+    <string name="month_year_format">%1$s, %2$d</string>
 
     <!-- ====== Register Screen ====== -->
     <string name="register_title">Tạo tài khoản</string>
@@ -102,4 +102,13 @@
         <item>Tháng 11</item>
         <item>Tháng 12</item>
     </string-array>
+
+    <!-- Stats screen -->
+    <string name="stats_title">Thống kê &amp; Báo cáo</string>
+    <string name="stats_expense_by_category">Chi tiêu theo danh mục</string>
+    <string name="stats_income_by_category">Thu nhập theo danh mục</string>
+    <string name="stats_weekly_trend">Xu hướng tuần</string>
+    <string name="stats_monthly_summary">Tóm tắt tháng</string>
+    <string name="stats_highest_expense">Chi tiêu cao nhất</string>
+    <string name="stats_total_transactions">Tổng giao dịch</string>
 </resources>
