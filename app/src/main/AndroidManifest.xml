@@ -46,6 +46,11 @@
             android:exported="false"
             android:label="@string/edit_profile_title"
             android:theme="@style/Theme.Cashie" />
+        <activity
+            android:name=".StatsActivity"
+            android:exported="false"
+            android:label="@string/stats_title"
+            android:theme="@style/Theme.Cashie" />
 
     </application>
 
