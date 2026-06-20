@@ -18,6 +18,7 @@
     <string name="cd_next_month">Tháng sau</string>
     <string name="cd_account">Tài khoản</string>
     <string name="cd_add_transaction">Thêm giao dịch</string>
+    <string name="cd_back">Quay lại</string>
 
     <!-- Bottom navigation -->
     <string name="nav_home">Trang chủ</string>
@@ -27,6 +28,64 @@
 
     <!-- Month/year display format: e.g. "Tháng 6, 2026" -->
     <string name="month_year_format">%s, %d</string>
+
+    <!-- ====== Register Screen ====== -->
+    <string name="register_title">Tạo tài khoản</string>
+    <string name="register_app_tagline">Quản lý tài chính thông minh</string>
+    <string name="hint_full_name">Họ và tên</string>
+    <string name="hint_username">Tên đăng nhập</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_confirm_password">Xác nhận mật khẩu</string>
+    <string name="btn_register">Đăng ký</string>
+    <string name="register_already_have_account">Đã có tài khoản? </string>
+    <string name="register_login_link">Đăng nhập</string>
+
+    <!-- ====== Setup Screen ====== -->
+    <string name="setup_title">Thiết lập tài khoản</string>
+    <string name="setup_welcome">Chào mừng, Nguyễn Văn A!</string>
+    <string name="setup_description">Hãy thiết lập tài khoản của bạn</string>
+    <string name="setup_currency_section">Đơn vị tiền tệ</string>
+    <string name="setup_currency_vnd">VND — Việt Nam Đồng</string>
+    <string name="setup_currency_usd">USD — Đô la Mỹ</string>
+    <string name="setup_balance_section">Số dư ban đầu</string>
+    <string name="setup_balance_hint">Nhập số dư hiện tại của bạn</string>
+    <string name="setup_balance_note">Bạn có thể thay đổi sau trong phần Cài đặt</string>
+    <string name="setup_suffix_vnd">đ</string>
+    <string name="setup_suffix_usd">$</string>
+    <string name="btn_start_using">Bắt đầu sử dụng</string>
+
+    <!-- ====== Profile Screen ====== -->
+    <string name="profile_title">Hồ sơ</string>
+    <string name="profile_name">Nguyễn Văn A</string>
+    <string name="profile_username">@nguyenvana</string>
+    <string name="profile_currency_badge">VND</string>
+    <string name="profile_stat_income_label">Thu nhập</string>
+    <string name="profile_stat_expense_label">Chi tiêu</string>
+    <string name="profile_stat_transactions_label">Giao dịch</string>
+    <string name="profile_stat_income_value">12.500.000đ</string>
+    <string name="profile_stat_expense_value">1.165.000đ</string>
+    <string name="profile_stat_transactions_value">8</string>
+    <string name="profile_menu_edit_info">Chỉnh sửa thông tin</string>
+    <string name="profile_menu_change_password">Đổi mật khẩu</string>
+    <string name="profile_menu_currency">Đơn vị tiền tệ</string>
+    <string name="profile_menu_stats">Thống kê cá nhân</string>
+    <string name="profile_menu_stats_soon">Sắp ra mắt</string>
+    <string name="profile_menu_logout">Đăng xuất</string>
+    <string name="btn_edit">Sửa</string>
+    <string name="cd_edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="cd_avatar">Ảnh đại diện</string>
+
+    <!-- ====== Edit Profile Screen ====== -->
+    <string name="edit_profile_title">Chỉnh sửa thông tin</string>
+    <string name="edit_profile_change_photo">Thay đổi ảnh</string>
+    <string name="edit_hint_full_name">Họ và tên</string>
+    <string name="edit_hint_username">Tên đăng nhập</string>
+    <string name="edit_username_readonly_note">Tên đăng nhập không thể thay đổi</string>
+    <string name="edit_hint_email">Email</string>
+    <string name="edit_section_currency">Đơn vị tiền tệ</string>
+    <string name="btn_save_changes">Lưu thay đổi</string>
+    <string name="toast_saved">Đã lưu thay đổi</string>
+    <string name="cd_camera">Thay đổi ảnh đại diện</string>
 
     <!-- Month names -->
     <string-array name="months">

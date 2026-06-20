@@ -1,5 +1,6 @@
 package com.uth.cashie
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -62,6 +63,13 @@ class MainActivity : AppCompatActivity() {
         setupFilterChips()
         setupFab()
         setupBottomNav()
+        setupAvatar()
+    }
+
+    private fun setupAvatar() {
+        binding.btnAvatar.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     private fun setupRecyclerView() {

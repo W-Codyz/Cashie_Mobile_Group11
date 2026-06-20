@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cashie">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -18,10 +19,34 @@
             android:theme="@style/Theme.Cashie">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:label="@string/register_title"
+            android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".SetupActivity"
+            android:exported="false"
+            android:label="@string/setup_title"
+            android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:label="@string/profile_title"
+            android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".EditProfileActivity"
+            android:exported="false"
+            android:label="@string/edit_profile_title"
+            android:theme="@style/Theme.Cashie" />
+
     </application>
 
 </manifest>
