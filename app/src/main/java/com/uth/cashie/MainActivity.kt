@@ -12,6 +12,7 @@ import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.Transaction
 import com.uth.cashie.model.TransactionGroup
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -121,26 +122,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNav() {
         binding.bottomNav.selectedItemId = R.id.nav_home
+
         binding.bottomNav.itemActiveIndicatorColor =
-            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_container))
+            ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green_container)
+            )
+
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> true
+
+                R.id.nav_home -> {
+                    true
+                }
+
                 R.id.nav_stats -> {
-                    val intent = Intent(this, StatsActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, StatsActivity::class.java))
                     true
                 }
+
                 R.id.nav_categories -> {
-                    // TODO: mở màn hình categories
                     true
                 }
+
                 R.id.nav_settings -> {
-                    // TODO: mở màn hình settings
+                    startActivity(
+                        Intent(this, SettingActivity::class.java)
+                    )
                     true
                 }
+
                 else -> false
             }
         }
     }
-}
