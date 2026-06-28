@@ -12,6 +12,8 @@ import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.Transaction
 import com.uth.cashie.model.TransactionGroup
 
+// Import CategoryMainActivity để mở khi nhấn Danh mục
+import com.uth.cashie.CategoryMainActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -193,6 +195,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_categories -> {
+                    // Mở CategoryMainActivity khi nhấn vào Danh mục
+                    startActivity(Intent(this, CategoryMainActivity::class.java))
                     true
                 }
 

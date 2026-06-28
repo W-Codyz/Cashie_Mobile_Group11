@@ -58,11 +58,21 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
 
+    // Navigation Component
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
+    // Bắt buộc để dùng by viewModels()
+    implementation("androidx.fragment:fragment-ktx:1.8.0")
+
+    // Bắt buộc cho ViewModel và LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.0")
 
     implementation(libs.androidx.core.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 }
