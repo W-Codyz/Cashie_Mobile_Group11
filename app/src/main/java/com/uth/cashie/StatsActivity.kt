@@ -2,82 +2,173 @@ package com.uth.cashie
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.databinding.ActivityStatsBinding
+import com.uth.cashie.stats.model.QuarterlyStat
+import com.uth.cashie.stats.model.StatsResult
+import com.uth.cashie.stats.ui.StatsViewModel
+import com.uth.cashie.stats.view.DonutChartView
 
 class StatsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStatsBinding
-    private lateinit var months: Array<String>
-    private var monthIndex = 5
+    private val viewModel: StatsViewModel by viewModels()
 
-    private val totalIncome = 12_500_000L
-    private val totalExpense = 1_165_000L
-    private val totalTransactions = 8
-    private val highestExpense = 450_000L
+    // Màu 4 quý – khớp với legend trong XML
+    private val quarterColors = listOf(
+        Color.parseColor("#A5D6A7"),   // Q1 – xanh lá nhạt
+        Color.parseColor("#FFF59D"),   // Q2 – vàng nhạt
+        Color.parseColor("#FFCC80"),   // Q3 – cam nhạt
+        Color.parseColor("#80DEEA")    // Q4 – xanh cyan nhạt
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStatsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        months = resources.getStringArray(R.array.months)
-        setupSummary()
         setupMonthNavigation()
         setupBottomNav()
+        observeViewModel()
     }
 
-    private fun setupSummary() {
-        binding.tvStatsIncome.text = formatVND(totalIncome)
-        binding.tvStatsExpense.text = formatVND(totalExpense)
-        binding.tvStatsBalance.text = formatVND(totalIncome - totalExpense)
-        binding.tvTotalTransactions.text = totalTransactions.toString()
-        binding.tvHighestExpense.text = formatVND(highestExpense)
+    // ─────────────────────────────────────────────────────────────────────────
+    // Observers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun observeViewModel() {
+        // Loading
+        viewModel.isLoading.observe(this) { loading ->
+            binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+        }
+
+        // Error
+        viewModel.error.observe(this) { msg ->
+            if (!msg.isNullOrBlank()) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        }
+
+        // Month/Year label
+        viewModel.month.observe(this) { updateMonthLabel() }
+        viewModel.year.observe(this)  { updateMonthLabel() }
+
+        // Stats data
+        viewModel.statsResult.observe(this) { result ->
+            bindSummary(result)
+            bindComparison(result)
+            bindDonutChart(result.quarterlyStats)
+        }
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bind helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun bindSummary(result: StatsResult) {
+        val s = result.summary
+        binding.tvStatsIncome.text       = formatVND(s.totalIncome)
+        binding.tvStatsExpense.text      = formatVND(s.totalExpense)
+        binding.tvStatsBalance.text      = formatVND(s.balance)
+        binding.tvTotalTransactions.text = s.totalTransactions.toString()
+        binding.tvHighestExpense.text    = formatVND(s.highestExpense)
+    }
+
+    private fun bindComparison(result: StatsResult) {
+        result.comparison?.let { cmp ->
+            val expSign = if (cmp.expenseChange >= 0) "+" else ""
+            val incSign = if (cmp.incomeChange  >= 0) "+" else ""
+
+            binding.tvExpenseChange.text =
+                "$expSign${"%.1f".format(cmp.expenseChangePercent)}% so tháng trước"
+            binding.tvIncomeChange.text  =
+                "$incSign${"%.1f".format(cmp.incomeChangePercent)}% so tháng trước"
+
+            binding.tvExpenseChange.setTextColor(
+                if (cmp.expenseChange > 0) Color.parseColor("#F44336")
+                else Color.parseColor("#4CAF50")
+            )
+            binding.tvIncomeChange.setTextColor(
+                if (cmp.incomeChange >= 0) Color.parseColor("#4CAF50")
+                else Color.parseColor("#F44336")
+            )
+        }
+    }
+
+    private fun bindDonutChart(quarters: List<QuarterlyStat>) {
+        // Chỉ đưa vào biểu đồ những quý có chi tiêu > 0
+        val segments = quarters
+            .filter { it.expense > 0 }
+            .mapIndexed { i, q ->
+                DonutChartView.Segment(
+                    label = q.label,
+                    value = q.expense.toFloat(),
+                    color = quarterColors[q.quarter - 1]
+                )
+            }
+
+        binding.donutChartQuarterly.setData(
+            segments       = segments,
+            centerTitle    = "Chi tiêu",
+            centerSubtitle = "Cả năm"
+        )
+        binding.donutChartQuarterly.animateIn()
+
+        // Legend – hiển thị số tiền thực từng quý
+        val legendViews = listOf(
+            binding.tvLegendQ1,
+            binding.tvLegendQ2,
+            binding.tvLegendQ3,
+            binding.tvLegendQ4
+        )
+        quarters.forEachIndexed { i, q ->
+            legendViews.getOrNull(i)?.text =
+                if (q.expense > 0) formatVND(q.expense) else "Chưa có"
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Month navigation
+    // ─────────────────────────────────────────────────────────────────────────
 
     private fun setupMonthNavigation() {
-        updateMonthLabel()
-        binding.btnPrevMonth.setOnClickListener {
-            if (monthIndex > 0) {
-                monthIndex--
-                updateMonthLabel()
-            }
-        }
-        binding.btnNextMonth.setOnClickListener {
-            if (monthIndex < 11) {
-                monthIndex++
-                updateMonthLabel()
-            }
-        }
+        binding.btnPrevMonth.setOnClickListener { viewModel.prevMonth() }
+        binding.btnNextMonth.setOnClickListener { viewModel.nextMonth() }
     }
 
     private fun updateMonthLabel() {
-        binding.tvCurrentMonth.text = getString(R.string.month_year_format, months[monthIndex], 2026)
+        val m      = viewModel.month.value ?: return
+        val y      = viewModel.year.value  ?: return
+        val months = resources.getStringArray(R.array.months)
+        binding.tvCurrentMonth.text =
+            getString(R.string.month_year_format, months.getOrElse(m - 1) { "T$m" }, y)
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bottom Navigation
+    // ─────────────────────────────────────────────────────────────────────────
 
     private fun setupBottomNav() {
         binding.bottomNav.selectedItemId = R.id.nav_stats
         binding.bottomNav.itemActiveIndicatorColor =
             ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_container))
+
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                    true
+                    startActivity(Intent(this, MainActivity::class.java)); finish(); true
                 }
                 R.id.nav_stats -> true
                 R.id.nav_categories -> {
-                    // TODO: mở màn hình categories
-                    true
+                    startActivity(Intent(this, CategoryMainActivity::class.java)); finish(); true
                 }
                 R.id.nav_settings -> {
-                    // TODO: mở màn hình settings
-                    true
+                    startActivity(Intent(this, SettingActivity::class.java)); finish(); true
                 }
                 else -> false
             }

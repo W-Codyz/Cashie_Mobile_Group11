@@ -68,6 +68,15 @@
             android:layout_height="1dp"
             android:background="@color/divider" />
 
+        <!-- Loading indicator -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:indeterminateTint="@color/green_primary" />
+
         <!-- ── Scrollable body ── -->
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -124,6 +133,15 @@
                                 android:textColor="@color/income_green"
                                 tools:text="12.500.000đ" />
 
+                            <TextView
+                                android:id="@+id/tvIncomeChange"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textSize="11sp"
+                                android:textColor="@color/text_muted"
+                                tools:text="+5.0% so tháng trước" />
+
                         </LinearLayout>
 
                     </com.google.android.material.card.MaterialCardView>
@@ -160,6 +178,15 @@
                                 android:textStyle="bold"
                                 android:textColor="@color/expense_red"
                                 tools:text="1.165.000đ" />
+
+                            <TextView
+                                android:id="@+id/tvExpenseChange"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textSize="11sp"
+                                android:textColor="@color/text_muted"
+                                tools:text="-3.2% so tháng trước" />
 
                         </LinearLayout>
 
@@ -715,6 +742,226 @@
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
+
+                <!-- ── Quarterly Donut Chart Section ── -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/bg_card">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <!-- Tiêu đề section -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chi tiêu theo quý"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tỉ trọng chi tiêu 4 quý trong năm"
+                            android:textSize="12sp"
+                            android:textColor="@color/text_muted"
+                            android:layout_marginBottom="16dp" />
+
+                        <!-- Donut chart -->
+                        <com.uth.cashie.stats.view.DonutChartView
+                            android:id="@+id/donutChartQuarterly"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" />
+
+                        <!-- Legend -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="20dp"
+                            android:gravity="center">
+
+                            <!-- Q1 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:paddingEnd="4dp">
+
+                                <View
+                                    android:id="@+id/legendQ1"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/legend_dot"
+                                    android:backgroundTint="#A5D6A7"
+                                    android:layout_marginEnd="6dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Quý 1"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/text_muted" />
+
+                                    <TextView
+                                        android:id="@+id/tvLegendQ1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        tools:text="2.105.000đ" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <!-- Q2 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:paddingEnd="4dp">
+
+                                <View
+                                    android:id="@+id/legendQ2"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/legend_dot"
+                                    android:backgroundTint="#FFF59D"
+                                    android:layout_marginEnd="6dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Quý 2"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/text_muted" />
+
+                                    <TextView
+                                        android:id="@+id/tvLegendQ2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        tools:text="3.580.000đ" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <!-- Q3 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center"
+                                android:paddingEnd="4dp">
+
+                                <View
+                                    android:id="@+id/legendQ3"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/legend_dot"
+                                    android:backgroundTint="#FFCC80"
+                                    android:layout_marginEnd="6dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Quý 3"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/text_muted" />
+
+                                    <TextView
+                                        android:id="@+id/tvLegendQ3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        tools:text="0đ" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <!-- Q4 -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="horizontal"
+                                android:gravity="center">
+
+                                <View
+                                    android:id="@+id/legendQ4"
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/legend_dot"
+                                    android:backgroundTint="#80DEEA"
+                                    android:layout_marginEnd="6dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Quý 4"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/text_muted" />
+
+                                    <TextView
+                                        android:id="@+id/tvLegendQ4"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/text_primary"
+                                        tools:text="0đ" />
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
