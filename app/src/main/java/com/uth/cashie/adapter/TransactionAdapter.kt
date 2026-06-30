@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.uth.cashie.ThemeManager
 import com.uth.cashie.databinding.ItemTransactionBinding
 import com.uth.cashie.databinding.ItemTransactionHeaderBinding
 import com.uth.cashie.model.Transaction
@@ -59,9 +60,10 @@ class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(group: TransactionGroup) {
             binding.tvDateLabel.text = group.dateLabel
-            val sign  = if (group.dayNet >= 0) "+" else "-"
-            val color = if (group.dayNet >= 0) Color.parseColor("#22CC00") else Color.parseColor("#FF4444")
-            binding.tvDayNet.text      = "$sign${formatVND(group.dayNet)}"
+            val sign       = if (group.dayNet >= 0) "+" else "-"
+            val incomeColor = ThemeManager.getThemeColorInt()
+            val color      = if (group.dayNet >= 0) incomeColor else Color.parseColor("#FF4444")
+            binding.tvDayNet.text = "$sign${formatVND(group.dayNet)}"
             binding.tvDayNet.setTextColor(color)
         }
     }
@@ -86,8 +88,9 @@ class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             binding.tvTitle.text        = transaction.title
             binding.tvCategoryTime.text = "${transaction.category}  ·  ${transaction.time}"
 
-            val sign  = if (transaction.isIncome) "+" else "-"
-            val color = if (transaction.isIncome) Color.parseColor("#22CC00") else Color.parseColor("#FF4444")
+            val sign        = if (transaction.isIncome) "+" else "-"
+            val incomeColor = ThemeManager.getThemeColorInt()
+            val color       = if (transaction.isIncome) incomeColor else Color.parseColor("#FF4444")
             binding.tvAmount.text = "$sign${formatVND(transaction.amount)}"
             binding.tvAmount.setTextColor(color)
         }

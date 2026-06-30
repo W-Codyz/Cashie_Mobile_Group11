@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
@@ -20,9 +19,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val adapter = TransactionAdapter()
 
-    private val allGroups = listOf(
+    private val allGroups by lazy {
+        listOf(
         TransactionGroup(
-            dateLabel = "Hôm nay, 16/06",
+            dateLabel = "${getString(R.string.label_today)}, 16/06",
             dayNet = 10_000_000L - 85_000L - 45_000L,
             transactions = listOf(
                 Transaction(
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             )
         ),
         TransactionGroup(
-            dateLabel = "Hôm qua, 15/06",
+            dateLabel = "${getString(R.string.label_yesterday)}, 15/06",
             dayNet = 2_500_000L - 350_000L,
             transactions = listOf(
                 Transaction(
@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             )
         ),
     )
+    }
 
     private val totalIncome = 12_500_000L
     private val totalExpense = 1_165_000L
@@ -105,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         months = resources.getStringArray(R.array.months)
+        applyTheme()
         setupRecyclerView()
         setupSummary()
         setupMonthNavigation()
@@ -112,6 +114,71 @@ class MainActivity : AppCompatActivity() {
         setupFab()
         setupBottomNav()
         setupAvatar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Re-apply theme mỗi khi quay lại từ SettingActivity
+        applyTheme()
+        // Refresh adapter để cập nhật màu income/expense theo theme mới
+        adapter.notifyDataSetChanged()
+    }
+
+    /** Áp màu chủ đề từ ThemeManager lên các UI element */
+    private fun applyTheme() {
+        val colorInt       = ThemeManager.getThemeColorInt()
+        val colorStateList = ColorStateList.valueOf(colorInt)
+
+        // Balance card gradient
+        ThemeManager.applyToGradientCard(binding.balanceCard)
+
+        // FAB
+        binding.fab.backgroundTintList = colorStateList
+
+        // Bottom nav: active indicator + icon/text màu theme
+        binding.bottomNav.itemActiveIndicatorColor =
+            ColorStateList.valueOf(ThemeManager.getContainerColor())
+        binding.bottomNav.itemIconTintList = ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
+        )
+        binding.bottomNav.itemTextColor = ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
+        )
+
+        // Bottom nav card stroke
+        binding.cardBottomNav.strokeColor = colorInt
+
+        // App name "Cashie" text
+        binding.tvAppName.setTextColor(colorInt)
+
+        // Avatar background circle
+        val avatarBg = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.OVAL
+            setColor(colorInt)
+        }
+        binding.avatarCircle.background = avatarBg
+
+        // Chip "Tất cả" (selected state background + stroke)
+        val chipCheckedBg = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(colorInt, android.graphics.Color.WHITE)
+        )
+        val chipCheckedStroke = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(colorInt, android.graphics.Color.parseColor("#E0E0E0"))
+        )
+        listOf(binding.chipAll, binding.chipIncome, binding.chipExpense).forEach { chip ->
+            chip.chipBackgroundColor = chipCheckedBg
+            chip.chipStrokeColor     = chipCheckedStroke
+        }
     }
 
     private fun setupAvatar() {
@@ -176,11 +243,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBottomNav() {
         binding.bottomNav.selectedItemId = R.id.nav_home
-
-        binding.bottomNav.itemActiveIndicatorColor =
-            ColorStateList.valueOf(
-                ContextCompat.getColor(this, R.color.green_container)
-            )
 
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {

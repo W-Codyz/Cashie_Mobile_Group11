@@ -8,9 +8,11 @@
 
     <!-- Toolbar -->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/bg_card"
+        android:fitsSystemWindows="true"
         app:elevation="2dp">
 
         <androidx.appcompat.widget.Toolbar
@@ -36,6 +38,7 @@
                     android:contentDescription="@string/cd_back" />
 
                 <TextView
+                    android:id="@+id/tvToolbarTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -66,6 +69,7 @@
 
             <!-- Header gradient card -->
             <LinearLayout
+                android:id="@+id/registerHeaderCard"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:layout_marginTop="16dp"
@@ -102,8 +106,8 @@
                 android:hint="@string/hint_full_name"
                 app:startIconDrawable="@drawable/ic_person"
                 app:startIconTint="@color/text_muted"
-                app:boxStrokeColor="@color/green_primary"
-                app:hintTextColor="@color/green_dark"
+                app:boxStrokeColor="@color/text_muted"
+                app:hintTextColor="@color/text_muted"
                 app:boxCornerRadiusTopStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
@@ -127,8 +131,8 @@
                 android:hint="@string/hint_username"
                 app:startIconDrawable="@drawable/ic_person"
                 app:startIconTint="@color/text_muted"
-                app:boxStrokeColor="@color/green_primary"
-                app:hintTextColor="@color/green_dark"
+                app:boxStrokeColor="@color/text_muted"
+                app:hintTextColor="@color/text_muted"
                 app:boxCornerRadiusTopStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
@@ -154,8 +158,8 @@
                 app:startIconTint="@color/text_muted"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_muted"
-                app:boxStrokeColor="@color/green_primary"
-                app:hintTextColor="@color/green_dark"
+                app:boxStrokeColor="@color/text_muted"
+                app:hintTextColor="@color/text_muted"
                 app:boxCornerRadiusTopStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
@@ -181,8 +185,8 @@
                 app:startIconTint="@color/text_muted"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/text_muted"
-                app:boxStrokeColor="@color/green_primary"
-                app:hintTextColor="@color/green_dark"
+                app:boxStrokeColor="@color/text_muted"
+                app:hintTextColor="@color/text_muted"
                 app:boxCornerRadiusTopStart="10dp"
                 app:boxCornerRadiusTopEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
@@ -232,7 +236,7 @@
                     android:text="@string/register_login_link"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="@color/green_primary"
+                    android:textColor="@color/text_primary"
                     android:background="?attr/selectableItemBackgroundBorderless" />
 
             </LinearLayout>
@@ -241,3 +245,4 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

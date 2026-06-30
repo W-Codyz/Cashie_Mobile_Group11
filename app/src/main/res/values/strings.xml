@@ -111,4 +111,43 @@
     <string name="stats_monthly_summary">Tóm tắt tháng</string>
     <string name="stats_highest_expense">Chi tiêu cao nhất</string>
     <string name="stats_total_transactions">Tổng giao dịch</string>
+
+    <!-- ====== Settings Screen ====== -->
+    <string name="setting_title">Cài đặt</string>
+    <string name="setting_section_appearance">Giao diện</string>
+    <string name="setting_theme_color">Màu chủ đề</string>
+    <string name="setting_app_icon">Biểu tượng ứng dụng</string>
+    <string name="setting_section_general">Chung</string>
+    <string name="setting_language">Ngôn ngữ</string>
+    <string name="setting_language_vi">Tiếng Việt</string>
+    <string name="setting_language_en">English</string>
+    <string name="setting_section_account">Tài khoản</string>
+    <string name="setting_logout">Đăng xuất</string>
+    <string name="setting_logout_confirm_title">Đăng xuất?</string>
+    <string name="setting_logout_confirm_msg">Bạn có chắc muốn đăng xuất không?</string>
+    <string name="setting_logout_confirm_yes">Đăng xuất</string>
+    <string name="setting_logout_confirm_no">Hủy</string>
+    <string name="toast_theme_applied">Đã áp dụng màu chủ đề</string>
+    <string name="toast_language_applied">Đã đổi ngôn ngữ. Vui lòng khởi động lại ứng dụng.</string>
+    <string name="toast_icon_applied">Đã đổi biểu tượng ứng dụng</string>
+    <string name="setting_icon_default">Mặc định</string>
+
+    <!-- Date labels -->
+    <string name="label_today">Hôm nay</string>
+    <string name="label_yesterday">Hôm qua</string>
+
+    <!-- Edit Profile validation -->
+    <string name="error_full_name_empty">Vui lòng nhập họ và tên</string>
+    <string name="error_current_password_empty">Vui lòng nhập mật khẩu hiện tại</string>
+
+    <!-- Change password -->
+    <string name="change_password_title">Đổi mật khẩu</string>
+    <string name="hint_current_password">Mật khẩu hiện tại</string>
+    <string name="hint_new_password">Mật khẩu mới</string>
+    <string name="hint_confirm_new_password">Xác nhận mật khẩu mới</string>
+    <string name="btn_change_password">Đổi mật khẩu</string>
+    <string name="error_wrong_password">Mật khẩu hiện tại không đúng</string>
+    <string name="error_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="error_password_too_short">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="toast_password_changed">Đổi mật khẩu thành công</string>
 </resources>

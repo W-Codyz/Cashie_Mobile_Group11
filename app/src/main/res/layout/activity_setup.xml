@@ -19,6 +19,7 @@
 
             <!-- Header gradient card -->
             <LinearLayout
+                android:id="@+id/setupHeaderCard"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="@drawable/bg_balance_card"
@@ -35,6 +36,7 @@
                     android:contentDescription="@null" />
 
                 <TextView
+                    android:id="@+id/tvSetupWelcome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -98,7 +100,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:buttonTint="@color/green_primary" />
+                            android:buttonTint="@color/text_muted" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -111,12 +113,13 @@
                             android:textColor="@color/text_primary" />
 
                         <TextView
+                            android:id="@+id/tvCurrencySymbolVnd"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="đ"
                             android:textSize="20sp"
                             android:textStyle="bold"
-                            android:textColor="@color/green_primary" />
+                            android:textColor="@color/text_primary" />
 
                     </LinearLayout>
 
@@ -136,7 +139,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="false"
-                            android:buttonTint="@color/green_primary" />
+                            android:buttonTint="@color/text_muted" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -194,9 +197,9 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/setup_balance_hint"
                         app:suffixText="@string/setup_suffix_vnd"
-                        app:suffixTextColor="@color/green_primary"
-                        app:boxStrokeColor="@color/green_primary"
-                        app:hintTextColor="@color/green_dark"
+                        app:suffixTextColor="@color/text_muted"
+                        app:boxStrokeColor="@color/text_muted"
+                        app:hintTextColor="@color/text_muted"
                         app:boxCornerRadiusTopStart="10dp"
                         app:boxCornerRadiusTopEnd="10dp"
                         app:boxCornerRadiusBottomStart="10dp"
@@ -244,3 +247,4 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

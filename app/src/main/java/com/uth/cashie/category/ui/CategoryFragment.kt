@@ -35,9 +35,24 @@ class CategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        applyTheme()
         setupRecyclerView()
         setupTabLayout()
         observeData()
+    }
+
+    private fun applyTheme() {
+        val colorInt = com.uth.cashie.ThemeManager.getThemeColorInt()
+        // Toolbar background
+        binding.toolbar.setBackgroundColor(colorInt)
+        val onColor = com.uth.cashie.ThemeManager.getOnThemeColor()
+        binding.toolbar.setTitleTextColor(onColor)
+        // TabLayout selected indicator + text
+        binding.tabLayout.setSelectedTabIndicatorColor(colorInt)
+        binding.tabLayout.setTabTextColors(
+            android.graphics.Color.parseColor("#888888"),
+            colorInt
+        )
     }
 
     private fun setupRecyclerView() {
