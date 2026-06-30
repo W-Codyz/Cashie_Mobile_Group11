@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item nhỏ cho lưới chọn danh mục (5 cột) trong màn hình thêm/sửa giao dịch -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackgroundBorderless">
+
+    <!-- Vòng tròn emoji với border khi được chọn -->
+    <FrameLayout
+        android:id="@+id/flEmojiContainer"
+        android:layout_width="48dp"
+        android:layout_height="48dp">
+
+        <TextView
+            android:id="@+id/tvCategoryEmoji"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:background="@drawable/bg_emoji_category_normal" />
+
+    </FrameLayout>
+
+    <!-- Tên danh mục -->
+    <TextView
+        android:id="@+id/tvCategoryName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:textSize="10sp"
+        android:textColor="@color/text_muted"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+</LinearLayout>

@@ -14,7 +14,9 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import kotlin.math.abs
 
-class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TransactionAdapter(
+    private val onItemClick: ((Transaction) -> Unit)? = null
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     sealed class ListItem {
         data class Header(val group: TransactionGroup) : ListItem()
@@ -41,7 +43,7 @@ class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_HEADER -> HeaderViewHolder(ItemTransactionHeaderBinding.inflate(inflater, parent, false))
-            else        -> ItemViewHolder(ItemTransactionBinding.inflate(inflater, parent, false))
+            else        -> ItemViewHolder(ItemTransactionBinding.inflate(inflater, parent, false), onItemClick)
         }
     }
 
@@ -69,15 +71,16 @@ class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     // ── Item ViewHolder ──────────────────────────────────────────────────────
-    class ItemViewHolder(private val binding: ItemTransactionBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ItemViewHolder(
+        private val binding: ItemTransactionBinding,
+        private val onItemClick: ((Transaction) -> Unit)?
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaction: Transaction) {
             binding.tvEmoji.text = transaction.emoji
 
-            // Each item gets its own oval drawable to avoid shared-drawable tint conflicts
             runCatching {
-                val base = Color.parseColor(transaction.iconColorHex)
+                val base   = Color.parseColor(transaction.iconColorHex)
                 val tinted = Color.argb(32, Color.red(base), Color.green(base), Color.blue(base))
                 binding.tvEmoji.background = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
@@ -93,6 +96,8 @@ class TransactionAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val color       = if (transaction.isIncome) incomeColor else Color.parseColor("#FF4444")
             binding.tvAmount.text = "$sign${formatVND(transaction.amount)}"
             binding.tvAmount.setTextColor(color)
+
+            binding.root.setOnClickListener { onItemClick?.invoke(transaction) }
         }
     }
 
