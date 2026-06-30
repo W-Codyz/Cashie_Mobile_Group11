@@ -24,6 +24,7 @@
     <string name="nav_home">Trang chủ</string>
     <string name="nav_stats">Thống kê</string>
     <string name="nav_categories">Danh mục</string>
+    <string name="nav_profile">Hồ sơ</string>
     <string name="nav_settings">Cài đặt</string>
 
     <!-- Month/year display format: e.g. "Tháng 6, 2026" -->
@@ -111,6 +112,57 @@
     <string name="stats_monthly_summary">Tóm tắt tháng</string>
     <string name="stats_highest_expense">Chi tiêu cao nhất</string>
     <string name="stats_total_transactions">Tổng giao dịch</string>
+
+    <!-- ====== Navigation Menu Dialog ====== -->
+    <string name="menu_title">Điều hướng</string>
+    <string name="menu_transactions">Quản lý giao dịch</string>
+    <string name="menu_categories">Quản lý danh mục</string>
+    <string name="menu_stats">Thống kê</string>
+    <string name="menu_profile">Hồ sơ</string>
+    <string name="menu_settings">Cài đặt</string>
+    <string name="menu_about">Thông tin ứng dụng</string>
+    <string name="cd_menu">Mở menu điều hướng</string>
+
+    <!-- ====== Add / Edit Transaction ====== -->
+    <string name="add_transaction_title">Thêm giao dịch</string>
+    <string name="edit_transaction_title">Chỉnh sửa giao dịch</string>
+    <string name="label_transaction_type">Loại giao dịch</string>
+    <string name="label_amount">Số tiền *</string>
+    <string name="label_category">Danh mục *</string>
+    <string name="label_date">Ngày giao dịch</string>
+    <string name="label_wallet">Ví / Tài khoản</string>
+    <string name="label_note">Ghi chú / Mô tả</string>
+    <string name="hint_note">Nhập mô tả giao dịch...</string>
+    <string name="toggle_income">↑  Thu nhập</string>
+    <string name="toggle_expense">↓  Chi tiêu</string>
+    <string name="error_amount_empty">Vui lòng nhập số tiền</string>
+    <string name="error_category_empty">Vui lòng chọn danh mục</string>
+    <string name="toast_transaction_saved">Đã lưu giao dịch</string>
+    <string name="toast_transaction_updated">Đã cập nhật giao dịch</string>
+    <string name="toast_transaction_deleted">Đã xóa giao dịch</string>
+    <string name="wallet_cash">Tiền mặt</string>
+    <string name="btn_save_label">Lưu</string>
+
+    <!-- ====== Transaction Detail Sheet ====== -->
+    <string name="detail_title">Chi tiết giao dịch</string>
+    <string name="btn_edit_transaction">Chỉnh sửa</string>
+    <string name="btn_delete_transaction">Xóa</string>
+    <string name="confirm_delete_title">Xác nhận xóa</string>
+    <string name="confirm_delete_msg">Bạn có chắc muốn xóa giao dịch này không?</string>
+    <string name="btn_confirm">Xóa</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="label_type_badge_income">Thu nhập</string>
+    <string name="label_type_badge_expense">Chi tiêu</string>
+
+    <!-- ====== Month picker ====== -->
+    <string name="pick_month_title">Chọn tháng</string>
+
+    <!-- ====== Empty state ====== -->
+    <string name="empty_transactions">Không có giao dịch nào trong tháng này</string>
+
+    <!-- ====== About app ====== -->
+    <string name="about_title">Cashie</string>
+    <string name="about_message">Phiên bản: 1.0.0\n\nỨng dụng quản lý tài chính cá nhân\nGiúp bạn theo dõi thu chi hàng ngày\n\n© 2026 Mobile Group 11</string>
 
     <!-- ====== Settings Screen ====== -->
     <string name="setting_title">Cài đặt</string>

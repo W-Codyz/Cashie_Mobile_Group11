@@ -74,7 +74,22 @@
             android:label="@string/stats_title"
             android:theme="@style/Theme.Cashie" />
 
-        <activity android:name=".CategoryMainActivity" />
+        <activity
+            android:name=".CategoryMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AddTransactionActivity"
+            android:exported="false"
+            android:label="@string/add_transaction_title"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:label="Thông tin ứng dụng"
+            android:theme="@style/Theme.Cashie" />
 
         <!-- ══════════════════════════════════════════
              DYNAMIC ICON ALIASES
