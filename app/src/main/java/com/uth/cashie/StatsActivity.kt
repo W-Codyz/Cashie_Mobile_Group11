@@ -35,6 +35,7 @@ class StatsActivity : AppCompatActivity() {
         binding = ActivityStatsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupMenuButton()
         applyTheme()
         setupMonthNavigation()
         setupBottomNav()
@@ -188,6 +189,14 @@ class StatsActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Menu button
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun setupMenuButton() {
+        binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.STATS) }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Month navigation
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -209,22 +218,6 @@ class StatsActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun setupBottomNav() {
-        binding.bottomNav.selectedItemId = R.id.nav_stats
-
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, MainActivity::class.java)); finish(); true
-                }
-                R.id.nav_stats -> true
-                R.id.nav_categories -> {
-                    startActivity(Intent(this, CategoryMainActivity::class.java)); finish(); true
-                }
-                R.id.nav_settings -> {
-                    startActivity(Intent(this, SettingActivity::class.java)); finish(); true
-                }
-                else -> false
-            }
-        }
+        setupBottomNav(binding.bottomNav, R.id.nav_stats)
     }
 }

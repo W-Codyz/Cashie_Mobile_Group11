@@ -49,8 +49,9 @@ class ProfileActivity : AppCompatActivity() {
 
         // Toolbar + status bar + màu chữ toolbar tự động
         ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
-            binding.tvProfileTitle, binding.btnBack)
+            binding.tvProfileTitle, binding.btnMenu)
         binding.btnEdit.setTextColor(onThemeColor)
+        binding.cardBottomNav.strokeColor = colorInt
 
         // Gradient header card
         ThemeManager.applyToGradientCard(binding.profileHeaderCard)
@@ -135,7 +136,8 @@ class ProfileActivity : AppCompatActivity() {
 
     // ── Buttons ───────────────────────────────────────────────────────────────
     private fun setupButtons() {
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.PROFILE) }
+        setupBottomNav(binding.bottomNav, R.id.nav_profile)
 
         binding.btnEdit.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))

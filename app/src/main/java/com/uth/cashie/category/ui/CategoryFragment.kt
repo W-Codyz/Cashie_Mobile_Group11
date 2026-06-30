@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.uth.cashie.NavScreen
 import com.uth.cashie.category.adapter.CategoryAdapter
 import com.uth.cashie.databinding.FragmentCategoryBinding
-import com.uth.cashie.category.ui.CategoryViewModel   // ✅ Import ViewModel từ package ui
+import com.uth.cashie.category.ui.CategoryViewModel
+import com.uth.cashie.showNavMenu
 import com.google.android.material.tabs.TabLayout
 
 class CategoryFragment : Fragment() {
@@ -35,6 +38,9 @@ class CategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toolbar.setNavigationOnClickListener {
+            (requireActivity() as AppCompatActivity).showNavMenu(NavScreen.CATEGORIES)
+        }
         applyTheme()
         setupRecyclerView()
         setupTabLayout()
