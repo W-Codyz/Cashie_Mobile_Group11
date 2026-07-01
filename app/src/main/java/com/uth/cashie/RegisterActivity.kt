@@ -4,12 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import android.widget.Toast
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.DatabaseInitializer
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.database.entity.UserEntity
-import com.uth.cashie.database.util.PasswordUtils
 import com.uth.cashie.databinding.ActivityRegisterBinding
+import com.uth.cashie.util.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,91 +22,134 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         applyTheme()
-        binding.btnBack.setOnClickListener { finish() }
-        binding.btnRegister.setOnClickListener { attemptRegister() }
-        binding.tvLoginLink.setOnClickListener { finish() }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
+        binding.btnRegister.setOnClickListener {
+            attemptRegister()
+        }
+
+        binding.tvLoginLink.setOnClickListener {
+            finish()
+        }
     }
 
     private fun applyTheme() {
-        ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
-            binding.tvToolbarTitle, binding.btnBack)
+        ThemeManager.applyThemeToWindow(
+            this,
+            binding.appBarLayout,
+            binding.tvToolbarTitle,
+            binding.btnBack
+        )
+
         ThemeManager.applyToGradientCard(binding.registerHeaderCard)
         ThemeManager.applyToButton(binding.btnRegister)
-        binding.tvLoginLink.setTextColor(ThemeManager.getThemeColorInt())
-        listOf(binding.tilFullName, binding.tilUsername, binding.tilPassword, binding.tilConfirmPassword)
-            .forEach { ThemeManager.applyToTextInput(it) }
+
+        binding.tvLoginLink.setTextColor(
+            ThemeManager.getThemeColorInt()
+        )
+
+        listOf(
+            binding.edtFullName,
+            binding.edtUsername,
+            binding.edtPassword,
+            binding.edtConfirmPassword
+        ).forEach {
+            ThemeManager.applyToTextInput(it)
+        }
     }
 
     private fun attemptRegister() {
-        val fullName = binding.tilFullName.editText?.text?.toString()?.trim() ?: ""
-        val username = binding.tilUsername.editText?.text?.toString()?.trim() ?: ""
-        val password = binding.tilPassword.editText?.text?.toString() ?: ""
-        val confirm  = binding.tilConfirmPassword.editText?.text?.toString() ?: ""
 
-        // Reset lỗi cũ
-        binding.tilFullName.error        = null
-        binding.tilUsername.error        = null
-        binding.tilPassword.error        = null
-        binding.tilConfirmPassword.error = null
+        val fullName =
+            binding.edtFullName.editText?.text.toString().trim()
 
-        // Validate
+        val username =
+            binding.edtUsername.editText?.text.toString().trim()
+
+        val password =
+            binding.edtPassword.editText?.text.toString()
+
+        val confirm =
+            binding.edtConfirmPassword.editText?.text.toString()
+
+        binding.edtFullName.error = null
+        binding.edtUsername.error = null
+        binding.edtPassword.error = null
+        binding.edtConfirmPassword.error = null
+
         var hasError = false
+
         if (fullName.isEmpty()) {
-            binding.tilFullName.error = "Vui lòng nhập họ và tên"
+            binding.edtFullName.error = "Vui lòng nhập họ và tên"
             hasError = true
         }
+
         if (username.isEmpty()) {
-            binding.tilUsername.error = "Vui lòng nhập tên đăng nhập"
+            binding.edtUsername.error = "Vui lòng nhập tên đăng nhập"
             hasError = true
         } else if (username.length < 4) {
-            binding.tilUsername.error = "Tên đăng nhập phải từ 4 ký tự"
+            binding.edtUsername.error = "Tên đăng nhập phải từ 4 ký tự"
             hasError = true
         }
+
         if (password.length < 6) {
-            binding.tilPassword.error = getString(R.string.error_password_too_short)
+            binding.edtPassword.error = "Mật khẩu phải từ 6 ký tự"
             hasError = true
         }
+
         if (password != confirm) {
-            binding.tilConfirmPassword.error = getString(R.string.error_password_mismatch)
+            binding.edtConfirmPassword.error = "Mật khẩu xác nhận không khớp"
             hasError = true
         }
+
         if (hasError) return
 
         lifecycleScope.launch {
-            // Kiểm tra username đã tồn tại chưa
-            val exists = withContext(Dispatchers.IO) {
-                db.userDao().usernameExists(username) > 0
+
+            val existed = withContext(Dispatchers.IO) {
+                db.userDao().getByUsername(username)
             }
-            if (exists) {
-                binding.tilUsername.error = "Tên đăng nhập đã được sử dụng"
+
+            if (existed != null) {
+                binding.edtUsername.error = "Tên đăng nhập đã tồn tại"
                 return@launch
             }
 
-            // Tạo user mới
-            val newUser = UserEntity(
-                username     = username,
-                fullName     = fullName,
+            val user = UserEntity(
+                username = username,
+                fullName = fullName,
                 passwordHash = PasswordUtils.hash(password)
             )
 
             val userId = withContext(Dispatchers.IO) {
-                val id = db.userDao().insert(newUser)
-                // Tạo danh mục mặc định + app settings cho user mới
+                val id = db.userDao().insert(user)
                 DatabaseInitializer.setup(id, db)
                 id
             }
 
-            // Lưu session
             SessionManager.setCurrentUser(userId)
 
-            // Sang SetupActivity để thiết lập ban đầu
-            val intent = Intent(this@RegisterActivity, SetupActivity::class.java).apply {
-                putExtra("fullName", fullName)
-            }
+            Toast.makeText(
+                this@RegisterActivity,
+                "Đăng ký thành công",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            val intent = Intent(
+                this@RegisterActivity,
+                SetupActivity::class.java
+            )
+
+            intent.putExtra("fullName", fullName)
+
             startActivity(intent)
             finish()
         }

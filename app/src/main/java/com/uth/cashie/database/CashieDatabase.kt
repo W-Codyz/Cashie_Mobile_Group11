@@ -39,10 +39,12 @@ abstract class CashieDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: CashieDatabase? = null
 
+
         fun getInstance(context: Context): CashieDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
+
 
         private fun buildDatabase(context: Context): CashieDatabase =
             Room.databaseBuilder(
