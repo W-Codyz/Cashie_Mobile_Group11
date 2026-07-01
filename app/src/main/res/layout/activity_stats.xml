@@ -19,20 +19,30 @@
             android:layout_height="wrap_content"
             android:background="@color/bg_card"
             android:gravity="center_vertical"
-            android:paddingStart="16dp"
+            android:paddingStart="8dp"
             android:paddingEnd="16dp"
             android:paddingTop="14dp"
             android:paddingBottom="14dp"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_menu"
+                android:contentDescription="Menu điều hướng"
+                android:layout_marginEnd="4dp" />
+
             <TextView
+                android:id="@+id/tvStatsTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/stats_title"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/green_primary" />
+                android:textColor="@color/text_primary" />
 
             <ImageButton
                 android:id="@+id/btnPrevMonth"
@@ -68,14 +78,14 @@
             android:layout_height="1dp"
             android:background="@color/divider" />
 
-        <!-- Loading indicator -->
+        <!-- ProgressBar (loading) -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:visibility="gone"
-            android:indeterminateTint="@color/green_primary" />
+            android:indeterminateTint="@color/text_muted" />
 
         <!-- ── Scrollable body ── -->
         <androidx.core.widget.NestedScrollView
@@ -130,7 +140,7 @@
                                 android:layout_marginTop="4dp"
                                 android:textSize="20sp"
                                 android:textStyle="bold"
-                                android:textColor="@color/income_green"
+                                android:textColor="@color/text_primary"
                                 tools:text="12.500.000đ" />
 
                             <TextView
@@ -196,6 +206,7 @@
 
                 <!-- Balance Card -->
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardBalance"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -225,7 +236,7 @@
                             android:layout_marginTop="4dp"
                             android:textSize="28sp"
                             android:textStyle="bold"
-                            android:textColor="@color/green_primary"
+                            android:textColor="@color/text_primary"
                             tools:text="11.335.000đ" />
 
                     </LinearLayout>
@@ -399,10 +410,12 @@
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
+                                android:id="@+id/barBg1"
                                 android:layout_marginTop="10dp"
                                 android:background="@color/green_container">
 
                                 <View
+                                    android:id="@+id/barCategory1"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
                                     android:layout_weight="0.4"
@@ -463,10 +476,12 @@
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
+                                android:id="@+id/barBg2"
                                 android:layout_marginTop="10dp"
                                 android:background="@color/green_container">
 
                                 <View
+                                    android:id="@+id/barCategory2"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
                                     android:layout_weight="0.8"
@@ -526,10 +541,12 @@
                             <FrameLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="6dp"
+                                android:id="@+id/barBg3"
                                 android:layout_marginTop="10dp"
                                 android:background="@color/green_container">
 
                                 <View
+                                    android:id="@+id/barCategory3"
                                     android:layout_width="0dp"
                                     android:layout_height="match_parent"
                                     android:layout_weight="0.6"
@@ -585,6 +602,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT2"
                                     android:layout_width="12dp"
                                     android:layout_height="40dp"
                                     android:background="@color/green_light"
@@ -608,6 +626,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT3"
                                     android:layout_width="12dp"
                                     android:layout_height="60dp"
                                     android:background="@color/green_primary"
@@ -631,6 +650,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT4"
                                     android:layout_width="12dp"
                                     android:layout_height="30dp"
                                     android:background="@color/green_light"
@@ -654,6 +674,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT5"
                                     android:layout_width="12dp"
                                     android:layout_height="80dp"
                                     android:background="@color/green_primary"
@@ -677,6 +698,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT6"
                                     android:layout_width="12dp"
                                     android:layout_height="50dp"
                                     android:background="@color/green_light"
@@ -700,6 +722,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barT7"
                                     android:layout_width="12dp"
                                     android:layout_height="90dp"
                                     android:background="@color/green_primary"
@@ -723,6 +746,7 @@
                                 android:gravity="center">
 
                                 <View
+                                    android:id="@+id/barCn"
                                     android:layout_width="12dp"
                                     android:layout_height="70dp"
                                     android:background="@color/green_light"
@@ -979,7 +1003,7 @@
         app:cardCornerRadius="32dp"
         app:cardElevation="10dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:strokeColor="@color/green_primary"
+        app:strokeColor="@color/divider"
         app:strokeWidth="1.5dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -995,3 +1019,4 @@
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

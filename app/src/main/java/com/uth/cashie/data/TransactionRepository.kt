@@ -11,7 +11,7 @@ import com.uth.cashie.model.TransactionGroup
  */
 object TransactionRepository {
 
-    private val all: List<Transaction> = listOf(
+    private val _all: MutableList<Transaction> = mutableListOf(
         // ── Tháng 1 ──────────────────────────────────────────────────────────
         Transaction(101, "Lương tháng 1",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-01-05"),
         Transaction(102, "Ăn trưa",          "Ăn uống",     "🍜", "#FF8C00",    -85_000, false, "12:00", "2026-01-06"),
@@ -65,14 +65,33 @@ object TransactionRepository {
         Transaction(608, "Café buổi sáng",   "Ăn uống",     "☕", "#795548",    -35_000, false, "07:30", "2026-06-14"),
     )
 
-    fun getAll(): List<Transaction> = all
+    private var _nextId = 9000
 
-    fun getByMonth(month: Int, year: Int): List<Transaction> = all.filter { tx ->
+    fun getAll(): List<Transaction> = _all.toList()
+
+    fun getById(id: Int): Transaction? = _all.find { it.id == id }
+
+    fun getByMonth(month: Int, year: Int): List<Transaction> = _all.filter { tx ->
         val p = tx.date.split("-")
         p.getOrNull(0)?.toIntOrNull() == year && p.getOrNull(1)?.toIntOrNull() == month
     }
 
-    fun getByYear(year: Int): List<Transaction> = all.filter { it.date.startsWith(year.toString()) }
+    fun getByYear(year: Int): List<Transaction> = _all.filter { it.date.startsWith("$year-") }
+
+    fun add(transaction: Transaction): Transaction {
+        val withId = if (transaction.id == 0) transaction.copy(id = _nextId++) else transaction
+        _all.add(withId)
+        return withId
+    }
+
+    fun update(transaction: Transaction) {
+        val index = _all.indexOfFirst { it.id == transaction.id }
+        if (index >= 0) _all[index] = transaction
+    }
+
+    fun delete(id: Int) {
+        _all.removeAll { it.id == id }
+    }
 
     /** Nhóm theo ngày, sắp xếp mới nhất lên đầu */
     fun getGroupedByDate(transactions: List<Transaction>): List<TransactionGroup> =
@@ -81,7 +100,7 @@ object TransactionRepository {
             .entries
             .sortedByDescending { it.key }
             .map { (_, txList) ->
-                val net = txList.sumOf { if (it.isIncome) it.amount else -it.amount }
+                val net = txList.sumOf { it.amount } // amount đã mang dấu âm cho chi tiêu
                 val parts = txList.first().date.split("-")
                 val label = if (parts.size == 3) "${parts[2]}/${parts[1]}/${parts[0]}" else txList.first().date
                 TransactionGroup(

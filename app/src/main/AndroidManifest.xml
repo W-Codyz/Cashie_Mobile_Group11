@@ -13,18 +13,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cashie">
 
+        <!-- ══════════════════════════════════════════
+             ACTIVITIES
+        ══════════════════════════════════════════ -->
 
+        <!-- Màn hình đăng nhập — LAUNCHER chính, luôn enabled -->
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
-
+            android:exported="true"
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
 
         <activity
             android:name=".RegisterActivity"
@@ -39,6 +41,10 @@
             android:theme="@style/Theme.Cashie" />
 
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ProfileActivity"
             android:exported="false"
             android:label="@string/profile_title"
@@ -49,22 +55,138 @@
             android:exported="false"
             android:label="@string/edit_profile_title"
             android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:exported="false"
+            android:label="@string/change_password_title"
+            android:theme="@style/Theme.Cashie" />
+
+        <activity
+            android:name=".SettingActivity"
+            android:exported="false"
+            android:label="@string/setting_title"
+            android:theme="@style/Theme.Cashie" />
+
         <activity
             android:name=".StatsActivity"
             android:exported="false"
             android:label="@string/stats_title"
             android:theme="@style/Theme.Cashie" />
 
-
         <activity
-            android:name=".MainActivity"
+            android:name=".CategoryMainActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".AddTransactionActivity"
+            android:exported="false"
+            android:label="@string/add_transaction_title"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Cashie" />
 
         <activity
-            android:name=".SettingActivity"
-            android:exported="false" />
-        <activity android:name=".CategoryMainActivity" />
+            android:name=".AboutActivity"
+            android:exported="false"
+            android:label="Thông tin ứng dụng"
+            android:theme="@style/Theme.Cashie" />
+
+        <!-- ══════════════════════════════════════════
+             DYNAMIC ICON ALIASES
+             Các alias này CHỈ dùng để đổi icon app — KHÔNG có LAUNCHER intent-filter.
+             Launcher entry là LoginActivity ở trên.
+             Tất cả đều enabled=true để PackageManager không bị crash.
+        ══════════════════════════════════════════ -->
+
+        <activity-alias
+            android:name=".IconDefault"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_"
+            android:roundIcon="@mipmap/ic_launcher__round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon1"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_1"
+            android:roundIcon="@mipmap/ic_launcher_1_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon2"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_2"
+            android:roundIcon="@mipmap/ic_launcher_2_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon3"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_3"
+            android:roundIcon="@mipmap/ic_launcher_3_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon4"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_4"
+            android:roundIcon="@mipmap/ic_launcher_4_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon5"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_5"
+            android:roundIcon="@mipmap/ic_launcher_5_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon6"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_6"
+            android:roundIcon="@mipmap/ic_launcher_6_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon7"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_7"
+            android:roundIcon="@mipmap/ic_launcher_7_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon8"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_8"
+            android:roundIcon="@mipmap/ic_launcher_8_round"
+            android:label="@string/app_name" />
+
+        <activity-alias
+            android:name=".Icon9"
+            android:targetActivity=".LoginActivity"
+            android:exported="false"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher_9"
+            android:roundIcon="@mipmap/ic_launcher_9_round"
+            android:label="@string/app_name" />
 
     </application>
 

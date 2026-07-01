@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:title="Danh mục"
-        app:titleCentered="true" />
+        app:titleCentered="true"
+        app:navigationIcon="@drawable/ic_menu"
+        app:navigationContentDescription="Menu điều hướng" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -28,6 +30,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCategory"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingBottom="96dp"
+        android:clipToPadding="false" />
 
 </LinearLayout>

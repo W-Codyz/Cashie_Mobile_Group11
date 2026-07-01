@@ -13,6 +13,10 @@ class CashieApp : Application() {
         super.onCreate()
         // Khởi tạo SessionManager để dùng getCurrentUserId() từ bất kỳ đâu
         SessionManager.init(this)
+        // Khởi tạo ThemeManager để dùng màu chủ đề từ bất kỳ đâu
+        ThemeManager.init(this)
+        // Khởi tạo IconManager để lưu icon đang chọn
+        IconManager.init(this)
         // Khởi động Room Database (lazy, chỉ tạo file khi query đầu tiên)
         CashieDatabase.getInstance(this)
     }

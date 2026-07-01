@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Cashie</string>
+
+    <!-- Balance card -->
+    <string name="label_current_balance">Current Balance</string>
+    <string name="label_income">Income</string>
+    <string name="label_expense">Expense</string>
+    <string name="symbol_arrow_up">↑</string>
+    <string name="symbol_arrow_down">↓</string>
+
+    <!-- Filter chips -->
+    <string name="filter_all">All</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_prev_month">Previous month</string>
+    <string name="cd_next_month">Next month</string>
+    <string name="cd_account">Account</string>
+    <string name="cd_add_transaction">Add transaction</string>
+    <string name="cd_back">Go back</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_stats">Statistics</string>
+    <string name="nav_categories">Categories</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Month/year display format -->
+    <string name="month_year_format">%1$s %2$d</string>
+
+    <!-- ====== Register Screen ====== -->
+    <string name="register_title">Create Account</string>
+    <string name="register_app_tagline">Smart personal finance</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm password</string>
+    <string name="btn_register">Register</string>
+    <string name="register_already_have_account">Already have an account? </string>
+    <string name="register_login_link">Log in</string>
+
+    <!-- ====== Setup Screen ====== -->
+    <string name="setup_title">Account Setup</string>
+    <string name="setup_welcome">Welcome!</string>
+    <string name="setup_description">Let\'s set up your account</string>
+    <string name="setup_currency_section">Currency</string>
+    <string name="setup_currency_vnd">VND — Vietnamese Dong</string>
+    <string name="setup_currency_usd">USD — US Dollar</string>
+    <string name="setup_balance_section">Initial Balance</string>
+    <string name="setup_balance_hint">Enter your current balance</string>
+    <string name="setup_balance_note">You can change this later in Settings</string>
+    <string name="setup_suffix_vnd">đ</string>
+    <string name="setup_suffix_usd">$</string>
+    <string name="btn_start_using">Get Started</string>
+
+    <!-- ====== Profile Screen ====== -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_name">User Name</string>
+    <string name="profile_username">@username</string>
+    <string name="profile_currency_badge">VND</string>
+    <string name="profile_stat_income_label">Income</string>
+    <string name="profile_stat_expense_label">Expense</string>
+    <string name="profile_stat_transactions_label">Transactions</string>
+    <string name="profile_stat_income_value">0đ</string>
+    <string name="profile_stat_expense_value">0đ</string>
+    <string name="profile_stat_transactions_value">0</string>
+    <string name="profile_menu_edit_info">Edit Profile</string>
+    <string name="profile_menu_change_password">Change Password</string>
+    <string name="profile_menu_currency">Currency</string>
+    <string name="profile_menu_stats">Personal Stats</string>
+    <string name="profile_menu_stats_soon">Coming soon</string>
+    <string name="profile_menu_logout">Log out</string>
+    <string name="btn_edit">Edit</string>
+    <string name="cd_edit_profile">Edit profile</string>
+    <string name="cd_avatar">Avatar</string>
+
+    <!-- ====== Edit Profile Screen ====== -->
+    <string name="edit_profile_title">Edit Profile</string>
+    <string name="edit_profile_change_photo">Change Photo</string>
+    <string name="edit_hint_full_name">Full name</string>
+    <string name="edit_hint_username">Username</string>
+    <string name="edit_username_readonly_note">Username cannot be changed</string>
+    <string name="edit_hint_email">Email</string>
+    <string name="edit_section_currency">Currency</string>
+    <string name="btn_save_changes">Save Changes</string>
+    <string name="toast_saved">Changes saved</string>
+    <string name="cd_camera">Change avatar</string>
+
+    <!-- Month names -->
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <!-- Stats screen -->
+    <string name="stats_title">Statistics &amp; Reports</string>
+    <string name="stats_expense_by_category">Expense by category</string>
+    <string name="stats_income_by_category">Income by category</string>
+    <string name="stats_weekly_trend">Weekly trend</string>
+    <string name="stats_monthly_summary">Monthly summary</string>
+    <string name="stats_highest_expense">Highest expense</string>
+    <string name="stats_total_transactions">Total transactions</string>
+
+    <!-- ====== Settings Screen ====== -->
+    <string name="setting_title">Settings</string>
+    <string name="setting_section_appearance">Appearance</string>
+    <string name="setting_theme_color">Theme Color</string>
+    <string name="setting_app_icon">App Icon</string>
+    <string name="setting_section_general">General</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_language_vi">Tiếng Việt</string>
+    <string name="setting_language_en">English</string>
+    <string name="setting_section_account">Account</string>
+    <string name="setting_logout">Log out</string>
+    <string name="setting_logout_confirm_title">Log out?</string>
+    <string name="setting_logout_confirm_msg">Are you sure you want to log out?</string>
+    <string name="setting_logout_confirm_yes">Log out</string>
+    <string name="setting_logout_confirm_no">Cancel</string>
+    <string name="toast_theme_applied">Theme color applied</string>
+    <string name="toast_language_applied">Language changed. Please restart the app.</string>
+    <string name="toast_icon_applied">App icon changed</string>
+    <string name="setting_icon_default">Default</string>
+
+    <!-- Date labels -->
+    <string name="label_today">Today</string>
+    <string name="label_yesterday">Yesterday</string>
+
+    <!-- Edit Profile validation -->
+    <string name="error_full_name_empty">Please enter your full name</string>
+    <string name="error_current_password_empty">Please enter your current password</string>
+
+    <!-- Change password -->
+    <string name="change_password_title">Change Password</string>
+    <string name="hint_current_password">Current password</string>
+    <string name="hint_new_password">New password</string>
+    <string name="hint_confirm_new_password">Confirm new password</string>
+    <string name="btn_change_password">Change Password</string>
+    <string name="error_wrong_password">Current password is incorrect</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="error_password_too_short">Password must be at least 6 characters</string>
+    <string name="toast_password_changed">Password changed successfully</string>
+</resources>

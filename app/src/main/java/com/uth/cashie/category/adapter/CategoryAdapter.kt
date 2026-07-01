@@ -34,10 +34,17 @@ class CategoryAdapter(
             binding.txtName.text = category.name
             binding.imgIcon.setImageResource(category.icon)
 
-            // (Tuỳ chọn) Tô màu cho icon nếu category có trường color
-            // category.color?.let { colorRes ->
-            //     binding.imgIcon.setColorFilter(ContextCompat.getColor(binding.root.context, colorRes))
-            // }
+            // Circle background theo màu theme
+            val themeColor = com.uth.cashie.ThemeManager.getThemeColorInt()
+            val bg = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(themeColor)
+            }
+            binding.imgIcon.background = bg
+
+            // Icon tint trắng trên nền màu theme
+            binding.imgIcon.imageTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
 
             binding.root.setOnClickListener {
                 onItemClick(category)

@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Animation trượt từ trái cho nav panel dialog -->
+    <style name="NavDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_left</item>
+    </style>
+
     <style name="Theme.Cashie" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/green_primary</item>
         <item name="colorPrimaryVariant">@color/green_dark</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/green_dark</item>
         <item name="android:colorBackground">@color/bg_screen</item>
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <!-- Status bar trong suốt — màu được set bằng code qua applyThemeToWindow() -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- Cho phép nội dung vẽ dưới camera cutout -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 </resources>

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.uth.cashie.ThemeManager
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.databinding.ActivityStatsBinding
 import com.uth.cashie.stats.model.QuarterlyStat
@@ -34,9 +35,64 @@ class StatsActivity : AppCompatActivity() {
         binding = ActivityStatsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupMenuButton()
+        applyTheme()
         setupMonthNavigation()
         setupBottomNav()
         observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Theme
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun applyTheme() {
+        val colorInt  = ThemeManager.getThemeColorInt()
+        val colorList = ColorStateList.valueOf(colorInt)
+        val container = ThemeManager.getSolidContainerColor()
+
+        // Header title
+        binding.tvStatsTitle.setTextColor(colorInt)
+
+        // Balance card background + text
+        binding.cardBalance.setCardBackgroundColor(container)
+        binding.tvStatsBalance.setTextColor(colorInt)
+
+        // Income value
+        binding.tvStatsIncome.setTextColor(colorInt)
+
+        // Progress bars (category bars)
+        listOf(binding.barCategory1, binding.barCategory2, binding.barCategory3)
+            .forEach { bar -> bar.setBackgroundColor(colorInt) }
+
+        // Progress bar backgrounds (container color)
+        listOf(binding.barBg1, binding.barBg2, binding.barBg3)
+            .forEach { bg -> bg.setBackgroundColor(container) }
+
+        // Weekly chart bars (tall = theme, short = lighter)
+        listOf(binding.barT2, binding.barT3, binding.barT4, binding.barT5, binding.barT6, binding.barT7, binding.barCn)
+            .forEach { bar -> bar.setBackgroundColor(colorInt) }
+
+        // Bottom nav
+        binding.bottomNav.itemActiveIndicatorColor =
+            ColorStateList.valueOf(ThemeManager.getContainerColor())
+        binding.bottomNav.itemIconTintList = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
+        )
+        binding.bottomNav.itemTextColor = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
+        )
+        binding.cardBottomNav.strokeColor = colorInt
+
+        // ProgressBar spinner
+        binding.progressBar.indeterminateTintList = colorList
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -133,6 +189,14 @@ class StatsActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Menu button
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun setupMenuButton() {
+        binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.STATS) }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // Month navigation
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -154,24 +218,6 @@ class StatsActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun setupBottomNav() {
-        binding.bottomNav.selectedItemId = R.id.nav_stats
-        binding.bottomNav.itemActiveIndicatorColor =
-            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_container))
-
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, MainActivity::class.java)); finish(); true
-                }
-                R.id.nav_stats -> true
-                R.id.nav_categories -> {
-                    startActivity(Intent(this, CategoryMainActivity::class.java)); finish(); true
-                }
-                R.id.nav_settings -> {
-                    startActivity(Intent(this, SettingActivity::class.java)); finish(); true
-                }
-                else -> false
-            }
-        }
+        setupBottomNav(binding.bottomNav, R.id.nav_stats)
     }
 }

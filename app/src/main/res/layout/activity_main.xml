@@ -22,11 +22,21 @@
             android:layout_height="wrap_content"
             android:background="@color/bg_card"
             android:gravity="center_vertical"
-            android:paddingStart="16dp"
+            android:paddingStart="8dp"
             android:paddingEnd="16dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:orientation="horizontal">
+
+            <!-- Hamburger menu button -->
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_menu"
+                android:contentDescription="@string/cd_menu"
+                android:layout_marginEnd="4dp" />
 
             <TextView
                 android:id="@+id/tvAppName"
@@ -34,9 +44,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/app_name"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="@color/green_primary" />
+                android:textColor="@color/text_primary" />
 
             <ImageButton
                 android:id="@+id/btnPrevMonth"
@@ -72,8 +82,11 @@
                 android:layout_marginStart="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:clickable="true"
+                android:focusable="true">
                 <LinearLayout
+                    android:id="@+id/avatarCircle"
                     android:layout_width="38dp"
                     android:layout_height="38dp"
                     android:background="@drawable/bg_avatar"
@@ -107,6 +120,7 @@
 
                 <!-- ── Balance Card ── -->
                 <LinearLayout
+                    android:id="@+id/balanceCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -292,6 +306,18 @@
 
                 </com.google.android.material.chip.ChipGroup>
 
+                <!-- ── Empty state ── -->
+                <TextView
+                    android:id="@+id/tvEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:text="@string/empty_transactions"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_muted"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
                 <!-- ── Transaction RecyclerView ── -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTransactions"
@@ -337,7 +363,7 @@
         app:cardCornerRadius="32dp"
         app:cardElevation="10dp"
         app:cardBackgroundColor="@color/bg_card"
-        app:strokeColor="@color/green_primary"
+        app:strokeColor="@color/divider"
         app:strokeWidth="1.5dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
