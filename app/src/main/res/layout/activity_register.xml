@@ -94,7 +94,7 @@
 
             <!-- Full name -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilFullName"
+                android:id="@+id/edtFullName"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -119,7 +119,7 @@
 
             <!-- Username -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilUsername"
+                android:id="@+id/edtUsername"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
 
             <!-- Password -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPassword"
+                android:id="@+id/edtPassword"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
 
             <!-- Confirm password -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilConfirmPassword"
+                android:id="@+id/edtConfirmPassword"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

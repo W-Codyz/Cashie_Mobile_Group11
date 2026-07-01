@@ -1,7 +1,9 @@
 package com.uth.cashie.database
 
+import com.uth.cashie.database.DatabaseInitializer
 import com.uth.cashie.database.entity.AppSettingsEntity
 import com.uth.cashie.database.entity.CategoryEntity
+
 
 /**
  * Khởi tạo dữ liệu mặc định ngay sau khi tạo user.
