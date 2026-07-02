@@ -23,8 +23,10 @@ data class UserEntity(
     @ColumnInfo(name = "full_name")
     val fullName: String,
 
+
     @ColumnInfo(name = "email")
-    val password: String? = null,
+    val email: String = "",
+
 
     /** Mật khẩu đã hash (SHA-256), không lưu plaintext */
     @ColumnInfo(name = "password_hash")

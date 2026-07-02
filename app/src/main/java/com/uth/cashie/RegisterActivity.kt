@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
@@ -79,6 +80,8 @@ class RegisterActivity : AppCompatActivity() {
 
         val confirm =
             binding.edtConfirmPassword.editText?.text.toString()
+        val email = binding.edtEmail.text.toString().trim()
+
 
         binding.edtFullName.error = null
         binding.edtUsername.error = null
@@ -126,6 +129,7 @@ class RegisterActivity : AppCompatActivity() {
             val user = UserEntity(
                 username = username,
                 fullName = fullName,
+                email = email,
                 passwordHash = PasswordUtils.hash(password)
             )
 
@@ -135,22 +139,19 @@ class RegisterActivity : AppCompatActivity() {
                 id
             }
 
-            SessionManager.setCurrentUser(userId)
+
+
+
 
             Toast.makeText(
                 this@RegisterActivity,
-                "Đăng ký thành công",
+                "Đăng ký thành công. Vui lòng đăng nhập.",
                 Toast.LENGTH_SHORT
             ).show()
 
-            val intent = Intent(
-                this@RegisterActivity,
-                SetupActivity::class.java
+            startActivity(
+                Intent(this@RegisterActivity, LoginActivity::class.java)
             )
-
-            intent.putExtra("fullName", fullName)
-
-            startActivity(intent)
             finish()
         }
     }

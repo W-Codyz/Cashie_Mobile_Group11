@@ -33,7 +33,16 @@ interface UserDao {
     suspend fun login(
         username: String,
         passwordHash: String
-    ): UserEntity?
+    ): UserEntity
+    @Query("""
+UPDATE users
+SET avatar_path = :avatarPath
+WHERE id = :userId
+""")
+    suspend fun updateAvatar(
+        userId: Long,
+        avatarPath: String
+    )
 
     @Query("SELECT * FROM users")
     suspend fun getAll(): List<UserEntity>

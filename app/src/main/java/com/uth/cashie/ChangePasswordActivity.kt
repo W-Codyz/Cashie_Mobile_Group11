@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
-import com.uth.cashie.database.util.PasswordUtils
+import com.uth.cashie.util.PasswordUtils
 import com.uth.cashie.databinding.ActivityChangePasswordBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -22,7 +22,7 @@ import com.uth.cashie.database.entity.*
         TransactionEntity::class,
         SavedAccountEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class CashieDatabase : RoomDatabase() {
@@ -52,16 +52,15 @@ abstract class CashieDatabase : RoomDatabase() {
                 CashieDatabase::class.java,
                 DB_NAME
             )
+                .fallbackToDestructiveMigration()
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        // Bật Foreign Key support – bắt buộc với Room + SQLite
                         db.execSQL("PRAGMA foreign_keys = ON")
                     }
 
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
-                        // Bật lại mỗi khi mở DB (SQLite reset về OFF sau mỗi connection)
                         db.execSQL("PRAGMA foreign_keys = ON")
                     }
                 })

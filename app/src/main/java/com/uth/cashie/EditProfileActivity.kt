@@ -172,7 +172,8 @@ class EditProfileActivity : AppCompatActivity() {
     // ── Lưu ──────────────────────────────────────────────────────────────────
     private fun saveProfile() {
         val fullName = binding.etFullName.text?.toString()?.trim() ?: ""
-        val email    = binding.etEmail.text?.toString()?.trim()?.ifEmpty { null }
+        val email = binding.tilEmail.editText!!.text.toString().trim()
+
 
         if (fullName.isEmpty()) {
             binding.tilFullName.error = getString(R.string.error_full_name_empty)

@@ -3,6 +3,9 @@ package com.uth.cashie.util
 import java.security.MessageDigest
 
 object PasswordUtils {
+    fun verify(password: String, hash: String): Boolean {
+        return this.hash(password) == hash
+    }
 
     fun hash(password: String): String {
         val bytes = MessageDigest
