@@ -9,6 +9,7 @@ import com.uth.cashie.stats.model.StatsResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 /**
  * ViewModel cho StatsActivity.
@@ -22,10 +23,10 @@ class StatsViewModel : ViewModel() {
     // Exposed state
     // ─────────────────────────────────────────────────────────────────────────
 
-    private val _month = MutableLiveData(6)
+    private val _month = MutableLiveData(Calendar.getInstance().get(Calendar.MONTH) + 1)
     val month: LiveData<Int> = _month
 
-    private val _year = MutableLiveData(2026)
+    private val _year = MutableLiveData(Calendar.getInstance().get(Calendar.YEAR))
     val year: LiveData<Int> = _year
 
     private val _statsResult = MutableLiveData<StatsResult>()
@@ -50,16 +51,16 @@ class StatsViewModel : ViewModel() {
     // ─────────────────────────────────────────────────────────────────────────
 
     fun prevMonth() {
-        val m = _month.value ?: 6
-        val y = _year.value  ?: 2026
+        val m = _month.value ?: return
+        val y = _year.value  ?: return
         if (m == 1) { _month.value = 12; _year.value = y - 1 }
         else        { _month.value = m - 1 }
         loadStats()
     }
 
     fun nextMonth() {
-        val m = _month.value ?: 6
-        val y = _year.value  ?: 2026
+        val m = _month.value ?: return
+        val y = _year.value  ?: return
         if (m == 12) { _month.value = 1; _year.value = y + 1 }
         else         { _month.value = m + 1 }
         loadStats()
@@ -69,7 +70,7 @@ class StatsViewModel : ViewModel() {
     // Private
     // ─────────────────────────────────────────────────────────────────────────
 
-    private fun loadStats() {
+    fun loadStats() {
         val m = _month.value ?: return
         val y = _year.value  ?: return
         _isLoading.value = true

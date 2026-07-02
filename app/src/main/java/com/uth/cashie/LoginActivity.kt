@@ -11,7 +11,7 @@ import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.database.entity.SavedAccountEntity
 import com.uth.cashie.databinding.ActivityLoginBinding
-import com.uth.cashie.util.PasswordUtils
+import com.uth.cashie.database.util.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

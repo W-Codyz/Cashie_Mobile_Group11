@@ -1,4 +1,4 @@
-package com.uth.cashie.util
+package com.uth.cashie.database.util
 
 import java.security.MessageDigest
 

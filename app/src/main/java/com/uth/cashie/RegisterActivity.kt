@@ -13,7 +13,7 @@ import com.uth.cashie.database.DatabaseInitializer
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.database.entity.UserEntity
 import com.uth.cashie.databinding.ActivityRegisterBinding
-import com.uth.cashie.util.PasswordUtils
+import com.uth.cashie.database.util.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

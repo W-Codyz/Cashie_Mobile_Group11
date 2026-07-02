@@ -1,6 +1,5 @@
 package com.uth.cashie
 
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -8,43 +7,136 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import com.uth.cashie.ThemeManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.databinding.ActivityStatsBinding
+import com.uth.cashie.stats.adapter.CategoryStatAdapter
 import com.uth.cashie.stats.model.QuarterlyStat
 import com.uth.cashie.stats.model.StatsResult
+import com.uth.cashie.stats.report.ExcelExporter
+import com.uth.cashie.stats.report.ReportExporter
 import com.uth.cashie.stats.ui.StatsViewModel
 import com.uth.cashie.stats.view.DonutChartView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class StatsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStatsBinding
     private val viewModel: StatsViewModel by viewModels()
 
-    // Màu 4 quý – khớp với legend trong XML
+    private val expenseAdapter = CategoryStatAdapter()
+    private val incomeAdapter  = CategoryStatAdapter()
+
     private val quarterColors = listOf(
-        Color.parseColor("#A5D6A7"),   // Q1 – xanh lá nhạt
-        Color.parseColor("#FFF59D"),   // Q2 – vàng nhạt
-        Color.parseColor("#FFCC80"),   // Q3 – cam nhạt
-        Color.parseColor("#80DEEA")    // Q4 – xanh cyan nhạt
+        Color.parseColor("#A5D6A7"),
+        Color.parseColor("#FFF59D"),
+        Color.parseColor("#FFCC80"),
+        Color.parseColor("#80DEEA")
     )
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Lifecycle
+    // ─────────────────────────────────────────────────────────────────────────
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStatsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupRecyclerViews()
+        setupBarChart()
         setupMenuButton()
-        applyTheme()
         setupMonthNavigation()
+        setupExportButtons()
         setupBottomNav()
+        applyTheme()
         observeViewModel()
     }
 
     override fun onResume() {
         super.onResume()
         applyTheme()
+        viewModel.loadStats()
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Setup
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun setupRecyclerViews() {
+        binding.rvExpenseCategory.apply {
+            layoutManager = LinearLayoutManager(this@StatsActivity)
+            adapter = expenseAdapter
+            isNestedScrollingEnabled = false
+        }
+        binding.rvIncomeCategory.apply {
+            layoutManager = LinearLayoutManager(this@StatsActivity)
+            adapter = incomeAdapter
+            isNestedScrollingEnabled = false
+        }
+    }
+
+    private fun setupBarChart() {
+        binding.barChart.apply {
+            description.isEnabled = false
+            legend.isEnabled      = false
+            setDrawGridBackground(false)
+            setDrawBarShadow(false)
+            setScaleEnabled(false)
+            setPinchZoom(false)
+            setDrawValueAboveBar(false)
+            setNoDataText("Chưa có dữ liệu")
+
+            xAxis.apply {
+                position         = XAxis.XAxisPosition.BOTTOM
+                granularity      = 1f
+                setDrawGridLines(false)
+                textSize         = 10f
+                textColor        = Color.parseColor("#888888")
+            }
+            axisLeft.apply {
+                setDrawGridLines(true)
+                gridColor    = Color.parseColor("#F0F0F0")
+                axisMinimum  = 0f
+                textSize     = 9f
+                textColor    = Color.parseColor("#888888")
+                setValueFormatter(object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String = when {
+                        value >= 1_000_000f -> "${"%.0f".format(value / 1_000_000f)}M"
+                        value >= 1_000f     -> "${"%.0f".format(value / 1_000f)}K"
+                        else                -> value.toInt().toString()
+                    }
+                })
+            }
+            axisRight.isEnabled = false
+        }
+    }
+
+    private fun setupMenuButton() {
+        binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.STATS) }
+    }
+
+    private fun setupMonthNavigation() {
+        binding.btnPrevMonth.setOnClickListener { viewModel.prevMonth() }
+        binding.btnNextMonth.setOnClickListener { viewModel.nextMonth() }
+    }
+
+    private fun setupBottomNav() {
+        setupBottomNav(binding.bottomNav, R.id.nav_stats)
+    }
+
+    private fun setupExportButtons() {
+        binding.btnExportPdf.setOnClickListener   { exportPdf() }
+        binding.btnExportExcel.setOnClickListener { exportCsv() }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -54,45 +146,24 @@ class StatsActivity : AppCompatActivity() {
     private fun applyTheme() {
         val colorInt  = ThemeManager.getThemeColorInt()
         val colorList = ColorStateList.valueOf(colorInt)
-        val container = ThemeManager.getSolidContainerColor()
 
-        // Header title
         binding.tvStatsTitle.setTextColor(colorInt)
-
-        // Balance card background + text
-        binding.cardBalance.setCardBackgroundColor(container)
+        binding.cardBalance.setCardBackgroundColor(ThemeManager.getSolidContainerColor())
         binding.tvStatsBalance.setTextColor(colorInt)
-
-        // Income value
         binding.tvStatsIncome.setTextColor(colorInt)
-
-        // Progress bars (category bars)
-        listOf(binding.barCategory1, binding.barCategory2, binding.barCategory3)
-            .forEach { bar -> bar.setBackgroundColor(colorInt) }
-
-        // Progress bar backgrounds (container color)
-        listOf(binding.barBg1, binding.barBg2, binding.barBg3)
-            .forEach { bg -> bg.setBackgroundColor(container) }
-
-        // Weekly chart bars (tall = theme, short = lighter)
-        listOf(binding.barT2, binding.barT3, binding.barT4, binding.barT5, binding.barT6, binding.barT7, binding.barCn)
-            .forEach { bar -> bar.setBackgroundColor(colorInt) }
-
-        // Bottom nav
-        binding.bottomNav.itemActiveIndicatorColor =
-            ColorStateList.valueOf(ThemeManager.getContainerColor())
-        binding.bottomNav.itemIconTintList = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
-        binding.bottomNav.itemTextColor = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
-        binding.cardBottomNav.strokeColor = colorInt
-
-        // ProgressBar spinner
         binding.progressBar.indeterminateTintList = colorList
+        binding.btnExportPdf.setStrokeColor(colorList)
+        binding.btnExportPdf.setTextColor(colorInt)
+        binding.btnExportExcel.backgroundTintList = colorList
+
+        val navColorList = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+            intArrayOf(colorInt, Color.parseColor("#888888"))
+        )
+        binding.bottomNav.itemActiveIndicatorColor = ColorStateList.valueOf(ThemeManager.getContainerColor())
+        binding.bottomNav.itemIconTintList  = navColorList
+        binding.bottomNav.itemTextColor     = navColorList
+        binding.cardBottomNav.strokeColor   = colorInt
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -100,30 +171,25 @@ class StatsActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun observeViewModel() {
-        // Loading
         viewModel.isLoading.observe(this) { loading ->
             binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         }
-
-        // Error
         viewModel.error.observe(this) { msg ->
             if (!msg.isNullOrBlank()) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         }
-
-        // Month/Year label
         viewModel.month.observe(this) { updateMonthLabel() }
         viewModel.year.observe(this)  { updateMonthLabel() }
-
-        // Stats data
         viewModel.statsResult.observe(this) { result ->
             bindSummary(result)
             bindComparison(result)
+            bindCategoryLists(result)
+            bindBarChart(result)
             bindDonutChart(result.quarterlyStats)
         }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Bind helpers
+    // Bind: Summary
     // ─────────────────────────────────────────────────────────────────────────
 
     private fun bindSummary(result: StatsResult) {
@@ -133,54 +199,117 @@ class StatsActivity : AppCompatActivity() {
         binding.tvStatsBalance.text      = formatVND(s.balance)
         binding.tvTotalTransactions.text = s.totalTransactions.toString()
         binding.tvHighestExpense.text    = formatVND(s.highestExpense)
+        binding.tvAvgDailyExpense.text   = formatVND(s.avgDailyExpense)
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bind: Comparison
+    // ─────────────────────────────────────────────────────────────────────────
 
     private fun bindComparison(result: StatsResult) {
         result.comparison?.let { cmp ->
             val expSign = if (cmp.expenseChange >= 0) "+" else ""
             val incSign = if (cmp.incomeChange  >= 0) "+" else ""
-
-            binding.tvExpenseChange.text =
-                "$expSign${"%.1f".format(cmp.expenseChangePercent)}% so tháng trước"
-            binding.tvIncomeChange.text  =
-                "$incSign${"%.1f".format(cmp.incomeChangePercent)}% so tháng trước"
-
+            binding.tvExpenseChange.text = "$expSign${"%.1f".format(cmp.expenseChangePercent)}% so tháng trước"
+            binding.tvIncomeChange.text  = "$incSign${"%.1f".format(cmp.incomeChangePercent)}% so tháng trước"
             binding.tvExpenseChange.setTextColor(
-                if (cmp.expenseChange > 0) Color.parseColor("#F44336")
-                else Color.parseColor("#4CAF50")
+                if (cmp.expenseChange > 0) Color.parseColor("#F44336") else Color.parseColor("#4CAF50")
             )
             binding.tvIncomeChange.setTextColor(
-                if (cmp.incomeChange >= 0) Color.parseColor("#4CAF50")
-                else Color.parseColor("#F44336")
+                if (cmp.incomeChange >= 0) Color.parseColor("#4CAF50") else Color.parseColor("#F44336")
             )
+        } ?: run {
+            binding.tvExpenseChange.text = ""
+            binding.tvIncomeChange.text  = ""
         }
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bind: Category lists
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun bindCategoryLists(result: StatsResult) {
+        if (result.expenseByCategory.isEmpty()) {
+            binding.tvEmptyExpense.visibility    = View.VISIBLE
+            binding.rvExpenseCategory.visibility = View.GONE
+        } else {
+            binding.tvEmptyExpense.visibility    = View.GONE
+            binding.rvExpenseCategory.visibility = View.VISIBLE
+            expenseAdapter.submitList(result.expenseByCategory)
+        }
+        if (result.incomeByCategory.isEmpty()) {
+            binding.tvEmptyIncome.visibility    = View.VISIBLE
+            binding.rvIncomeCategory.visibility = View.GONE
+        } else {
+            binding.tvEmptyIncome.visibility    = View.GONE
+            binding.rvIncomeCategory.visibility = View.VISIBLE
+            incomeAdapter.submitList(result.incomeByCategory)
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bind: Bar chart (thu/chi 12 tháng)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun bindBarChart(result: StatsResult) {
+        val trends = result.monthlyTrends
+        if (trends.isEmpty()) { binding.barChart.clear(); return }
+
+        val labels = listOf("T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12")
+
+        // Mỗi tháng dùng 2 đơn vị trên trục X: income ở vị trí chẵn, expense ở chẵn+0.85
+        val incomeEntries  = trends.mapIndexed { i, t -> BarEntry(i * 2f,        t.income.toFloat()) }
+        val expenseEntries = trends.mapIndexed { i, t -> BarEntry(i * 2f + 0.85f, t.expense.toFloat()) }
+
+        val incomeSet = BarDataSet(incomeEntries, "Thu nhập").apply {
+            color = Color.parseColor("#22CC00")
+            setDrawValues(false)
+        }
+        val expenseSet = BarDataSet(expenseEntries, "Chi tiêu").apply {
+            color = Color.parseColor("#FF4444")
+            setDrawValues(false)
+        }
+
+        // Tạo mảng nhãn: nhãn tháng ở vị trí chẵn, chuỗi rỗng ở vị trí lẻ
+        val xLabels = Array(trends.size * 2) { i ->
+            if (i % 2 == 0) labels.getOrElse(i / 2) { "" } else ""
+        }
+
+        binding.barChart.apply {
+            xAxis.valueFormatter = IndexAxisValueFormatter(xLabels)
+            xAxis.labelCount     = xLabels.size
+            xAxis.axisMinimum    = -0.5f
+            xAxis.axisMaximum    = (trends.size * 2).toFloat() - 0.5f
+            data = BarData(incomeSet, expenseSet).apply { barWidth = 0.8f }
+            animateY(700)
+            invalidate()
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Bind: Donut chart (chi tiêu theo quý)
+    // ─────────────────────────────────────────────────────────────────────────
+
     private fun bindDonutChart(quarters: List<QuarterlyStat>) {
-        // Chỉ đưa vào biểu đồ những quý có chi tiêu > 0
         val segments = quarters
             .filter { it.expense > 0 }
-            .mapIndexed { i, q ->
+            .map { q ->
                 DonutChartView.Segment(
                     label = q.label,
                     value = q.expense.toFloat(),
                     color = quarterColors[q.quarter - 1]
                 )
             }
-
         binding.donutChartQuarterly.setData(
             segments       = segments,
             centerTitle    = "Chi tiêu",
             centerSubtitle = "Cả năm"
         )
-        binding.donutChartQuarterly.animateIn()
+        if (segments.isNotEmpty()) binding.donutChartQuarterly.animateIn()
 
-        // Legend – hiển thị số tiền thực từng quý
         val legendViews = listOf(
-            binding.tvLegendQ1,
-            binding.tvLegendQ2,
-            binding.tvLegendQ3,
-            binding.tvLegendQ4
+            binding.tvLegendQ1, binding.tvLegendQ2,
+            binding.tvLegendQ3, binding.tvLegendQ4
         )
         quarters.forEachIndexed { i, q ->
             legendViews.getOrNull(i)?.text =
@@ -189,21 +318,8 @@ class StatsActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Menu button
+    // Month label
     // ─────────────────────────────────────────────────────────────────────────
-
-    private fun setupMenuButton() {
-        binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.STATS) }
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Month navigation
-    // ─────────────────────────────────────────────────────────────────────────
-
-    private fun setupMonthNavigation() {
-        binding.btnPrevMonth.setOnClickListener { viewModel.prevMonth() }
-        binding.btnNextMonth.setOnClickListener { viewModel.nextMonth() }
-    }
 
     private fun updateMonthLabel() {
         val m      = viewModel.month.value ?: return
@@ -214,10 +330,66 @@ class StatsActivity : AppCompatActivity() {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Bottom Navigation
+    // Export PDF
     // ─────────────────────────────────────────────────────────────────────────
 
-    private fun setupBottomNav() {
-        setupBottomNav(binding.bottomNav, R.id.nav_stats)
+    private fun exportPdf() {
+        val result = viewModel.statsResult.value ?: run {
+            Toast.makeText(this, "Chưa có dữ liệu để xuất", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val m = viewModel.month.value ?: return
+        val y = viewModel.year.value  ?: return
+
+        binding.progressBar.visibility = View.VISIBLE
+        CoroutineScope(Dispatchers.IO).launch {
+            val fileName = ReportExporter.exportPdf(
+                context = applicationContext,
+                result  = result,
+                month   = m,
+                year    = y
+            )
+            withContext(Dispatchers.Main) {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(
+                    this@StatsActivity,
+                    if (fileName != null) "✅ Đã lưu: $fileName (Downloads)"
+                    else                  "❌ Xuất PDF thất bại",
+                    if (fileName != null) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Export CSV
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun exportCsv() {
+        val result = viewModel.statsResult.value ?: run {
+            Toast.makeText(this, "Chưa có dữ liệu để xuất", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val m = viewModel.month.value ?: return
+        val y = viewModel.year.value  ?: return
+
+        binding.progressBar.visibility = View.VISIBLE
+        CoroutineScope(Dispatchers.IO).launch {
+            val fileName = ExcelExporter.exportXlsx(
+                context = applicationContext,
+                result  = result,
+                month   = m,
+                year    = y
+            )
+            withContext(Dispatchers.Main) {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(
+                    this@StatsActivity,
+                    if (fileName != null) "✅ Đã lưu: $fileName (Downloads)"
+                    else                  "❌ Xuất CSV thất bại",
+                    if (fileName != null) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }
