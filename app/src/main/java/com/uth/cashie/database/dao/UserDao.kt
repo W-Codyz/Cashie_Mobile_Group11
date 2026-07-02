@@ -46,4 +46,7 @@ WHERE id = :userId
 
     @Query("SELECT * FROM users")
     suspend fun getAll(): List<UserEntity>
+
+    @Query("SELECT username FROM users ORDER BY username")
+    suspend fun getAllUsernames(): List<String>
 }

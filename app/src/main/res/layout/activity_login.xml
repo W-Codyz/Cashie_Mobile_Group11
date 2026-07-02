@@ -32,6 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:hint="Tên đăng nhập"
         app:boxStrokeColor="@color/text_muted"
         app:hintTextColor="@color/text_muted"
         app:boxCornerRadiusTopStart="10dp"
@@ -39,13 +40,16 @@
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusBottomEnd="10dp">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
             android:id="@+id/edtUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tên đăng nhập"
-            android:textColor="@color/text_primary" />
-
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:completionThreshold="0"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:passwordToggleEnabled="true"
+        android:hint="Mật khẩu"
+        app:endIconMode="password_toggle"
         app:boxStrokeColor="@color/text_muted"
         app:hintTextColor="@color/text_muted"
         app:boxCornerRadiusTopStart="10dp"
@@ -64,13 +69,22 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edtPassword"
-            android:hint="Mật khẩu"
-            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textPassword"
             android:textColor="@color/text_primary" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Checkbox nhớ đăng nhập — đặt ngoài TextInputLayout -->
+    <CheckBox
+        android:id="@+id/cbRemember"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="8dp"
+        android:text="Nhớ thông tin đăng nhập"
+        android:textColor="@color/text_primary" />
 
     <Button
         android:id="@+id/btnLogin"
@@ -81,7 +95,7 @@
         android:textColor="@color/white"
         android:background="@drawable/bg_button_primary"
         android:stateListAnimator="@null"
-        android:layout_marginTop="24dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/tvRegister"

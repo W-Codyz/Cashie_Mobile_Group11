@@ -11,13 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
-import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivityEditProfileBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import com.uth.cashie.database.SessionManager
 
 class EditProfileActivity : AppCompatActivity() {
 

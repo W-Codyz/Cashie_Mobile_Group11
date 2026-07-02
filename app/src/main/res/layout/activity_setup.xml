@@ -159,7 +159,34 @@
                             android:textStyle="bold"
                             android:textColor="@color/text_muted" />
 
+
                     </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ngôn ngữ"
+                        android:textStyle="bold"
+                        android:textSize="18sp"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgLanguage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <RadioButton
+                            android:id="@+id/rbVietnamese"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tiếng Việt"/>
+
+                        <RadioButton
+                            android:id="@+id/rbEnglish"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="English"/>
+
+                    </RadioGroup>
+
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

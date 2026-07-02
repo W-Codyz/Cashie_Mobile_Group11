@@ -27,6 +27,9 @@ data class UserEntity(
     @ColumnInfo(name = "email")
     val email: String = "",
 
+    @ColumnInfo(name = "avatar")
+    val avatar: String? = null,
+
 
     /** Mật khẩu đã hash (SHA-256), không lưu plaintext */
     @ColumnInfo(name = "password_hash")
@@ -51,4 +54,5 @@ data class UserEntity(
     /** 1 = đang hoạt động, 0 = bị khóa */
     @ColumnInfo(name = "is_active")
     val isActive: Int = 1
+
 )

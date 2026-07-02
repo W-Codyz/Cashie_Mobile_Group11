@@ -1,10 +1,13 @@
 package com.uth.cashie
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import android.widget.Toast
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.DatabaseInitializer
 import com.uth.cashie.database.SessionManager
@@ -15,8 +18,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class RegisterActivity : AppCompatActivity() {
+
+    private var avatarUri: Uri? = null
 
     private lateinit var binding: ActivityRegisterBinding
     private val db by lazy { CashieDatabase.getInstance(this) }
@@ -29,16 +33,21 @@ class RegisterActivity : AppCompatActivity() {
 
         applyTheme()
 
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
+        binding.btnBack.setOnClickListener { finish() }
 
-        binding.btnRegister.setOnClickListener {
-            attemptRegister()
-        }
+        binding.btnRegister.setOnClickListener { validateAndShowConfirm() }
 
-        binding.tvLoginLink.setOnClickListener {
-            finish()
+        binding.tvLoginLink.setOnClickListener { finish() }
+
+        binding.btnChooseImage.setOnClickListener { pickImage.launch("image/*") }
+    }
+
+    private val pickImage = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            avatarUri = uri
+            binding.imgAvatar.setImageURI(uri)
         }
     }
 
@@ -49,44 +58,34 @@ class RegisterActivity : AppCompatActivity() {
             binding.tvToolbarTitle,
             binding.btnBack
         )
-
         ThemeManager.applyToGradientCard(binding.registerHeaderCard)
         ThemeManager.applyToButton(binding.btnRegister)
-
-        binding.tvLoginLink.setTextColor(
-            ThemeManager.getThemeColorInt()
-        )
-
+        binding.tvLoginLink.setTextColor(ThemeManager.getThemeColorInt())
         listOf(
             binding.edtFullName,
             binding.edtUsername,
+            binding.tilEmail,
             binding.edtPassword,
             binding.edtConfirmPassword
-        ).forEach {
-            ThemeManager.applyToTextInput(it)
-        }
+        ).forEach { ThemeManager.applyToTextInput(it) }
     }
 
-    private fun attemptRegister() {
+    /**
+     * Bước 1: Validate form, nếu hợp lệ thì hiển thị dialog xác nhận thông tin.
+     */
+    private fun validateAndShowConfirm() {
+        val fullName = binding.edtFullName.editText?.text.toString().trim()
+        val username = binding.edtUsername.editText?.text.toString().trim()
+        val password = binding.edtPassword.editText?.text.toString()
+        val confirm  = binding.edtConfirmPassword.editText?.text.toString()
+        val email    = binding.edtEmail.text.toString().trim()
 
-        val fullName =
-            binding.edtFullName.editText?.text.toString().trim()
-
-        val username =
-            binding.edtUsername.editText?.text.toString().trim()
-
-        val password =
-            binding.edtPassword.editText?.text.toString()
-
-        val confirm =
-            binding.edtConfirmPassword.editText?.text.toString()
-        val email = binding.edtEmail.text.toString().trim()
-
-
-        binding.edtFullName.error = null
-        binding.edtUsername.error = null
-        binding.edtPassword.error = null
-        binding.edtConfirmPassword.error = null
+        // Reset errors
+        binding.edtFullName.error         = null
+        binding.edtUsername.error         = null
+        binding.tilEmail.error            = null
+        binding.edtPassword.error         = null
+        binding.edtConfirmPassword.error  = null
 
         var hasError = false
 
@@ -103,6 +102,11 @@ class RegisterActivity : AppCompatActivity() {
             hasError = true
         }
 
+        if (email.isNotEmpty() && !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.error = "Email không hợp lệ"
+            hasError = true
+        }
+
         if (password.length < 6) {
             binding.edtPassword.error = "Mật khẩu phải từ 6 ký tự"
             hasError = true
@@ -115,8 +119,47 @@ class RegisterActivity : AppCompatActivity() {
 
         if (hasError) return
 
-        lifecycleScope.launch {
+        showConfirmDialog(fullName, username, email, password)
+    }
 
+    /**
+     * Bước 2: Hiển thị dialog xác nhận thông tin trước khi đăng ký.
+     */
+    private fun showConfirmDialog(
+        fullName: String,
+        username: String,
+        email: String,
+        password: String
+    ) {
+        val emailDisplay = if (email.isEmpty()) "(không nhập)" else email
+        val avatarDisplay = if (avatarUri != null) "Đã chọn ảnh" else "(không chọn)"
+
+        AlertDialog.Builder(this)
+            .setTitle("Xác nhận thông tin đăng ký")
+            .setMessage(
+                "Họ tên: $fullName\n\n" +
+                "Tên đăng nhập: $username\n\n" +
+                "Email: $emailDisplay\n\n" +
+                "Ảnh đại diện: $avatarDisplay\n\n" +
+                "Bạn có chắc muốn tạo tài khoản?"
+            )
+            .setPositiveButton("Xác nhận") { _, _ ->
+                registerUser(fullName, username, email, password)
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
+    }
+
+    /**
+     * Bước 3: Thực sự đăng ký — kiểm tra trùng username rồi insert vào DB.
+     */
+    private fun registerUser(
+        fullName: String,
+        username: String,
+        email: String,
+        password: String
+    ) {
+        lifecycleScope.launch {
             val existed = withContext(Dispatchers.IO) {
                 db.userDao().getByUsername(username)
             }
@@ -127,10 +170,11 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             val user = UserEntity(
-                username = username,
-                fullName = fullName,
-                email = email,
-                passwordHash = PasswordUtils.hash(password)
+                username     = username,
+                fullName     = fullName,
+                email        = email,
+                passwordHash = PasswordUtils.hash(password),
+                avatar       = avatarUri?.toString()
             )
 
             val userId = withContext(Dispatchers.IO) {
@@ -139,18 +183,20 @@ class RegisterActivity : AppCompatActivity() {
                 id
             }
 
-
-
-
+            // Lưu session để SetupActivity biết user nào
+            SessionManager.setCurrentUser(userId)
 
             Toast.makeText(
                 this@RegisterActivity,
-                "Đăng ký thành công. Vui lòng đăng nhập.",
+                "Đăng ký thành công! Hãy thiết lập tài khoản.",
                 Toast.LENGTH_SHORT
             ).show()
 
+            // Chuyển sang SetupActivity thay vì LoginActivity
             startActivity(
-                Intent(this@RegisterActivity, LoginActivity::class.java)
+                Intent(this@RegisterActivity, SetupActivity::class.java).apply {
+                    putExtra("fullName", fullName)
+                }
             )
             finish()
         }

@@ -15,12 +15,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
-import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivitySettingBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
+import com.uth.cashie.database.SessionManager
 
 class SettingActivity : AppCompatActivity() {
 
