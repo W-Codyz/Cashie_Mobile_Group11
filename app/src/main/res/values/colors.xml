@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary green palette -->
-    <color name="green_primary">#22CC00</color>
-    <color name="green_dark">#1AA300</color>
-    <color name="green_mid">#2EDD00</color>
-    <color name="green_light">#55D938</color>
-    <color name="green_container">#DCF7D8</color>
-
-    <!-- Semantic -->
-    <color name="income_green">#22CC00</color>
-    <color name="expense_red">#FF4444</color>
-    <color name="expense_text">#FFCDD2</color>
-
-    <!-- Backgrounds -->
-    <color name="bg_screen">#F5FAF4</color>
-    <color name="bg_card">#FFFFFF</color>
-    <color name="bg_arrow_circle">#33FFFFFF</color>
-
-    <!-- Text -->
-    <color name="text_primary">#1A1A1A</color>
-    <color name="text_muted">#888888</color>
-    <color name="white">#FFFFFF</color>
-
-    <!-- Divider -->
-    <color name="divider">#F0F0F0</color>
-
-    <!--    CATAGORY-->
-    <!-- Màu mặc định -->
+    <!-- ===== MÀU CỦA APP (THEME CHÍNH) ===== -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-<!--    <color name="white">#FFFFFFFF</color>-->
+    <color name="white">#FFFFFFFF</color>
 
-    <!-- Màu cho danh mục (thêm vào) -->
+    <!-- ===== MÀU NỀN & GIAO DIỆN ===== -->
+    <color name="bg_screen">#F5FAF4</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_muted">#757575</color>
+
+    <!-- ===== MÀU CHỦ ĐẠO (XANH LÁ) ===== -->
+    <color name="green_primary">#22CC00</color>
+    <color name="green_dark">#1AA300</color>
+    <color name="green_mid">#2EDD00</color>
+    <color name="green_light">#55D938</color>
+    <color name="green_container">#DCF7D8</color>
+
+    <!-- ===== MÀU THU NHẬP / CHI PHÍ ===== -->
+    <color name="income_text">#4CAF50</color>
+    <color name="income_green">#22CC00</color>
+    <color name="expense_text">#F44336</color>
+    <color name="expense_red">#FF4444</color>
+
+    <!-- ===== MÀU NỀN CHO CÁC THÀNH PHẦN KHÁC ===== -->
+    <color name="bg_arrow_circle">#33FFFFFF</color>
+
+    <!-- ===== CÁC MÀU CHO DANH MỤC (Category) ===== -->
     <color name="red">#F44336</color>
     <color name="cyan">#00BCD4</color>
     <color name="orange">#FF9800</color>
