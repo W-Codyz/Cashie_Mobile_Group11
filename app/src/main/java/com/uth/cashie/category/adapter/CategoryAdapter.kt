@@ -1,17 +1,18 @@
 package com.uth.cashie.category.adapter
 
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.uth.cashie.ThemeManager
 import com.uth.cashie.category.model.Category
 import com.uth.cashie.databinding.ItemCategoryBinding
 
 class CategoryAdapter(
-    private val onItemClick: (Category) -> Unit,        // Click 1 lần
-    private val onItemLongClick: (Category) -> Unit      // Giữ lâu
+    private val onItemClick: (Category) -> Unit,
+    private val onItemLongClick: (Category) -> Unit
 ) : ListAdapter<Category, CategoryAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -35,50 +36,25 @@ class CategoryAdapter(
 
         fun bind(category: Category) {
             binding.txtName.text = category.name
+            // Hiển thị emoji trực tiếp, fallback về 📂 nếu trống
+            binding.tvEmoji.text = category.emoji.ifEmpty { "📂" }
 
-            if (category.icon != 0) {
-                binding.imgIcon.setImageResource(category.icon)
-            } else {
-                binding.imgIcon.setImageResource(android.R.drawable.ic_menu_gallery)
-            }
+            // category.color đã là parsed color Int từ repository (Color.parseColor)
+            val colorInt = if (category.color != 0) category.color
+                           else ThemeManager.getThemeColorInt()
 
-            val colorInt = if (category.color != 0) {
-                try {
-                    ContextCompat.getColor(binding.root.context, category.color)
-                } catch (e: Exception) {
-                    category.color
-                }
-            } else {
-                com.uth.cashie.ThemeManager.getThemeColorInt()
-            }
-
-            val bg = android.graphics.drawable.GradientDrawable().apply {
-                shape = android.graphics.drawable.GradientDrawable.OVAL
+            binding.flIconBg.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
                 setColor(colorInt)
             }
-            binding.imgIcon.background = bg
-            binding.imgIcon.setColorFilter(android.graphics.Color.WHITE)
 
-            // Click 1 lần → vào chi tiết
-            binding.root.setOnClickListener {
-                onItemClick(category)
-            }
-
-            // Giữ lâu → hiện dialog xóa
-            binding.root.setOnLongClickListener {
-                onItemLongClick(category)
-                true
-            }
+            binding.root.setOnClickListener { onItemClick(category) }
+            binding.root.setOnLongClickListener { onItemLongClick(category); true }
         }
     }
 }
 
 class CategoryDiffCallback : DiffUtil.ItemCallback<Category>() {
-    override fun areItemsTheSame(oldItem: Category, newItem: Category): Boolean {
-        return oldItem.id == newItem.id
-    }
-
-    override fun areContentsTheSame(oldItem: Category, newItem: Category): Boolean {
-        return oldItem == newItem
-    }
+    override fun areItemsTheSame(oldItem: Category, newItem: Category) = oldItem.id == newItem.id
+    override fun areContentsTheSame(oldItem: Category, newItem: Category) = oldItem == newItem
 }

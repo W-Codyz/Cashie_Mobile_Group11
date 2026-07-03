@@ -10,33 +10,83 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:title="Danh mục"
-            app:titleCentered="true"
-            app:navigationIcon="@drawable/ic_menu"
-            app:navigationContentDescription="Menu điều hướng" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+        <!-- Header khớp activity_main: trắng, horizontal, paddingStart=8dp -->
+        <LinearLayout
+            android:id="@+id/layoutHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabIndicatorFullWidth="false"
-            android:paddingHorizontal="8dp">
+            android:background="@color/bg_card"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Menu điều hướng"
+                android:src="@drawable/ic_menu" />
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="CHI PHÍ" />
+                android:layout_weight="1"
+                android:text="Danh mục"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="THU NHẬP" />
-        </com.google.android.material.tabs.TabLayout>
+        </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <!-- Segmented control: Chi phí / Thu nhập -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="4dp"
+            app:cardBackgroundColor="#ECEFF1"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:padding="4dp"
+                app:tabBackground="@drawable/bg_tab_selector"
+                app:tabGravity="fill"
+                app:tabIndicatorHeight="0dp"
+                app:tabMode="fixed"
+                app:tabRippleColor="@android:color/transparent">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CHI PHÍ" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="THU NHẬP" />
+            </com.google.android.material.tabs.TabLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Container cho sub-fragment (chi tiết / thêm) -->
         <FrameLayout
             android:id="@+id/containerAddCategory"
             android:layout_width="match_parent"
@@ -44,27 +94,31 @@
             android:layout_weight="1"
             android:visibility="gone" />
 
+        <!-- Grid danh mục, paddingBottom đủ tránh bị FAB đè -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCategory"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingHorizontal="8dp"
-            android:paddingBottom="16dp"
-            android:clipToPadding="false" />
+            android:clipToPadding="false"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="108dp" />
 
     </LinearLayout>
 
-    <!-- FAB thêm danh mục -->
+    <!-- FAB: icon only, 96dp từ dưới để tránh bottom nav -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddCategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="160dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="96dp"
+        android:contentDescription="Thêm danh mục"
         android:src="@android:drawable/ic_input_add"
-        app:fabSize="normal"
-        android:contentDescription="Thêm danh mục" />
+        app:elevation="6dp"
+        app:fabSize="normal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

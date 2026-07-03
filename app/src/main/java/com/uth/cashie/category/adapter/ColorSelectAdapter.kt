@@ -51,11 +51,14 @@ class ColorSelectAdapter(
                 binding.vwColor.setBackgroundColor(Color.BLACK)
             }
 
+            val density = binding.root.resources.displayMetrics.density
             if (isSelected) {
                 binding.ivCheck.visibility = android.view.View.VISIBLE
-                binding.cardColor.elevation = 8f
+                binding.cardColor.strokeWidth = (density * 3).toInt()
+                binding.cardColor.elevation = 10f
             } else {
                 binding.ivCheck.visibility = android.view.View.GONE
+                binding.cardColor.strokeWidth = 0
                 binding.cardColor.elevation = 2f
             }
 

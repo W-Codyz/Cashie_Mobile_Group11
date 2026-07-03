@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.uth.cashie.NavScreen
 import com.uth.cashie.R
+import com.uth.cashie.ThemeManager
 import com.uth.cashie.category.adapter.CategoryAdapter
 import com.uth.cashie.category.data.CategoryRepository
 import com.uth.cashie.databinding.FragmentCategoryBinding
@@ -44,7 +45,8 @@ class CategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbar.setNavigationOnClickListener {
+        // Sử dụng btnMenu thay vì toolbar.setNavigationOnClickListener
+        binding.btnMenu.setOnClickListener {
             (requireActivity() as AppCompatActivity).showNavMenu(NavScreen.CATEGORIES)
         }
 
@@ -77,35 +79,40 @@ class CategoryFragment : Fragment() {
     }
 
     private fun applyTheme() {
-        val colorInt = com.uth.cashie.ThemeManager.getThemeColorInt()
-        val onColor = com.uth.cashie.ThemeManager.getOnThemeColor()
-        binding.toolbar.setTitleTextColor(onColor)
-        binding.tabLayout.setSelectedTabIndicatorColor(colorInt)
+        val colorInt = ThemeManager.getThemeColorInt()
+        // Pill tabs: ẩn indicator, text trắng khi selected
+        binding.tabLayout.setSelectedTabIndicatorColor(android.graphics.Color.TRANSPARENT)
         binding.tabLayout.setTabTextColors(
-            android.graphics.Color.parseColor("#888888"),
-            colorInt
+            android.graphics.Color.parseColor("#777777"),
+            android.graphics.Color.WHITE
         )
-        binding.fabAddCategory.backgroundTintList = android.content.res.ColorStateList.valueOf(colorInt)
+        binding.fabAddCategory.backgroundTintList =
+            android.content.res.ColorStateList.valueOf(colorInt)
     }
 
     private fun setupRecyclerView() {
         adapter = CategoryAdapter(
-            onItemClick = { category ->
-                showCategoryDetail(category)
-            },
-            onItemLongClick = { category ->
-                showDeleteDialog(category)
-            }
+            onItemClick = { category -> showCategoryDetail(category) },
+            onItemLongClick = { category -> showDeleteDialog(category) }
         )
-        val spanCount = 5
-        binding.rvCategory.layoutManager = GridLayoutManager(requireContext(), spanCount)
+        binding.rvCategory.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.rvCategory.adapter = adapter
+    }
+
+    private fun hideBottomNav() {
+        requireActivity().findViewById<View>(R.id.cardBottomNav)?.visibility = View.GONE
+    }
+
+    private fun showBottomNav() {
+        requireActivity().findViewById<View>(R.id.cardBottomNav)?.visibility = View.VISIBLE
     }
 
     // ===================== MỞ TRANG CHI TIẾT =====================
     private fun showCategoryDetail(category: com.uth.cashie.category.model.Category) {
+        hideBottomNav()
+        binding.layoutHeader.visibility = View.GONE
+        binding.cardTabLayout.visibility = View.GONE
         binding.rvCategory.visibility = View.GONE
-        binding.tabLayout.visibility = View.GONE
         binding.fabAddCategory.visibility = View.GONE
         binding.containerAddCategory.visibility = View.VISIBLE
 
@@ -126,22 +133,25 @@ class CategoryFragment : Fragment() {
 
     // ===================== MỞ THÊM DANH MỤC =====================
     private fun showAddCategoryFragment() {
-        val addFragment = AddCategoryFragment()
+        hideBottomNav()
+        binding.layoutHeader.visibility = View.GONE
+        binding.cardTabLayout.visibility = View.GONE
         binding.rvCategory.visibility = View.GONE
-        binding.tabLayout.visibility = View.GONE
         binding.fabAddCategory.visibility = View.GONE
         binding.containerAddCategory.visibility = View.VISIBLE
 
         childFragmentManager.beginTransaction()
-            .add(R.id.containerAddCategory, addFragment)
+            .add(R.id.containerAddCategory, AddCategoryFragment())
             .addToBackStack(null)
             .commit()
     }
 
     // ===================== HIỂN THỊ LẠI DANH SÁCH =====================
     private fun showMainContent() {
+        showBottomNav()
+        binding.layoutHeader.visibility = View.VISIBLE
+        binding.cardTabLayout.visibility = View.VISIBLE
         binding.rvCategory.visibility = View.VISIBLE
-        binding.tabLayout.visibility = View.VISIBLE
         binding.fabAddCategory.visibility = View.VISIBLE
         binding.containerAddCategory.visibility = View.GONE
 
@@ -163,9 +173,7 @@ class CategoryFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setTitle("Xóa danh mục")
             .setMessage("Bạn có chắc muốn xóa danh mục \"${category.name}\"?")
-            .setPositiveButton("Xóa") { _, _ ->
-                viewModel.deleteCategory(category.id.toLong())
-            }
+            .setPositiveButton("Xóa") { _, _ -> viewModel.deleteCategory(category.id.toLong()) }
             .setNegativeButton("Hủy", null)
             .show()
     }
@@ -184,9 +192,7 @@ class CategoryFragment : Fragment() {
 
     // ===================== FAB =====================
     private fun setupFAB() {
-        binding.fabAddCategory.setOnClickListener {
-            showAddCategoryFragment()
-        }
+        binding.fabAddCategory.setOnClickListener { showAddCategoryFragment() }
     }
 
     // ===================== QUAN SÁT DỮ LIỆU =====================

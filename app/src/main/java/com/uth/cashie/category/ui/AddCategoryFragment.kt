@@ -2,7 +2,10 @@ package com.uth.cashie.category.ui
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,6 +77,8 @@ class AddCategoryFragment : Fragment() {
             setupEmojiRecyclerView()
             setupColorRecyclerView()
             setupActionButtons()
+            setupPreviewNameWatcher()
+            updatePreview()
 
         } catch (e: Exception) {
             android.util.Log.e("AddCategoryFragment", "Error: ${e.message}", e)
@@ -129,6 +134,7 @@ class AddCategoryFragment : Fragment() {
         val emojis = if (selectedType == "expense") EmojiCategory.EXPENSE else EmojiCategory.INCOME
         emojiAdapter = EmojiSelectAdapter(emojis) { emoji ->
             selectedEmoji = emoji
+            updatePreview()
         }
         binding.rvEmojis.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.rvEmojis.adapter = emojiAdapter
@@ -143,6 +149,7 @@ class AddCategoryFragment : Fragment() {
         val colors = getAvailableColors()
         colorAdapter = ColorSelectAdapter(colors) { colorHex ->
             selectedColor = colorHex
+            updatePreview()
         }
         binding.rvColors.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvColors.adapter = colorAdapter
@@ -167,6 +174,30 @@ class AddCategoryFragment : Fragment() {
 
         binding.btnSave.setOnClickListener {
             saveCategory()
+        }
+    }
+
+    private fun setupPreviewNameWatcher() {
+        binding.etCategoryName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) { updatePreview() }
+        })
+    }
+
+    private fun updatePreview() {
+        binding.tvPreviewEmoji.text = selectedEmoji
+        val name = binding.etCategoryName.text?.toString()?.trim()
+        binding.tvPreviewName.text = if (name.isNullOrEmpty()) "Tên danh mục" else name
+        try {
+            val colorInt = Color.parseColor(selectedColor)
+            val bg = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(colorInt)
+            }
+            binding.viewPreviewBg.background = bg
+        } catch (e: Exception) {
+            android.util.Log.w("AddCategoryFragment", "Invalid color: $selectedColor")
         }
     }
 
