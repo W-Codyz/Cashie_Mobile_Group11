@@ -5,12 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.uth.cashie.adapter.EmojiCategoryAdapter
 import com.uth.cashie.data.TransactionRepository
 import com.uth.cashie.databinding.ActivityAddTransactionBinding
 import com.uth.cashie.model.EmojiCategory
 import com.uth.cashie.model.Transaction
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -151,67 +153,71 @@ class AddTransactionActivity : AppCompatActivity() {
         val dateStr = storedDateFmt.format(Date(selectedDateMs))
         val timeStr = if (editingId != -1) originalTime ?: timeFmt.format(Date()) else timeFmt.format(Date())
 
-        if (editingId != -1) {
-            val updated = Transaction(
-                id           = editingId,
-                title        = title,
-                category     = cat.name,
-                emoji        = cat.emoji,
-                iconColorHex = cat.colorHex,
-                amount       = finalAmount,
-                isIncome     = isIncome,
-                time         = timeStr,
-                date         = dateStr
-            )
-            TransactionRepository.update(updated)
-            Toast.makeText(this, getString(R.string.toast_transaction_updated), Toast.LENGTH_SHORT).show()
-        } else {
-            val newTx = Transaction(
-                id           = 0,
-                title        = title,
-                category     = cat.name,
-                emoji        = cat.emoji,
-                iconColorHex = cat.colorHex,
-                amount       = finalAmount,
-                isIncome     = isIncome,
-                time         = timeStr,
-                date         = dateStr
-            )
-            TransactionRepository.add(newTx)
-            Toast.makeText(this, getString(R.string.toast_transaction_saved), Toast.LENGTH_SHORT).show()
-        }
+        lifecycleScope.launch {
+            if (editingId != -1) {
+                val updated = Transaction(
+                    id           = editingId,
+                    title        = title,
+                    category     = cat.name,
+                    emoji        = cat.emoji,
+                    iconColorHex = cat.colorHex,
+                    amount       = finalAmount,
+                    isIncome     = isIncome,
+                    time         = timeStr,
+                    date         = dateStr
+                )
+                TransactionRepository.update(updated)
+                Toast.makeText(this@AddTransactionActivity, getString(R.string.toast_transaction_updated), Toast.LENGTH_SHORT).show()
+            } else {
+                val newTx = Transaction(
+                    id           = 0,
+                    title        = title,
+                    category     = cat.name,
+                    emoji        = cat.emoji,
+                    iconColorHex = cat.colorHex,
+                    amount       = finalAmount,
+                    isIncome     = isIncome,
+                    time         = timeStr,
+                    date         = dateStr
+                )
+                TransactionRepository.add(newTx)
+                Toast.makeText(this@AddTransactionActivity, getString(R.string.toast_transaction_saved), Toast.LENGTH_SHORT).show()
+            }
 
-        setResult(RESULT_OK)
-        finish()
+            setResult(RESULT_OK)
+            finish()
+        }
     }
 
     // ── Load for edit ──────────────────────────────────────────────────────────
 
     private fun loadTransactionForEdit() {
-        val tx = TransactionRepository.getById(editingId) ?: run { finish(); return }
-        originalTime = tx.time
+        lifecycleScope.launch {
+            val tx = TransactionRepository.getById(editingId) ?: run { finish(); return@launch }
+            originalTime = tx.time
 
-        switchType(income = tx.isIncome, animate = false)
+            switchType(income = tx.isIncome, animate = false)
 
-        // Pre-fill amount (absolute value)
-        val absAmount = if (tx.amount < 0) -tx.amount else tx.amount
-        binding.etAmount.setText(absAmount.toString())
+            // Pre-fill amount (absolute value)
+            val absAmount = if (tx.amount < 0) -tx.amount else tx.amount
+            binding.etAmount.setText(absAmount.toString())
 
-        // Pre-fill note
-        binding.etNote.setText(tx.title)
+            // Pre-fill note
+            binding.etNote.setText(tx.title)
 
-        // Pre-select date
-        runCatching {
-            val parsed = storedDateFmt.parse(tx.date)
-            if (parsed != null) {
-                selectedDateMs = parsed.time
-                updateDateDisplay(selectedDateMs)
+            // Pre-select date
+            runCatching {
+                val parsed = storedDateFmt.parse(tx.date)
+                if (parsed != null) {
+                    selectedDateMs = parsed.time
+                    updateDateDisplay(selectedDateMs)
+                }
             }
-        }
 
-        // Pre-select category after list is loaded
-        categoryAdapter.selectByName(tx.category)
-        selectedCategory = EmojiCategory(tx.category, tx.emoji, tx.iconColorHex)
+            // Pre-select category after list is loaded
+            categoryAdapter.selectByName(tx.category)
+            selectedCategory = EmojiCategory(tx.category, tx.emoji, tx.iconColorHex)
+        }
     }
 
     // ── Back ───────────────────────────────────────────────────────────────────

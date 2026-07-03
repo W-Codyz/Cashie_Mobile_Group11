@@ -1,112 +1,181 @@
 package com.uth.cashie.data
 
+import android.content.Context
+import com.uth.cashie.database.CashieDatabase
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.model.Transaction
 import com.uth.cashie.model.TransactionGroup
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.abs
 
 /**
  * Repository trung tâm cho Transaction.
- *
- * Dùng dữ liệu fake (hardcoded) – có thể thay bằng Room/Firebase
- * mà không cần thay đổi code ở ViewModel hay Repository khác.
+ * 
+ * **Đã chuyển từ fake data sang Room Database.**
+ * 
+ * Tất cả method đều là suspend function (chạy trên IO thread).
  */
 object TransactionRepository {
 
-    private val _all: MutableList<Transaction> = mutableListOf(
-        // ── Tháng 1 ──────────────────────────────────────────────────────────
-        Transaction(101, "Lương tháng 1",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-01-05"),
-        Transaction(102, "Ăn trưa",          "Ăn uống",     "🍜", "#FF8C00",    -85_000, false, "12:00", "2026-01-06"),
-        Transaction(103, "Taxi",             "Di chuyển",   "🚗", "#2196F3",    -45_000, false, "17:00", "2026-01-06"),
-        Transaction(104, "Tiền điện",        "Hóa đơn",     "⚡", "#FFC107",   -450_000, false, "09:00", "2026-01-10"),
-        Transaction(105, "Siêu thị",         "Mua sắm",     "🛒", "#E91E63",   -320_000, false, "11:00", "2026-01-12"),
-        Transaction(106, "Freelance T1",     "Thu nhập",    "💼", "#22CC00",  2_000_000, true,  "14:00", "2026-01-15"),
-        Transaction(107, "Café",             "Ăn uống",     "☕", "#795548",    -55_000, false, "07:30", "2026-01-18"),
-        Transaction(108, "Internet",         "Hóa đơn",     "📶", "#9C27B0",   -200_000, false, "09:05", "2026-01-10"),
-        Transaction(109, "Quần áo",          "Mua sắm",     "👗", "#E91E63",   -650_000, false, "15:00", "2026-01-20"),
-        Transaction(110, "Gym",              "Tập thể dục", "🏋", "#FF5722",   -300_000, false, "06:00", "2026-01-22"),
-        // ── Tháng 2 ──────────────────────────────────────────────────────────
-        Transaction(201, "Lương tháng 2",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-02-05"),
-        Transaction(202, "Ăn tối",           "Ăn uống",     "🍱", "#FF8C00",   -120_000, false, "19:00", "2026-02-07"),
-        Transaction(203, "Tiền nhà",         "Hóa đơn",     "🏠", "#607D8B", -3_500_000, false, "10:00", "2026-02-01"),
-        Transaction(204, "Thưởng Tết",       "Thưởng",      "🎁", "#22CC00",  5_000_000, true,  "09:00", "2026-02-10"),
-        Transaction(205, "Quà Tết",          "Quà tặng",    "🎀", "#E91E63",   -800_000, false, "11:00", "2026-02-11"),
-        Transaction(206, "Siêu thị Tết",     "Mua sắm",     "🛒", "#E91E63", -1_200_000, false, "14:00", "2026-02-12"),
-        Transaction(207, "Café",             "Ăn uống",     "☕", "#795548",    -45_000, false, "07:30", "2026-02-14"),
-        // ── Tháng 3 ──────────────────────────────────────────────────────────
-        Transaction(301, "Lương tháng 3",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-03-05"),
-        Transaction(302, "Ăn trưa",          "Ăn uống",     "🍜", "#FF8C00",    -75_000, false, "12:00", "2026-03-06"),
-        Transaction(303, "Tiền điện",        "Hóa đơn",     "⚡", "#FFC107",   -420_000, false, "09:00", "2026-03-10"),
-        Transaction(304, "Đầu tư cổ phiếu", "Đầu tư",      "📈", "#22CC00",  3_000_000, true,  "10:00", "2026-03-15"),
-        Transaction(305, "Sách",             "Giáo dục",    "📚", "#3F51B5",   -250_000, false, "16:00", "2026-03-17"),
-        Transaction(306, "Gym",              "Tập thể dục", "🏋", "#FF5722",   -300_000, false, "06:00", "2026-03-22"),
-        Transaction(307, "Internet",         "Hóa đơn",     "📶", "#9C27B0",   -200_000, false, "09:05", "2026-03-10"),
-        // ── Tháng 4 ──────────────────────────────────────────────────────────
-        Transaction(401, "Lương tháng 4",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-04-05"),
-        Transaction(402, "Vé máy bay",       "Du lịch",     "✈", "#00BCD4", -1_800_000, false, "05:00", "2026-04-10"),
-        Transaction(403, "Khách sạn",        "Du lịch",     "🏨", "#00BCD4", -2_400_000, false, "14:00", "2026-04-11"),
-        Transaction(404, "Ăn du lịch",       "Ăn uống",     "🍣", "#FF8C00",   -600_000, false, "12:00", "2026-04-12"),
-        Transaction(405, "Freelance T4",     "Thu nhập",    "💼", "#22CC00",  1_500_000, true,  "10:00", "2026-04-18"),
-        Transaction(406, "Tiền điện",        "Hóa đơn",     "⚡", "#FFC107",   -380_000, false, "09:00", "2026-04-10"),
-        // ── Tháng 5 ──────────────────────────────────────────────────────────
-        Transaction(501, "Lương tháng 5",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-05-05"),
-        Transaction(502, "Tiền nhà",         "Hóa đơn",     "🏠", "#607D8B", -3_500_000, false, "10:00", "2026-05-01"),
-        Transaction(503, "Học tiếng Anh",    "Giáo dục",    "📖", "#3F51B5", -1_200_000, false, "09:00", "2026-05-10"),
-        Transaction(504, "Freelance T5",     "Thu nhập",    "💼", "#22CC00",  2_500_000, true,  "15:00", "2026-05-15"),
-        Transaction(505, "Siêu thị",         "Mua sắm",     "🛒", "#E91E63",   -480_000, false, "11:00", "2026-05-18"),
-        Transaction(506, "Điện thoại mới",   "Mua sắm",     "📱", "#607D8B", -8_500_000, false, "14:00", "2026-05-25"),
-        Transaction(507, "Tiền điện",        "Hóa đơn",     "⚡", "#FFC107",   -410_000, false, "09:00", "2026-05-10"),
-        // ── Tháng 6 ──────────────────────────────────────────────────────────
-        Transaction(601, "Lương tháng 6",    "Lương",       "💰", "#22CC00", 12_000_000, true,  "08:00", "2026-06-05"),
-        Transaction(602, "Ăn trưa",          "Ăn uống",     "🍜", "#FF8C00",    -85_000, false, "12:15", "2026-06-16"),
-        Transaction(603, "Taxi về nhà",      "Di chuyển",   "🚗", "#2196F3",    -45_000, false, "17:30", "2026-06-16"),
-        Transaction(604, "Siêu thị Coopmart","Mua sắm",     "🛒", "#E91E63",   -350_000, false, "10:00", "2026-06-15"),
-        Transaction(605, "Freelance T6",     "Thu nhập",    "💼", "#22CC00",  2_500_000, true,  "14:00", "2026-06-15"),
-        Transaction(606, "Tiền điện",        "Hóa đơn",     "⚡", "#FFC107",   -450_000, false, "09:00", "2026-06-14"),
-        Transaction(607, "Internet",         "Hóa đơn",     "📶", "#9C27B0",   -200_000, false, "09:05", "2026-06-14"),
-        Transaction(608, "Café buổi sáng",   "Ăn uống",     "☕", "#795548",    -35_000, false, "07:30", "2026-06-14"),
-    )
+    private lateinit var db: CashieDatabase
 
-    private var _nextId = 9000
-
-    fun getAll(): List<Transaction> = _all.toList()
-
-    fun getById(id: Int): Transaction? = _all.find { it.id == id }
-
-    fun getByMonth(month: Int, year: Int): List<Transaction> = _all.filter { tx ->
-        val p = tx.date.split("-")
-        p.getOrNull(0)?.toIntOrNull() == year && p.getOrNull(1)?.toIntOrNull() == month
+    /** Khởi tạo — gọi từ Application.onCreate() */
+    fun init(context: Context) {
+        db = CashieDatabase.getInstance(context)
     }
 
-    fun getByYear(year: Int): List<Transaction> = _all.filter { it.date.startsWith("$year-") }
+    private fun getUserId(): Long = SessionManager.getCurrentUserId()
 
-    fun add(transaction: Transaction): Transaction {
-        val withId = if (transaction.id == 0) transaction.copy(id = _nextId++) else transaction
-        _all.add(withId)
-        return withId
+    // ─────────────────────────────────────────────────────────────────────────
+    // CRUD operations
+    // ─────────────────────────────────────────────────────────────────────────
+
+    suspend fun getAll(): List<Transaction> = withContext(Dispatchers.IO) {
+        db.transactionDao().getAllByUserOnce(getUserId()).map { it.toModel() }
     }
 
-    fun update(transaction: Transaction) {
-        val index = _all.indexOfFirst { it.id == transaction.id }
-        if (index >= 0) _all[index] = transaction
+    suspend fun getById(id: Int): Transaction? = withContext(Dispatchers.IO) {
+        db.transactionDao().getAllByUserOnce(getUserId())
+            .find { it.id == id.toLong() }?.toModel()
     }
 
-    fun delete(id: Int) {
-        _all.removeAll { it.id == id }
+    suspend fun getByMonth(month: Int, year: Int): List<Transaction> = withContext(Dispatchers.IO) {
+        val cal = Calendar.getInstance()
+        cal.set(year, month - 1, 1, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val startMs = cal.timeInMillis
+
+        cal.set(year, month - 1, cal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
+        cal.set(Calendar.MILLISECOND, 999)
+        val endMs = cal.timeInMillis
+
+        db.transactionDao().getByDateRangeOnce(getUserId(), startMs, endMs)
+            .map { it.toModel() }
     }
 
-    /** Nhóm theo ngày, sắp xếp mới nhất lên đầu */
+    suspend fun getByYear(year: Int): List<Transaction> = withContext(Dispatchers.IO) {
+        val cal = Calendar.getInstance()
+        cal.set(year, 0, 1, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val startMs = cal.timeInMillis
+
+        cal.set(year, 11, 31, 23, 59, 59)
+        cal.set(Calendar.MILLISECOND, 999)
+        val endMs = cal.timeInMillis
+
+        db.transactionDao().getByDateRangeOnce(getUserId(), startMs, endMs)
+            .map { it.toModel() }
+    }
+
+    suspend fun add(transaction: Transaction): Transaction = withContext(Dispatchers.IO) {
+        val userId = getUserId()
+        // Tra categoryId từ tên danh mục trong DB
+        val catId = db.categoryDao().getByTypeOnce(
+            userId,
+            if (transaction.isIncome) "income" else "expense"
+        ).find { it.name == transaction.category }?.id
+
+        val entity = transaction.toEntity(userId).copy(categoryId = catId)
+        val id = db.transactionDao().insert(entity)
+        transaction.copy(id = id.toInt())
+    }
+
+    suspend fun update(transaction: Transaction) = withContext(Dispatchers.IO) {
+        val userId = getUserId()
+        val existing = db.transactionDao().getAllByUserOnce(userId)
+            .find { it.id == transaction.id.toLong() } ?: return@withContext
+
+        val catId = db.categoryDao().getByTypeOnce(
+            userId,
+            if (transaction.isIncome) "income" else "expense"
+        ).find { it.name == transaction.category }?.id ?: existing.categoryId
+
+        db.transactionDao().updateTransaction(
+            id         = transaction.id.toLong(),
+            userId     = userId,
+            amount     = abs(transaction.amount).toDouble(),
+            note       = transaction.title,
+            date       = parseDateToMillis(transaction.date, transaction.time),
+            categoryId = catId,
+            updatedAt  = System.currentTimeMillis()
+        )
+    }
+
+    suspend fun delete(id: Int) = withContext(Dispatchers.IO) {
+        db.transactionDao().deleteById(id.toLong(), getUserId())
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Grouping helper
+    // ─────────────────────────────────────────────────────────────────────────
+
     fun getGroupedByDate(transactions: List<Transaction>): List<TransactionGroup> =
         transactions
             .groupBy { it.date }
             .entries
             .sortedByDescending { it.key }
             .map { (_, txList) ->
-                val net = txList.sumOf { it.amount } // amount đã mang dấu âm cho chi tiêu
+                val net = txList.sumOf { it.amount }
                 val parts = txList.first().date.split("-")
-                val label = if (parts.size == 3) "${parts[2]}/${parts[1]}/${parts[0]}" else txList.first().date
+                val label = if (parts.size == 3) "${parts[2]}/${parts[1]}/${parts[0]}" 
+                            else txList.first().date
                 TransactionGroup(
                     dateLabel    = label,
                     dayNet       = net,
                     transactions = txList.sortedByDescending { it.time }
                 )
             }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Mapper: Entity <-> Model
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun com.uth.cashie.database.entity.TransactionEntity.toModel(): Transaction {
+        val cal = Calendar.getInstance().apply { timeInMillis = transactionDate }
+        val dateStr = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
+        val timeStr = SimpleDateFormat("HH:mm", Locale.getDefault()).format(cal.time)
+        
+        // Load category info from database
+        val category = categoryId?.let { catId ->
+            runCatching {
+                kotlinx.coroutines.runBlocking(Dispatchers.IO) {
+                    db.categoryDao().getById(catId, userId)
+                }
+            }.getOrNull()
+        }
+
+        return Transaction(
+            id            = id.toInt(),
+            title         = note ?: "",
+            category      = category?.name ?: "Khác",
+            emoji         = category?.iconEmoji ?: "📝",
+            iconColorHex  = category?.color ?: "#888888",
+            amount        = if (type == "income") amount.toLong() else -amount.toLong(),
+            isIncome      = type == "income",
+            time          = timeStr,
+            date          = dateStr
+        )
+    }
+
+    private fun Transaction.toEntity(userId: Long): com.uth.cashie.database.entity.TransactionEntity {
+        return com.uth.cashie.database.entity.TransactionEntity(
+            id              = if (id == 0) 0 else id.toLong(),
+            userId          = userId,
+            categoryId      = null,  // Cần tra cứu từ category name nếu cần
+            type            = if (isIncome) "income" else "expense",
+            amount          = abs(amount).toDouble(),
+            note            = title,
+            transactionDate = parseDateToMillis(date, time),
+            createdAt       = System.currentTimeMillis()
+        )
+    }
+
+    private fun parseDateToMillis(dateStr: String, timeStr: String): Long {
+        val fullStr = "$dateStr $timeStr"
+        val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        return fmt.parse(fullStr)?.time ?: System.currentTimeMillis()
+    }
 }

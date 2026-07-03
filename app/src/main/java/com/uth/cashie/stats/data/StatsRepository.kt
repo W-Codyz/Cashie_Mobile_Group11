@@ -6,16 +6,11 @@ import com.uth.cashie.stats.model.*
 import kotlin.math.abs
 
 /**
- * Tính toán tất cả số liệu thống kê từ TransactionRepository.
- * Không giữ state – mỗi lần gọi đều tính lại từ nguồn dữ liệu.
+ * Tính toán tất cả số liệu thống kê từ TransactionRepository (Room Database).
  */
 object StatsRepository {
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Public API
-    // ─────────────────────────────────────────────────────────────────────────
-
-    fun getStatsForMonth(month: Int, year: Int): StatsResult {
+    suspend fun getStatsForMonth(month: Int, year: Int): StatsResult {
         val txs = TransactionRepository.getByMonth(month, year)
         return StatsResult(
             summary           = buildSummary(month, year, txs),
@@ -28,15 +23,11 @@ object StatsRepository {
         )
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Builders
-    // ─────────────────────────────────────────────────────────────────────────
-
     private fun buildSummary(month: Int, year: Int, txs: List<Transaction>): MonthlySummary {
-        val income  = txs.filter { it.isIncome }.sumOf { it.amount }
-        val expense = txs.filter { !it.isIncome }.sumOf { abs(it.amount) }
+        val income   = txs.filter { it.isIncome }.sumOf { it.amount }
+        val expense  = txs.filter { !it.isIncome }.sumOf { abs(it.amount) }
         val expenses = txs.filter { !it.isIncome }
-        val days = expenses.map { it.date }.distinct().size
+        val days     = expenses.map { it.date }.distinct().size
         return MonthlySummary(
             month             = month,
             year              = year,
@@ -73,7 +64,7 @@ object StatsRepository {
             DailyAmount(day = day, income = income, expense = expense)
         }.sortedBy { it.day }
 
-    private fun buildMonthlyTrends(year: Int): List<MonthlyTrend> {
+    private suspend fun buildMonthlyTrends(year: Int): List<MonthlyTrend> {
         val labels = listOf("T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12")
         return (1..12).map { m ->
             val txs     = TransactionRepository.getByMonth(m, year)
@@ -83,7 +74,7 @@ object StatsRepository {
         }
     }
 
-    private fun buildQuarterlyStats(year: Int): List<QuarterlyStat> {
+    private suspend fun buildQuarterlyStats(year: Int): List<QuarterlyStat> {
         val quarters = listOf(1..3, 4..6, 7..9, 10..12)
         return quarters.mapIndexed { idx, range ->
             val txs = TransactionRepository.getByYear(year).filter { tx ->
@@ -99,7 +90,7 @@ object StatsRepository {
         }
     }
 
-    private fun buildComparison(month: Int, year: Int): MonthComparison? {
+    private suspend fun buildComparison(month: Int, year: Int): MonthComparison? {
         val prevMonth = if (month == 1) 12 else month - 1
         val prevYear  = if (month == 1) year - 1 else year
         val prevTxs   = TransactionRepository.getByMonth(prevMonth, prevYear)

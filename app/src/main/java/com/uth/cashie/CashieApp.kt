@@ -19,5 +19,7 @@ class CashieApp : Application() {
         IconManager.init(this)
         // Khởi động Room Database (lazy, chỉ tạo file khi query đầu tiên)
         CashieDatabase.getInstance(this)
+        // Khởi tạo TransactionRepository với database
+        com.uth.cashie.data.TransactionRepository.init(this)
     }
 }

@@ -8,12 +8,14 @@ import android.widget.NumberPicker
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.data.TransactionRepository
 import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.TransactionGroup
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
@@ -59,11 +61,13 @@ class MainActivity : AppCompatActivity() {
     // ── Data ──────────────────────────────────────────────────────────────────
 
     private fun refreshData() {
-        val txList = TransactionRepository.getByMonth(monthIndex + 1, currentYear)
-        currentGroups = TransactionRepository.getGroupedByDate(txList)
-        updateSummary(txList.sumOf { if (it.isIncome) it.amount else 0L },
-                      txList.sumOf { if (!it.isIncome) -it.amount else 0L })
-        applyFilter()
+        lifecycleScope.launch {
+            val txList = TransactionRepository.getByMonth(monthIndex + 1, currentYear)
+            currentGroups = TransactionRepository.getGroupedByDate(txList)
+            updateSummary(txList.sumOf { if (it.isIncome) it.amount else 0L },
+                          txList.sumOf { if (!it.isIncome) -it.amount else 0L })
+            applyFilter()
+        }
     }
 
     private fun updateSummary(income: Long, expense: Long) {
