@@ -1,12 +1,18 @@
 package com.uth.cashie
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -23,7 +29,7 @@ import com.uth.cashie.stats.report.ExcelExporter
 import com.uth.cashie.stats.report.ReportExporter
 import com.uth.cashie.stats.ui.StatsViewModel
 import com.uth.cashie.stats.view.DonutChartView
-import kotlinx.coroutines.CoroutineScope
+import com.uth.cashie.database.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,6 +38,14 @@ class StatsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStatsBinding
     private val viewModel: StatsViewModel by viewModels()
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(this, "✅ Quyền đã được cấp!", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "⚠️ Vui lòng cấp quyền để xuất file!", Toast.LENGTH_LONG).show()
+        }
+    }
 
     private val expenseAdapter = CategoryStatAdapter()
     private val incomeAdapter  = CategoryStatAdapter()
@@ -135,8 +149,20 @@ class StatsActivity : AppCompatActivity() {
     }
 
     private fun setupExportButtons() {
-        binding.btnExportPdf.setOnClickListener   { exportPdf() }
-        binding.btnExportExcel.setOnClickListener { exportCsv() }
+        binding.btnExportPdf.setOnClickListener   { checkPermissionAndExport { exportPdf() } }
+        binding.btnExportExcel.setOnClickListener { checkPermissionAndExport { exportCsv() } }
+    }
+
+    private fun checkPermissionAndExport(onPermissionGranted: () -> Unit) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                onPermissionGranted()
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        } else {
+            onPermissionGranted()
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -194,12 +220,13 @@ class StatsActivity : AppCompatActivity() {
 
     private fun bindSummary(result: StatsResult) {
         val s = result.summary
-        binding.tvStatsIncome.text       = formatVND(s.totalIncome)
-        binding.tvStatsExpense.text      = formatVND(s.totalExpense)
-        binding.tvStatsBalance.text      = formatVND(s.balance)
+        val currency = SessionManager.getCurrency()
+        binding.tvStatsIncome.text       = formatVND(s.totalIncome, currency)
+        binding.tvStatsExpense.text      = formatVND(s.totalExpense, currency)
+        binding.tvStatsBalance.text      = formatVND(s.balance, currency)
         binding.tvTotalTransactions.text = s.totalTransactions.toString()
-        binding.tvHighestExpense.text    = formatVND(s.highestExpense)
-        binding.tvAvgDailyExpense.text   = formatVND(s.avgDailyExpense)
+        binding.tvHighestExpense.text    = formatVND(s.highestExpense, currency)
+        binding.tvAvgDailyExpense.text   = formatVND(s.avgDailyExpense, currency)
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -307,13 +334,14 @@ class StatsActivity : AppCompatActivity() {
         )
         if (segments.isNotEmpty()) binding.donutChartQuarterly.animateIn()
 
+        val currency = SessionManager.getCurrency()
         val legendViews = listOf(
             binding.tvLegendQ1, binding.tvLegendQ2,
             binding.tvLegendQ3, binding.tvLegendQ4
         )
         quarters.forEachIndexed { i, q ->
             legendViews.getOrNull(i)?.text =
-                if (q.expense > 0) formatVND(q.expense) else "Chưa có"
+                if (q.expense > 0) formatVND(q.expense, currency) else "Chưa có"
         }
     }
 
@@ -342,9 +370,9 @@ class StatsActivity : AppCompatActivity() {
         val y = viewModel.year.value  ?: return
 
         binding.progressBar.visibility = View.VISIBLE
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val fileName = ReportExporter.exportPdf(
-                context = applicationContext,
+                context = this@StatsActivity,
                 result  = result,
                 month   = m,
                 year    = y
@@ -374,9 +402,9 @@ class StatsActivity : AppCompatActivity() {
         val y = viewModel.year.value  ?: return
 
         binding.progressBar.visibility = View.VISIBLE
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             val fileName = ExcelExporter.exportXlsx(
-                context = applicationContext,
+                context = this@StatsActivity,
                 result  = result,
                 month   = m,
                 year    = y

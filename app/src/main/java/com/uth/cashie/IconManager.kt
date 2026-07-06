@@ -1,22 +1,16 @@
 package com.uth.cashie
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.util.Log
 
 /**
  * Quản lý dynamic app icon.
  *
- * Cơ chế: Lưu index icon đang chọn vào SharedPreferences.
- * Icon picker trong SettingActivity dùng index này để hiển thị viền chọn.
- *
- * Lưu ý quan trọng:
- * - Dynamic icon thực sự (thay đổi icon trên launcher) đòi hỏi activity-alias
- *   với LAUNCHER intent-filter, nhưng cơ chế này gây lỗi PackageManager cache
- *   trên nhiều thiết bị/emulator khi reinstall.
- * - Giải pháp hiện tại: lưu lựa chọn icon vào DB và SharedPreferences,
- *   hiển thị đúng icon được chọn trong UI Settings.
- *   Icon trên launcher giữ nguyên icon mặc định của app.
+ * Cơ chế: Sử dụng activity-alias trong AndroidManifest, enable alias mong muốn
+ * và disable các alias khác.
  */
 object IconManager {
 
@@ -26,30 +20,73 @@ object IconManager {
 
     private lateinit var prefs: SharedPreferences
 
+    /** Danh sách tên các activity-alias trong AndroidManifest (index 0 = mặc định) */
+    private val ALIAS_NAMES = listOf(
+        "com.uth.cashie.IconDefault",
+        "com.uth.cashie.Icon1",
+        "com.uth.cashie.Icon2",
+        "com.uth.cashie.Icon3",
+        "com.uth.cashie.Icon4",
+        "com.uth.cashie.Icon5",
+        "com.uth.cashie.Icon6",
+        "com.uth.cashie.Icon7",
+        "com.uth.cashie.Icon8",
+        "com.uth.cashie.Icon9",
+    )
+
     fun init(context: Context) {
         prefs = context.applicationContext
             .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        
+        // Áp dụng icon đã lưu trước đó (nếu có) khi app khởi động
+        val savedIndex = getCurrentIconIndex(context)
+        applyIcon(context, savedIndex, skipSave = true)
     }
 
     /** Số lượng icon có sẵn (0 = mặc định, 1–9 = icon tùy chỉnh) */
     const val ICON_COUNT = 10
 
     /**
-     * Lưu index icon được chọn.
+     * Lưu index icon được chọn và thay đổi icon app.
      * @param iconIndex 0 = mặc định, 1–9 = icon tùy chỉnh
      */
     fun setIcon(context: Context, iconIndex: Int) {
         val safeIndex = iconIndex.coerceIn(0, ICON_COUNT - 1)
         try {
+            applyIcon(context, safeIndex, skipSave = false)
+        } catch (e: Exception) {
+            Log.e(TAG, "setIcon failed: ${e.message}")
+        }
+    }
+
+    private fun applyIcon(context: Context, iconIndex: Int, skipSave: Boolean = false) {
+        val pm = context.packageManager
+        
+        // Disable tất cả các alias trước
+        ALIAS_NAMES.forEach { aliasName ->
+            pm.setComponentEnabledSetting(
+                ComponentName(context, aliasName),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+            )
+        }
+        
+        // Enable alias mong muốn
+        pm.setComponentEnabledSetting(
+            ComponentName(context, ALIAS_NAMES[iconIndex]),
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+        
+        // Lưu index vào SharedPreferences (nếu cần)
+        if (!skipSave) {
             if (::prefs.isInitialized) {
-                prefs.edit().putInt(KEY_INDEX, safeIndex).apply()
+                prefs.edit().putInt(KEY_INDEX, iconIndex).apply()
             } else {
                 context.applicationContext
                     .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                    .edit().putInt(KEY_INDEX, safeIndex).apply()
+                    .edit().putInt(KEY_INDEX, iconIndex).apply()
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "setIcon failed: ${e.message}")
         }
     }
 
@@ -72,6 +109,6 @@ object IconManager {
         }
     }
 
-    /** Luôn available vì không dùng PackageManager nữa */
+    /** Luôn available */
     fun isAvailable(context: Context): Boolean = true
 }

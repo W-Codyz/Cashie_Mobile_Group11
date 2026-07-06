@@ -10,8 +10,10 @@ object SessionManager {
 
     private const val KEY_USER_ID = "current_user_id"
     private const val KEY_REMEMBER = "remember_login"
+    private const val KEY_CURRENCY = "current_currency"
 
     private const val NO_USER = -1L
+    private const val DEFAULT_CURRENCY = "VND"
 
     private lateinit var prefs: SharedPreferences
 
@@ -38,6 +40,14 @@ object SessionManager {
 
     fun isRememberLogin(): Boolean {
         return prefs.getBoolean(KEY_REMEMBER, false)
+    }
+
+    fun setCurrency(currency: String) {
+        prefs.edit().putString(KEY_CURRENCY, currency).apply()
+    }
+
+    fun getCurrency(): String {
+        return prefs.getString(KEY_CURRENCY, DEFAULT_CURRENCY) ?: DEFAULT_CURRENCY
     }
 
     // ======================

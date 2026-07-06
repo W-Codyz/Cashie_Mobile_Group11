@@ -4,10 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.stats.model.StatsResult
 import java.io.File
 import java.io.FileOutputStream
@@ -39,10 +41,12 @@ object ReportExporter {
     /**
      * Tạo file PDF từ [StatsResult].
      *
-     * @return  đường dẫn file đã lưu, hoặc null nếu có lỗi.
+     * @return  tên file đã lưu, hoặc null nếu có lỗi.
      */
     fun exportPdf(context: Context, result: StatsResult, month: Int, year: Int): String? {
         val doc = PdfDocument()
+        var savedFileName: String? = null
+        var fileUri: Uri? = null
         try {
             val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create()
             val page     = doc.startPage(pageInfo)
@@ -53,17 +57,37 @@ object ReportExporter {
             doc.finishPage(page)
 
             val fileName = "Cashie_BaoCao_T${month}_${year}.pdf"
-            val outStream = openOutputStream(context, fileName) ?: return null
+            val (outStream, uri) = openOutputStream(context, fileName)
+            fileUri = uri
+            if (outStream == null) return null
             doc.writeTo(outStream)
             outStream.flush()
             outStream.close()
 
-            return fileName
+            if (fileUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val cv = ContentValues().apply {
+                    put(MediaStore.Downloads.IS_PENDING, 0)
+                }
+                context.contentResolver.update(fileUri, cv, null, null)
+            }
+
+            if (fileUri != null) {
+                scanFile(context, fileUri)
+            }
+            savedFileName = fileName
         } catch (e: IOException) {
             e.printStackTrace()
-            return null
         } finally {
             doc.close()
+        }
+        return savedFileName
+    }
+
+    private fun scanFile(context: Context, uri: Uri) {
+        try {
+            context.contentResolver.notifyChange(uri, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -73,6 +97,7 @@ object ReportExporter {
 
     private fun drawReport(canvas: Canvas, result: StatsResult, month: Int, year: Int) {
         var y = MARGIN
+        val currency = SessionManager.getCurrency()
 
         // ── Header ──────────────────────────────────────────────────────────
         val headerPaint = Paint().apply { color = COLOR_HEADER_BG }
@@ -106,12 +131,12 @@ object ReportExporter {
 
         val s = result.summary
         val rows = listOf(
-            Triple("Thu nhập",     formatVND(s.totalIncome),   COLOR_PRIMARY),
-            Triple("Chi tiêu",     formatVND(s.totalExpense),  COLOR_EXPENSE),
-            Triple("Số dư",        formatVND(s.balance),       if (s.balance >= 0) COLOR_PRIMARY else COLOR_EXPENSE),
+            Triple("Thu nhập",     formatVND(s.totalIncome, currency),   COLOR_PRIMARY),
+            Triple("Chi tiêu",     formatVND(s.totalExpense, currency),  COLOR_EXPENSE),
+            Triple("Số dư",        formatVND(s.balance, currency),       if (s.balance >= 0) COLOR_PRIMARY else COLOR_EXPENSE),
             Triple("Giao dịch",    "${s.totalTransactions} lần",  COLOR_TEXT),
-            Triple("Chi cao nhất", formatVND(s.highestExpense),COLOR_EXPENSE),
-            Triple("TB ngày/chi",  formatVND(s.avgDailyExpense),COLOR_TEXT)
+            Triple("Chi cao nhất", formatVND(s.highestExpense, currency),COLOR_EXPENSE),
+            Triple("TB ngày/chi",  formatVND(s.avgDailyExpense, currency),COLOR_TEXT)
         )
         for ((label, value, valColor) in rows) {
             y = drawKeyValue(canvas, label, value, y, valColor)
@@ -126,10 +151,10 @@ object ReportExporter {
             val sign  = { v: Long -> if (v >= 0) "+" else "" }
             val color = { v: Long -> if (v >= 0) COLOR_PRIMARY else COLOR_EXPENSE }
             y = drawKeyValue(canvas, "Thay đổi thu nhập",
-                "${sign(cmp.incomeChange)}${formatVND(cmp.incomeChange)}  (${"%.1f".format(cmp.incomeChangePercent)}%)",
+                "${sign(cmp.incomeChange)}${formatVND(cmp.incomeChange, currency)}  (${"%.1f".format(cmp.incomeChangePercent)}%)",
                 y, color(cmp.incomeChange))
             y = drawKeyValue(canvas, "Thay đổi chi tiêu",
-                "${sign(cmp.expenseChange)}${formatVND(cmp.expenseChange)}  (${"%.1f".format(cmp.expenseChangePercent)}%)",
+                "${sign(cmp.expenseChange)}${formatVND(cmp.expenseChange, currency)}  (${"%.1f".format(cmp.expenseChangePercent)}%)",
                 y, if (cmp.expenseChange > 0) COLOR_EXPENSE else COLOR_PRIMARY)
             y += 12f
             drawDivider(canvas, y); y += 16f
@@ -140,7 +165,7 @@ object ReportExporter {
             y = drawSectionTitle(canvas, "CHI TIÊU THEO DANH MỤC", y)
             for (cat in result.expenseByCategory.take(8)) {
                 val label = "${cat.emoji} ${cat.categoryName}"
-                val value = "${formatVND(cat.totalAmount)}  (${"%.1f".format(cat.percentage)}%)"
+                val value = "${formatVND(cat.totalAmount, currency)}  (${"%.1f".format(cat.percentage)}%)"
                 y = drawKeyValue(canvas, label, value, y, COLOR_EXPENSE)
                 // Thanh tiến trình mini
                 drawMiniBar(canvas, cat.percentage, y - 4f)
@@ -155,7 +180,7 @@ object ReportExporter {
             y = drawSectionTitle(canvas, "THU NHẬP THEO DANH MỤC", y)
             for (cat in result.incomeByCategory.take(6)) {
                 val label = "${cat.emoji} ${cat.categoryName}"
-                val value = "${formatVND(cat.totalAmount)}  (${"%.1f".format(cat.percentage)}%)"
+                val value = "${formatVND(cat.totalAmount, currency)}  (${"%.1f".format(cat.percentage)}%)"
                 y = drawKeyValue(canvas, label, value, y, COLOR_PRIMARY)
             }
             y += 12f
@@ -166,7 +191,7 @@ object ReportExporter {
         y = drawSectionTitle(canvas, "XU HƯỚNG CHI TIÊU THEO QUÝ - NĂM $year", y)
         for (q in result.quarterlyStats) {
             y = drawKeyValue(canvas, q.label,
-                "Chi: ${formatVND(q.expense)}   Thu: ${formatVND(q.income)}", y, COLOR_TEXT)
+                "Chi: ${formatVND(q.expense, currency)}   Thu: ${formatVND(q.income, currency)}", y, COLOR_TEXT)
         }
 
         // ── Footer ────────────────────────────────────────────────────────────
@@ -225,26 +250,27 @@ object ReportExporter {
     // File I/O
     // ─────────────────────────────────────────────────────────────────────────
 
-    private fun openOutputStream(context: Context, fileName: String): OutputStream? {
+    private fun openOutputStream(context: Context, fileName: String): Pair<OutputStream?, Uri?> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // Android 10+ → dùng MediaStore (Downloads)
             val cv = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
                 put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
                 put(MediaStore.Downloads.IS_PENDING, 1)
+                put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                put(MediaStore.Downloads.DATE_ADDED, System.currentTimeMillis() / 1000)
             }
             val uri = context.contentResolver
-                .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv) ?: return null
-            cv.clear()
-            cv.put(MediaStore.Downloads.IS_PENDING, 0)
-            context.contentResolver.update(uri, cv, null, null)
-            context.contentResolver.openOutputStream(uri)
+                .insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv) ?: return Pair(null, null)
+            val stream = context.contentResolver.openOutputStream(uri) ?: return Pair(null, null)
+            Pair(stream, uri)
         } else {
             // Android 9 trở xuống → ghi thẳng vào Downloads
             @Suppress("DEPRECATION")
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             dir.mkdirs()
-            FileOutputStream(File(dir, fileName))
+            val file = File(dir, fileName)
+            Pair(FileOutputStream(file), Uri.fromFile(file))
         }
     }
 }

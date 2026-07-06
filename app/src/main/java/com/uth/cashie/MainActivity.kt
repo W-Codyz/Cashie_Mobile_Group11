@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.data.TransactionRepository
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.TransactionGroup
 import kotlinx.coroutines.launch
@@ -71,9 +72,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateSummary(income: Long, expense: Long) {
-        binding.tvBalance.text      = formatVND(income - expense)
-        binding.tvTotalIncome.text  = formatVND(income)
-        binding.tvTotalExpense.text = formatVND(expense)
+        val currency = SessionManager.getCurrency()
+        binding.tvBalance.text      = formatVND(income - expense, currency)
+        binding.tvTotalIncome.text  = formatVND(income, currency)
+        binding.tvTotalExpense.text = formatVND(expense, currency)
     }
 
     private fun applyFilter() {

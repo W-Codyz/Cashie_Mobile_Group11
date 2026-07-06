@@ -128,8 +128,9 @@ class ProfileActivity : AppCompatActivity() {
                 db.transactionDao().getCount(userId, startMs, endMs)
             }
 
-            binding.tvStatIncomeValue.text      = formatVND(income.toLong())
-            binding.tvStatExpenseValue.text     = formatVND(expense.toLong())
+            val currency = SessionManager.getCurrency()
+            binding.tvStatIncomeValue.text      = formatVND(income.toLong(), currency)
+            binding.tvStatExpenseValue.text     = formatVND(expense.toLong(), currency)
             binding.tvStatTransactionsValue.text = count.toString()
         }
     }
@@ -155,7 +156,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         binding.menuStats.setOnClickListener {
-            // Coming soon
+            startActivity(Intent(this, StatsActivity::class.java))
         }
 
         binding.menuLogout.setOnClickListener {
@@ -177,6 +178,7 @@ class ProfileActivity : AppCompatActivity() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         db.userDao().update(user.copy(currency = currency))
                     }
+                    SessionManager.setCurrency(currency)
                     binding.tvCurrencyBadge.text = currency
                     dialog.dismiss()
                     Toast.makeText(this@ProfileActivity, getString(R.string.toast_saved), Toast.LENGTH_SHORT).show()

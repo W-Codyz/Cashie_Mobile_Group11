@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.uth.cashie.ThemeManager
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ItemTransactionBinding
 import com.uth.cashie.databinding.ItemTransactionHeaderBinding
 import com.uth.cashie.model.Transaction
@@ -65,7 +66,8 @@ class TransactionAdapter(
             val sign       = if (group.dayNet >= 0) "+" else "-"
             val incomeColor = ThemeManager.getThemeColorInt()
             val color      = if (group.dayNet >= 0) incomeColor else Color.parseColor("#FF4444")
-            binding.tvDayNet.text = "$sign${formatVND(group.dayNet)}"
+            val currency = SessionManager.getCurrency()
+            binding.tvDayNet.text = "$sign${formatVND(group.dayNet, currency)}"
             binding.tvDayNet.setTextColor(color)
         }
     }
@@ -94,7 +96,8 @@ class TransactionAdapter(
             val sign        = if (transaction.isIncome) "+" else "-"
             val incomeColor = ThemeManager.getThemeColorInt()
             val color       = if (transaction.isIncome) incomeColor else Color.parseColor("#FF4444")
-            binding.tvAmount.text = "$sign${formatVND(transaction.amount)}"
+            val currency = SessionManager.getCurrency()
+            binding.tvAmount.text = "$sign${formatVND(transaction.amount, currency)}"
             binding.tvAmount.setTextColor(color)
 
             binding.root.setOnClickListener { onItemClick?.invoke(transaction) }
@@ -105,12 +108,14 @@ class TransactionAdapter(
         private const val VIEW_HEADER = 0
         private const val VIEW_ITEM   = 1
 
-        fun formatVND(amount: Long): String {
+        fun formatVND(amount: Long, currency: String = "VND"): String {
             val sym = DecimalFormatSymbols().apply {
                 groupingSeparator = '.'
                 decimalSeparator  = ','
             }
-            return DecimalFormat("#,###", sym).format(abs(amount)) + "đ"
+            val amountStr = DecimalFormat("#,###", sym).format(abs(amount))
+            val suffix = if (currency == "USD") "$" else "đ"
+            return amountStr + suffix
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.uth.cashie.R
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.stats.model.CategoryStat
 
 class CategoryStatAdapter : ListAdapter<CategoryStat, CategoryStatAdapter.VH>(DIFF) {
@@ -27,9 +28,10 @@ class CategoryStatAdapter : ListAdapter<CategoryStat, CategoryStatAdapter.VH>(DI
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
+        val currency = SessionManager.getCurrency()
         holder.tvEmoji.text   = item.emoji
         holder.tvName.text    = item.categoryName
-        holder.tvAmount.text  = formatVND(item.totalAmount)
+        holder.tvAmount.text  = formatVND(item.totalAmount, currency)
         holder.tvPercent.text = "${"%.1f".format(item.percentage)}%"
 
         // Animate bar width theo phần trăm

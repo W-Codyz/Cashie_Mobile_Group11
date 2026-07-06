@@ -199,6 +199,8 @@ class EditProfileActivity : AppCompatActivity() {
                     db.userDao().updateAvatar(userId, path)
                 }
             }
+            // Lưu tiền tệ vào SessionManager
+            SessionManager.setCurrency(selectedCurrency)
 
             Toast.makeText(
                 this@EditProfileActivity,

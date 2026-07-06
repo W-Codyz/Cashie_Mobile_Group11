@@ -134,6 +134,8 @@ class SetupActivity : AppCompatActivity() {
 
             // Lưu ngôn ngữ vào ThemeManager để dùng ngay trong session này
             ThemeManager.setLanguage(selectedLanguage)
+            // Lưu tiền tệ vào SessionManager
+            SessionManager.setCurrency(selectedCurrency)
 
             startActivity(Intent(this@SetupActivity, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
