@@ -130,29 +130,31 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/label_current_balance"
-                        android:textSize="13sp"
-                        android:textColor="#DDFFFFFF"
-                        android:gravity="center" />
-                    <ImageButton
-                        android:id="@+id/btnEditBalance"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="8dp"
-                        android:padding="4dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_edit"
-                        app:tint="@android:color/white"
-                        android:contentDescription="Chỉnh sửa số dư" />
-                </LinearLayout>
+                    <!-- Label row: label centered, pencil icon pinned right -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/label_current_balance"
+                            android:textSize="13sp"
+                            android:textColor="#DDFFFFFF" />
+
+                        <ImageButton
+                            android:id="@+id/btnEditBalance"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_edit"
+                            android:contentDescription="@string/cd_edit_balance"
+                            android:padding="4dp"
+                            app:tint="#FFFFFF" />
+                    </RelativeLayout>
 
                 <TextView
                     android:id="@+id/tvBalance"
@@ -366,32 +368,15 @@
         app:elevation="6dp" />
 
     <!-- ══════════════════════════════════════
-         Bottom Navigation — floating pill style
+         Bottom Navigation — bubble pill style
     ══════════════════════════════════════ -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardBottomNav"
+    <com.uth.cashie.BubbleBottomNavView
+        android:id="@+id/bubbleNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="10dp"
-        app:cardBackgroundColor="@color/bg_card"
-        app:strokeColor="@color/divider"
-        app:strokeWidth="1.5dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:itemIconTint="@color/nav_item_selector"
-            app:itemTextColor="@color/nav_item_selector"
-            app:labelVisibilityMode="selected"
-            app:menu="@menu/bottom_nav_menu" />
-
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_marginBottom="16dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

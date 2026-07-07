@@ -78,6 +78,11 @@ class StatsActivity : AppCompatActivity() {
         observeViewModel()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onNewIntentBottomNav(intent, binding.bubbleNav, R.id.nav_stats)
+    }
+
     override fun onResume() {
         super.onResume()
         applyTheme()
@@ -147,7 +152,7 @@ class StatsActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNav() {
-        setupBottomNav(binding.bottomNav, R.id.nav_stats)
+        setupBottomNav(binding.bubbleNav, R.id.nav_stats)
     }
 
     private fun setupExportButtons() {
@@ -184,14 +189,7 @@ class StatsActivity : AppCompatActivity() {
         binding.btnExportPdf.setTextColor(colorInt)
         binding.btnExportExcel.backgroundTintList = colorList
 
-        val navColorList = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, Color.parseColor("#888888"))
-        )
-        binding.bottomNav.itemActiveIndicatorColor = ColorStateList.valueOf(ThemeManager.getContainerColor())
-        binding.bottomNav.itemIconTintList  = navColorList
-        binding.bottomNav.itemTextColor     = navColorList
-        binding.cardBottomNav.strokeColor   = colorInt
+        binding.bubbleNav.updateThemeColor(colorInt)
     }
 
     // ─────────────────────────────────────────────────────────────────────────

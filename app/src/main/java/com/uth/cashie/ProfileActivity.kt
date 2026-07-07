@@ -32,6 +32,11 @@ class ProfileActivity : AppCompatActivity() {
         setupButtons()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onNewIntentBottomNav(intent, binding.bubbleNav, R.id.nav_profile)
+    }
+
     override fun onResume() {
         super.onResume()
         // Reload mỗi khi quay lại từ EditProfile
@@ -51,7 +56,7 @@ class ProfileActivity : AppCompatActivity() {
         ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
             binding.tvProfileTitle, binding.btnMenu)
         binding.btnEdit.setTextColor(onThemeColor)
-        binding.cardBottomNav.strokeColor = colorInt
+        binding.bubbleNav.updateThemeColor(colorInt)
 
         // Gradient header card
         ThemeManager.applyToGradientCard(binding.profileHeaderCard)
@@ -148,7 +153,7 @@ class ProfileActivity : AppCompatActivity() {
     // ── Buttons ───────────────────────────────────────────────────────────────
     private fun setupButtons() {
         binding.btnMenu.setOnClickListener { showNavMenu(NavScreen.PROFILE) }
-        setupBottomNav(binding.bottomNav, R.id.nav_profile)
+        setupBottomNav(binding.bubbleNav, R.id.nav_profile)
 
         binding.btnEdit.setOnClickListener {
             startActivity(Intent(this, EditProfileActivity::class.java))

@@ -5,16 +5,20 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.NumberPicker
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.data.TransactionRepository
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
+import com.uth.cashie.database.entity.MonthlyBalanceEntity
 import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.TransactionGroup
 import kotlinx.coroutines.Dispatchers
@@ -52,50 +56,17 @@ class MainActivity : AppCompatActivity() {
         setupMenuButton()
         setupBottomNav()
         setupAvatar()
-        setupEditBalanceButton()
+        setupEditBalance()
         refreshData()
     }
 
-    private fun setupEditBalanceButton() {
-        binding.btnEditBalance.setOnClickListener {
-            lifecycleScope.launch {
-                val initialBalance = withContext(Dispatchers.IO) {
-                    val db = CashieDatabase.getInstance(this@MainActivity)
-                    db.userDao().getById(SessionManager.getCurrentUserId())?.initialBalance ?: 0.0
-                }
-                showEditBalanceDialog(initialBalance)
-            }
-        }
-    }
-
-    private fun showEditBalanceDialog(initialBalance: Double) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_balance, null)
-        val editText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etNewBalance)
-        val currency = SessionManager.getCurrency()
-
-        editText.setText(initialBalance.toLong().toString())
-
-        AlertDialog.Builder(this)
-            .setTitle("Chỉnh sửa số dư")
-            .setView(dialogView)
-            .setPositiveButton("Lưu") { _, _ ->
-                val newBalance = editText.text.toString().toDoubleOrNull() ?: 0.0
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        val db = CashieDatabase.getInstance(this@MainActivity)
-                        val user = db.userDao().getById(SessionManager.getCurrentUserId()) ?: return@withContext
-                        db.userDao().update(user.copy(initialBalance = newBalance))
-                    }
-                    refreshData()
-                }
-            }
-            .setNegativeButton("Hủy", null)
-            .show()
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onNewIntentBottomNav(intent, binding.bubbleNav, R.id.nav_home)
     }
 
     override fun onResume() {
         super.onResume()
-        binding.bottomNav.selectedItemId = R.id.nav_home
         applyTheme()
         refreshData()
     }
@@ -106,22 +77,26 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val txList = TransactionRepository.getByMonth(monthIndex + 1, currentYear)
             currentGroups = TransactionRepository.getGroupedByDate(txList)
-            val initialBalance = withContext(Dispatchers.IO) {
-                val db = CashieDatabase.getInstance(this@MainActivity)
-                db.userDao().getById(SessionManager.getCurrentUserId())?.initialBalance ?: 0.0
-            }
-            updateSummary(
-                txList.sumOf { if (it.isIncome) it.amount else 0L },
-                txList.sumOf { if (!it.isIncome) -it.amount else 0L },
-                initialBalance.toLong()
-            )
+            val income   = txList.sumOf { if (it.isIncome) it.amount else 0L }
+            val expense  = txList.sumOf { if (!it.isIncome) -it.amount else 0L }
+            val opening  = loadOpeningBalance(monthIndex + 1, currentYear)
+            updateSummary(income, expense, opening)
             applyFilter()
         }
     }
 
-    private fun updateSummary(income: Long, expense: Long, initialBalance: Long) {
+    private suspend fun loadOpeningBalance(month: Int, year: Int): Long =
+        withContext(Dispatchers.IO) {
+            val userId = SessionManager.getCurrentUserId()
+            val entity = CashieDatabase.getInstance(applicationContext)
+                .monthlyBalanceDao()
+                .getByMonthYear(userId, month, year)
+            (entity?.cashBalance ?: 0L) + (entity?.accountBalance ?: 0L)
+        }
+
+    private fun updateSummary(income: Long, expense: Long, openingBalance: Long = 0L) {
         val currency = SessionManager.getCurrency()
-        binding.tvBalance.text      = formatVND(initialBalance + income - expense, currency)
+        binding.tvBalance.text      = formatVND(openingBalance + income - expense, currency)
         binding.tvTotalIncome.text  = formatVND(income, currency)
         binding.tvTotalExpense.text = formatVND(expense, currency)
     }
@@ -140,6 +115,97 @@ class MainActivity : AppCompatActivity() {
         binding.tvEmpty.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
     }
 
+    // ── Edit Balance ──────────────────────────────────────────────────────────
+
+    private fun setupEditBalance() {
+        binding.btnEditBalance.setOnClickListener { showEditBalanceDialog() }
+    }
+
+    private fun showEditBalanceDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_balance, null)
+
+        val pickerMonth = dialogView.findViewById<NumberPicker>(R.id.pickerMonth)
+        val pickerYear  = dialogView.findViewById<NumberPicker>(R.id.pickerYear)
+        val etCash      = dialogView.findViewById<TextInputEditText>(R.id.etCashBalance)
+        val etAccount   = dialogView.findViewById<TextInputEditText>(R.id.etAccountBalance)
+        val tilCash     = dialogView.findViewById<TextInputLayout>(R.id.tilCashBalance)
+        val tilAccount  = dialogView.findViewById<TextInputLayout>(R.id.tilAccountBalance)
+
+        // Match TextInputLayout stroke/hint color to current theme
+        val themeColor      = ThemeManager.getThemeColorInt()
+        val themeColorList  = ColorStateList.valueOf(themeColor)
+        val strokeColors    = ColorStateList(
+            arrayOf(intArrayOf(android.R.attr.state_focused), intArrayOf()),
+            intArrayOf(themeColor, android.graphics.Color.parseColor("#BDBDBD"))
+        )
+        tilCash.setBoxStrokeColorStateList(strokeColors)
+        tilCash.hintTextColor = themeColorList
+        tilAccount.setBoxStrokeColorStateList(strokeColors)
+        tilAccount.hintTextColor = themeColorList
+
+        pickerMonth.apply {
+            minValue = 0; maxValue = 11
+            displayedValues = resources.getStringArray(R.array.months)
+            value = monthIndex
+            wrapSelectorWheel = false
+        }
+
+        pickerYear.apply {
+            minValue = 2020; maxValue = 2035
+            value = currentYear
+            wrapSelectorWheel = false
+        }
+
+        // Load existing saved balance whenever month/year selection changes
+        fun syncFields() {
+            lifecycleScope.launch {
+                val userId = SessionManager.getCurrentUserId()
+                val entity = withContext(Dispatchers.IO) {
+                    CashieDatabase.getInstance(applicationContext)
+                        .monthlyBalanceDao()
+                        .getByMonthYear(userId, pickerMonth.value + 1, pickerYear.value)
+                }
+                etCash.setText(if ((entity?.cashBalance ?: 0L) == 0L) "" else entity!!.cashBalance.toString())
+                etAccount.setText(if ((entity?.accountBalance ?: 0L) == 0L) "" else entity!!.accountBalance.toString())
+            }
+        }
+
+        syncFields()
+        pickerMonth.setOnValueChangedListener { _, _, _ -> syncFields() }
+        pickerYear.setOnValueChangedListener  { _, _, _ -> syncFields() }
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.edit_balance_title))
+            .setView(dialogView)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                val cash    = etCash.text.toString().trim().toLongOrNull() ?: 0L
+                val account = etAccount.text.toString().trim().toLongOrNull() ?: 0L
+                val month   = pickerMonth.value + 1
+                val year    = pickerYear.value
+
+                lifecycleScope.launch {
+                    val userId = SessionManager.getCurrentUserId()
+                    withContext(Dispatchers.IO) {
+                        CashieDatabase.getInstance(applicationContext)
+                            .monthlyBalanceDao()
+                            .upsert(
+                                MonthlyBalanceEntity(
+                                    userId         = userId,
+                                    month          = month,
+                                    year           = year,
+                                    cashBalance    = cash,
+                                    accountBalance = account
+                                )
+                            )
+                    }
+                    if (month == monthIndex + 1 && year == currentYear) refreshData()
+                    Toast.makeText(this@MainActivity, R.string.toast_balance_saved, Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
     // ── Theme ─────────────────────────────────────────────────────────────────
 
     private fun applyTheme() {
@@ -150,18 +216,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.fab.backgroundTintList = colorStateList
 
-        binding.bottomNav.itemActiveIndicatorColor =
-            ColorStateList.valueOf(ThemeManager.getContainerColor())
-        binding.bottomNav.itemIconTintList = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
-        binding.bottomNav.itemTextColor = ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
-
-        binding.cardBottomNav.strokeColor = colorInt
+        binding.bubbleNav.updateThemeColor(colorInt)
         binding.tvAppName.setTextColor(colorInt)
 
         val avatarBg = android.graphics.drawable.GradientDrawable().apply {
@@ -296,7 +351,7 @@ class MainActivity : AppCompatActivity() {
     // ── Bottom nav ────────────────────────────────────────────────────────────
 
     private fun setupBottomNav() {
-        setupBottomNav(binding.bottomNav, R.id.nav_home)
+        setupBottomNav(binding.bubbleNav, R.id.nav_home)
     }
 
     // ── Avatar ────────────────────────────────────────────────────────────────

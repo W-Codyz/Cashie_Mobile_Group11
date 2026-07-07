@@ -21,9 +21,10 @@ import com.uth.cashie.database.entity.*
         CategoryEntity::class,
         TransactionEntity::class,
         SavedAccountEntity::class,
+        MonthlyBalanceEntity::class,
         WalletEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class CashieDatabase : RoomDatabase() {
@@ -33,6 +34,7 @@ abstract class CashieDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun transactionDao(): TransactionDao
     abstract fun savedAccountDao(): SavedAccountDao
+    abstract fun monthlyBalanceDao(): MonthlyBalanceDao
     abstract fun walletDao(): WalletDao
 
     companion object {

@@ -1,5 +1,6 @@
 package com.uth.cashie
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -19,11 +20,16 @@ class CategoryMainActivity : AppCompatActivity() {
         // navController available for future in-fragment navigation
         val navController = navHostFragment.navController
 
-        setupBottomNav(binding.bottomNav, R.id.nav_categories)
+        setupBottomNav(binding.bubbleNav, R.id.nav_categories)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onNewIntentBottomNav(intent, binding.bubbleNav, R.id.nav_categories)
     }
 
     override fun onResume() {
         super.onResume()
-        binding.cardBottomNav.strokeColor = ThemeManager.getThemeColorInt()
+        binding.bubbleNav.updateThemeColor(ThemeManager.getThemeColorInt())
     }
 }

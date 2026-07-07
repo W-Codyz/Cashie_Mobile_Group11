@@ -100,11 +100,11 @@ class CategoryFragment : Fragment() {
     }
 
     private fun hideBottomNav() {
-        requireActivity().findViewById<View>(R.id.cardBottomNav)?.visibility = View.GONE
+        requireActivity().findViewById<View>(R.id.bubbleNav)?.visibility = View.GONE
     }
 
     private fun showBottomNav() {
-        requireActivity().findViewById<View>(R.id.cardBottomNav)?.visibility = View.VISIBLE
+        requireActivity().findViewById<View>(R.id.bubbleNav)?.visibility = View.VISIBLE
     }
 
     // ===================== MỞ TRANG CHI TIẾT =====================

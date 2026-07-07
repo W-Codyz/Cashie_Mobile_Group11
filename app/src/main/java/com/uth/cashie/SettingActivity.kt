@@ -40,10 +40,15 @@ class SettingActivity : AppCompatActivity() {
 
         applyCurrentTheme()
         setupToolbar()
-        setupBottomNav(binding.bottomNav, R.id.nav_settings)
+        setupBottomNav(binding.bubbleNav, R.id.nav_settings)
         loadSettings()
         setupLanguageMenu()
         setupLogout()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        onNewIntentBottomNav(intent, binding.bubbleNav, R.id.nav_settings)
     }
 
     // ── Apply màu chủ đề lên toolbar ─────────────────────────────────────────
@@ -51,19 +56,7 @@ class SettingActivity : AppCompatActivity() {
         val colorInt = ThemeManager.getThemeColorInt()
         ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
             binding.tvToolbarTitle, binding.btnMenu)
-        binding.cardBottomNav.strokeColor = colorInt
-
-        // Re-apply bottom nav tint when theme color changes live
-        binding.bottomNav.itemActiveIndicatorColor =
-            android.content.res.ColorStateList.valueOf(ThemeManager.getContainerColor())
-        binding.bottomNav.itemIconTintList = android.content.res.ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
-        binding.bottomNav.itemTextColor = android.content.res.ColorStateList(
-            arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-            intArrayOf(colorInt, android.graphics.Color.parseColor("#888888"))
-        )
+        binding.bubbleNav.updateThemeColor(colorInt)
 
         // "VI"/"EN" label màu theme
         binding.tvCurrentLanguage.setTextColor(colorInt)

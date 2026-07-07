@@ -1,8 +1,9 @@
 package com.uth.cashie
 
+import android.app.ActivityOptions
 import android.app.Dialog
+import androidx.activity.OnBackPressedCallback
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -11,7 +12,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.uth.cashie.databinding.DialogNavigationBinding
 
 enum class NavScreen { TRANSACTIONS, CATEGORIES, STATS, PROFILE, SETTINGS }
@@ -158,56 +158,135 @@ fun AppCompatActivity.showNavMenu(
     dialog.show()
 }
 
+internal const val EXTRA_PREV_NAV_INDEX = "bubble_nav_prev_index"
+
+private val NAV_IDS = listOf(
+    R.id.nav_home, R.id.nav_categories, R.id.nav_stats,
+    R.id.nav_profile, R.id.nav_settings
+)
+
 /**
- * Wires up a floating BottomNavigationView with correct selection state and
- * single-instance navigation (no stacking of peer activities).
+ * Call from onNewIntent() so the nav bar re-plays its slide animation on each tab revisit.
+ * REORDER_TO_FRONT skips onCreate, so this is the only place to re-trigger the animation.
+ */
+fun AppCompatActivity.onNewIntentBottomNav(
+    newIntent: android.content.Intent,
+    bubbleNav: BubbleBottomNavView,
+    selectedId: Int
+) {
+    setIntent(newIntent)
+    val selectedIndex = NAV_IDS.indexOf(selectedId).coerceAtLeast(0)
+    val prevIndex = newIntent.getIntExtra(EXTRA_PREV_NAV_INDEX, selectedIndex)
+    if (prevIndex != selectedIndex) {
+        bubbleNav.snapTo(prevIndex)
+        bubbleNav.post { bubbleNav.selectItem(selectedIndex) }
+    }
+
+    // Fade in only the content views — skip the nav bar so it looks persistent across tabs.
+    // bubbleNav.parent is the root layout; iterate its direct children and animate all except bubbleNav.
+    val root = bubbleNav.parent as? android.view.ViewGroup ?: return
+    for (i in 0 until root.childCount) {
+        val child = root.getChildAt(i)
+        if (child === bubbleNav) continue
+        child.alpha = 0f
+        child.animate()
+            .alpha(1f)
+            .setDuration(180)
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
+            .start()
+    }
+}
+
+/**
+ * Wires up a BubbleBottomNavView so that:
+ * - The nav bar slides from the PREVIOUS tab (stored in intent extra) to the current tab on entry.
+ * - Tapping another tab triggers instant activity swap (no screen slide) — the nav bar itself
+ *   provides the slide animation on the destination activity.
  *
- * @param bottomNav   the BottomNavigationView to configure
+ * @param bubbleNav   the BubbleBottomNavView to configure
  * @param selectedId  the menu item ID that represents the current screen
  */
-fun AppCompatActivity.setupBottomNav(bottomNav: BottomNavigationView, selectedId: Int) {
-    val themeColor = ThemeManager.getThemeColorInt()
-
-    bottomNav.selectedItemId = selectedId
-    bottomNav.itemActiveIndicatorColor = ColorStateList.valueOf(ThemeManager.getContainerColor())
-    bottomNav.itemIconTintList = ColorStateList(
-        arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-        intArrayOf(themeColor, Color.parseColor("#888888"))
+fun AppCompatActivity.setupBottomNav(bubbleNav: BubbleBottomNavView, selectedId: Int) {
+    val navIds = NAV_IDS
+    val navIcons = listOf(
+        R.drawable.ic_home,
+        R.drawable.ic_category,
+        R.drawable.ic_bar_chart,
+        R.drawable.ic_person,
+        R.drawable.ic_settings
     )
-    bottomNav.itemTextColor = ColorStateList(
-        arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-        intArrayOf(themeColor, Color.parseColor("#888888"))
+    val navLabels = listOf(
+        getString(R.string.nav_home),
+        getString(R.string.nav_categories),
+        getString(R.string.nav_stats),
+        getString(R.string.nav_profile),
+        getString(R.string.nav_settings)
     )
 
-    // Time-based debounce: ignore taps within 400 ms of the last navigation
+    val selectedIndex = navIds.indexOf(selectedId).coerceAtLeast(0)
+    val items = navIcons.zip(navLabels)
+
+    // Read the index that the user came FROM (set by the outgoing activity when navigating here).
+    // On first launch (no extra), default to current so no animation plays.
+    val prevIndex = intent.getIntExtra(EXTRA_PREV_NAV_INDEX, selectedIndex)
+
+    // Set up the nav bar in the "previous" selected state, then immediately animate into
+    // the real selected state — this is what produces the visible slide on arrival.
     var lastTapMs = 0L
 
-    bottomNav.setOnItemSelectedListener { item ->
-        if (item.itemId == selectedId) return@setOnItemSelectedListener true
-
+    bubbleNav.setup(items, prevIndex, ThemeManager.getThemeColorInt()) { clickedIndex ->
         val now = System.currentTimeMillis()
-        if (now - lastTapMs < 400L) return@setOnItemSelectedListener false
-
-        val intent = when (item.itemId) {
-            R.id.nav_home -> Intent(this, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            }
-            R.id.nav_categories -> Intent(this, CategoryMainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            R.id.nav_stats      -> Intent(this, StatsActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            R.id.nav_profile    -> Intent(this, ProfileActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            R.id.nav_settings   -> Intent(this, SettingActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            else -> return@setOnItemSelectedListener false
-        }
-
+        if (now - lastTapMs < 400L) return@setup
         lastTapMs = now
-        startActivity(intent)
-        @Suppress("DEPRECATION")
-        overridePendingTransition(R.anim.tab_enter, R.anim.tab_exit)
-        if (selectedId != R.id.nav_home) finish()
-        true
+
+        val targetId = navIds[clickedIndex]
+        // All tabs: REORDER_TO_FRONT brings the existing instance forward WITHOUT
+        //   finishing intermediate activities — no default exit animations, no slide.
+        val targetIntent = when (targetId) {
+            R.id.nav_home -> Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            R.id.nav_categories -> Intent(this, CategoryMainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            R.id.nav_stats      -> Intent(this, StatsActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            R.id.nav_profile    -> Intent(this, ProfileActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            R.id.nav_settings   -> Intent(this, SettingActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            else -> return@setup
+        }
+        // Tell the destination which tab we came from so it can animate its nav bar.
+        targetIntent.putExtra(EXTRA_PREV_NAV_INDEX, selectedIndex)
+
+        // No window animation — content fade is handled per-view in onNewIntentBottomNav
+        // so the bottom nav is excluded and stays visually persistent.
+        val opts = ActivityOptions.makeCustomAnimation(this, 0, 0)
+        startActivity(targetIntent, opts.toBundle())
     }
+
+    // Trigger the nav slide animation: animate from prevIndex → selectedIndex.
+    if (prevIndex != selectedIndex) {
+        bubbleNav.post { bubbleNav.selectItem(selectedIndex) }
+    }
+
+    // Back press handling for all tabs:
+    // - Home: minimize the app (moveTaskToBack) so MainActivity is NEVER destroyed.
+    //   This ensures REORDER_TO_FRONT always finds existing instances of the other tabs.
+    // - Non-home: go to Home with no slide. Fragment manager callbacks registered after
+    //   this one take priority (LIFO), so fragment back stacks are still handled correctly.
+    onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (selectedId == R.id.nav_home) {
+                moveTaskToBack(true)
+            } else {
+                startActivity(
+                    Intent(this@setupBottomNav, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                        .putExtra(EXTRA_PREV_NAV_INDEX, selectedIndex)
+                )
+                @Suppress("DEPRECATION")
+                overridePendingTransition(0, 0)
+            }
+        }
+    })
 }

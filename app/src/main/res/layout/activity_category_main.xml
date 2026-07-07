@@ -13,31 +13,14 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
 
-    <!-- Floating bottom navigation pill -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardBottomNav"
+    <!-- Bubble bottom navigation -->
+    <com.uth.cashie.BubbleBottomNavView
+        android:id="@+id/bubbleNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="10dp"
-        app:cardBackgroundColor="@color/bg_card"
-        app:strokeColor="@color/green_primary"
-        app:strokeWidth="1.5dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:itemIconTint="@color/nav_item_selector"
-            app:itemTextColor="@color/nav_item_selector"
-            app:labelVisibilityMode="selected"
-            app:menu="@menu/bottom_nav_menu" />
-
-    </com.google.android.material.card.MaterialCardView>
+        android:layout_marginBottom="16dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

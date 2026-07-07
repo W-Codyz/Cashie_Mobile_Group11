@@ -8,7 +8,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)](https://android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0.20-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Min SDK](https://img.shields.io/badge/Min%20SDK-24%20(Android%207.0)-blue)](https://developer.android.com)
-[![Version](https://img.shields.io/badge/Version-1.0.0-success)](https://github.com/W-Codyz/Cashie_Mobile_Group11)
+[![Version](https://img.shields.io/badge/Version-1.2.0-success)](https://github.com/W-Codyz/Cashie_Mobile_Group11)
 [![License](https://img.shields.io/badge/License-Educational-orange)](LICENSE)
 
 </div>
@@ -166,7 +166,7 @@ git clone https://github.com/W-Codyz/Cashie_Mobile_Group11.git
 
 <div align="center">
 
-**Phiên bản 1.0.0 · © 2026 Nhóm 11 — ĐH Giao thông Vận tải TP.HCM**
+**Phiên bản 1.2.0 · © 2026 Nhóm 11 — ĐH Giao thông Vận tải TP.HCM**
 
 *Dự án được thực hiện vì mục đích học thuật / Developed for educational purposes*
 
