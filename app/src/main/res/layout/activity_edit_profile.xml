@@ -78,27 +78,14 @@
                 android:orientation="vertical">
 
                 <!-- Avatar circle -->
-                <FrameLayout
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivEditAvatar"
                     android:layout_width="90dp"
-                    android:layout_height="90dp">
-
-                    <!-- Background tròn — màu set bằng code trong applyTheme() -->
-                    <View
-                        android:id="@+id/viewAvatarBg"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:background="@drawable/bg_avatar" />
-
-                    <!-- ImageView hiển thị ảnh avatar -->
-                    <ImageView
-                        android:id="@+id/ivEditAvatar"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:src="@drawable/ic_person"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="@string/cd_avatar" />
-
-                </FrameLayout>
+                    android:layout_height="90dp"
+                    android:src="@drawable/ic_person"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/cd_avatar"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
 
                 <!-- Change photo button -->
                 <Button

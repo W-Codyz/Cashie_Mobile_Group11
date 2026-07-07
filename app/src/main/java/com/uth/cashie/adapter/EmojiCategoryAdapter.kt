@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.uth.cashie.ThemeManager
 import com.uth.cashie.databinding.ItemEmojiCategoryBinding
 import com.uth.cashie.model.EmojiCategory
 
@@ -47,23 +48,21 @@ class EmojiCategoryAdapter(
             binding.tvCategoryEmoji.text = cat.emoji
             binding.tvCategoryName.text = cat.name
 
-            // Màu nền vòng tròn: tint nhẹ từ màu danh mục, border khi selected
-            runCatching {
-                val base = Color.parseColor(cat.colorHex)
-                val bg = GradientDrawable().apply {
-                    shape = GradientDrawable.OVAL
-                    if (isSelected) {
-                        setColor(Color.argb(40, Color.red(base), Color.green(base), Color.blue(base)))
-                        setStroke(4, base)
-                    } else {
-                        setColor(Color.argb(20, Color.red(base), Color.green(base), Color.blue(base)))
-                    }
+            // Màu nền vòng tròn: tint nhẹ từ màu chủ đề, border khi selected
+            val base = ThemeManager.getThemeColorInt()
+            val bg = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                if (isSelected) {
+                    setColor(Color.argb(40, Color.red(base), Color.green(base), Color.blue(base)))
+                    setStroke(4, base)
+                } else {
+                    setColor(Color.argb(20, Color.red(base), Color.green(base), Color.blue(base)))
                 }
-                binding.tvCategoryEmoji.background = bg
             }
+            binding.tvCategoryEmoji.background = bg
 
             binding.tvCategoryName.setTextColor(
-                if (isSelected) runCatching { Color.parseColor(cat.colorHex) }.getOrDefault(0xFF607D8B.toInt())
+                if (isSelected) base
                 else 0xFF888888.toInt()
             )
 

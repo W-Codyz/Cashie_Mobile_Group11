@@ -19,9 +19,19 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
                     icon = EmojiToIconMapper.getIconForEmoji(entity.iconEmoji ?: ""),
                     color = try { Color.parseColor(entity.color ?: "#FF000000") } catch (e: Exception) { Color.BLACK },
                     emoji = entity.iconEmoji ?: "",
-                    isDefault = entity.isDefault == 1   // <-- THÊM DÒNG NÀY
+                    isDefault = entity.isDefault == 1
                 )
             }
+        }
+    }
+
+    suspend fun getCategoriesByTypeOrderedByUsage(userId: Long, type: String): List<com.uth.cashie.model.EmojiCategory> {
+        return categoryDao.getByTypeOrderedByUsage(userId, type).map { entity ->
+            com.uth.cashie.model.EmojiCategory(
+                name = entity.name,
+                emoji = entity.iconEmoji ?: "💡",
+                colorHex = entity.color ?: "#888888"
+            )
         }
     }
 

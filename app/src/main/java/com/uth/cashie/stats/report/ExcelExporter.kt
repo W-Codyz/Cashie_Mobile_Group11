@@ -25,9 +25,9 @@ import java.io.PrintWriter
 object ExcelExporter {
 
     /**
-     * @return tên file đã lưu vào Downloads, hoặc null nếu thất bại.
+     * @return Pair(tên file đã lưu vào Downloads, Uri của file) hoặc null nếu thất bại.
      */
-    fun exportXlsx(context: Context, result: StatsResult, month: Int, year: Int): String? {
+    fun exportXlsx(context: Context, result: StatsResult, month: Int, year: Int): Pair<String, Uri>? {
         val fileName = "Cashie_BaoCao_T${month}_${year}.csv"
         var fileUri: Uri? = null
         try {
@@ -52,7 +52,7 @@ object ExcelExporter {
                 scanFile(context, fileUri)
             }
 
-            return fileName
+            return if (fileUri != null) Pair(fileName, fileUri) else null
         } catch (e: IOException) {
             e.printStackTrace()
             return null

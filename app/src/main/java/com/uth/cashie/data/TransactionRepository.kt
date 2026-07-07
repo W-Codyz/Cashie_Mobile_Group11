@@ -78,7 +78,7 @@ object TransactionRepository {
             if (transaction.isIncome) "income" else "expense"
         ).find { it.name == transaction.category }?.id
 
-        val entity = transaction.toEntity(userId).copy(categoryId = catId)
+        val entity = transaction.toEntity(userId).copy(categoryId = catId, walletId = transaction.walletId)
         val id = db.transactionDao().insert(entity)
         transaction.copy(id = id.toInt())
     }
@@ -100,6 +100,7 @@ object TransactionRepository {
             note       = transaction.title,
             date       = parseDateToMillis(transaction.date, transaction.time),
             categoryId = catId,
+            walletId = transaction.walletId ?: existing.walletId,
             updatedAt  = System.currentTimeMillis()
         )
     }
@@ -147,6 +148,15 @@ object TransactionRepository {
             }.getOrNull()
         }
 
+        // Load wallet info from database
+        val wallet = walletId?.let { wId ->
+            runCatching {
+                kotlinx.coroutines.runBlocking(Dispatchers.IO) {
+                    db.walletDao().getById(wId, userId)
+                }
+            }.getOrNull()
+        }
+
         return Transaction(
             id            = id.toInt(),
             title         = note ?: "",
@@ -156,7 +166,9 @@ object TransactionRepository {
             amount        = if (type == "income") amount.toLong() else -amount.toLong(),
             isIncome      = type == "income",
             time          = timeStr,
-            date          = dateStr
+            date          = dateStr,
+            walletId      = walletId,
+            walletName    = wallet?.name
         )
     }
 
@@ -165,6 +177,7 @@ object TransactionRepository {
             id              = if (id == 0) 0 else id.toLong(),
             userId          = userId,
             categoryId      = null,  // Cần tra cứu từ category name nếu cần
+            walletId        = walletId,
             type            = if (isIncome) "income" else "expense",
             amount          = abs(amount).toDouble(),
             note            = title,

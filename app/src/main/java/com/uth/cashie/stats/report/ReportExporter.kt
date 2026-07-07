@@ -41,9 +41,9 @@ object ReportExporter {
     /**
      * Tạo file PDF từ [StatsResult].
      *
-     * @return  tên file đã lưu, hoặc null nếu có lỗi.
+     * @return  Pair(tên file đã lưu, Uri của file) hoặc null nếu có lỗi.
      */
-    fun exportPdf(context: Context, result: StatsResult, month: Int, year: Int): String? {
+    fun exportPdf(context: Context, result: StatsResult, month: Int, year: Int): Pair<String, Uri>? {
         val doc = PdfDocument()
         var savedFileName: String? = null
         var fileUri: Uri? = null
@@ -80,7 +80,7 @@ object ReportExporter {
         } finally {
             doc.close()
         }
-        return savedFileName
+        return if (savedFileName != null && fileUri != null) Pair(savedFileName, fileUri) else null
     }
 
     private fun scanFile(context: Context, uri: Uri) {

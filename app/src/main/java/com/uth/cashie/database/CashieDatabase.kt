@@ -20,9 +20,10 @@ import com.uth.cashie.database.entity.*
         AppSettingsEntity::class,
         CategoryEntity::class,
         TransactionEntity::class,
-        SavedAccountEntity::class
+        SavedAccountEntity::class,
+        WalletEntity::class
     ],
-    version = 3,
+    version = 5,
     exportSchema = false
 )
 abstract class CashieDatabase : RoomDatabase() {
@@ -32,6 +33,7 @@ abstract class CashieDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun transactionDao(): TransactionDao
     abstract fun savedAccountDao(): SavedAccountDao
+    abstract fun walletDao(): WalletDao
 
     companion object {
         private const val DB_NAME = "cashie.db"

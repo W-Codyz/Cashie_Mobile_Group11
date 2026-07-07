@@ -1,6 +1,7 @@
 package com.uth.cashie
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -17,10 +18,12 @@ import com.uth.cashie.database.util.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 class RegisterActivity : AppCompatActivity() {
 
-    private var avatarUri: Uri? = null
+    private var avatarPath: String? = null
 
     private lateinit var binding: ActivityRegisterBinding
     private val db by lazy { CashieDatabase.getInstance(this) }
@@ -46,19 +49,63 @@ class RegisterActivity : AppCompatActivity() {
         ActivityResultContracts.GetContent()
     ) { uri ->
         if (uri != null) {
-            avatarUri = uri
-            binding.imgAvatar.setImageURI(uri)
+            handleImagePicked(uri)
+        }
+    }
+
+    private fun handleImagePicked(uri: Uri) {
+        lifecycleScope.launch {
+            val savedPath = withContext(Dispatchers.IO) {
+                try {
+                    val inputStream = contentResolver.openInputStream(uri) ?: return@withContext null
+                    val avatarDir = File(filesDir, "avatars")
+                    avatarDir.mkdirs()
+                    // We'll generate a temp user id for now, will overwrite after insert
+                    val file = File(avatarDir, "avatar_temp.jpg")
+                    FileOutputStream(file).use { out -> inputStream.copyTo(out) }
+                    file.absolutePath
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            savedPath?.let { path ->
+                avatarPath = path
+                val bmp = BitmapFactory.decodeFile(path)
+                binding.imgAvatar.setImageBitmap(bmp)
+                binding.imgAvatar.imageTintList = null
+                binding.imgAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+            }
         }
     }
 
     private fun applyTheme() {
+        val colorInt = ThemeManager.getThemeColorInt()
+        val colorList = android.content.res.ColorStateList.valueOf(colorInt)
+
+        // Apply theme to window
         ThemeManager.applyThemeToWindow(
             this,
             binding.appBarLayout,
             binding.tvToolbarTitle,
             binding.btnBack
         )
+
+        // Avatar section
+        val avatarBg = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.OVAL
+            setColor(colorInt)
+        }
+        binding.imgAvatar.background = avatarBg
+        // Default icon tint (white)
+        if (binding.imgAvatar.imageTintList != null) {
+            binding.imgAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            binding.imgAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+            binding.imgAvatar.setPadding(20, 20, 20, 20)
+        }
+
+        // Apply theme to other views
         ThemeManager.applyToGradientCard(binding.registerHeaderCard)
+        ThemeManager.applyToButton(binding.btnChooseImage)
         ThemeManager.applyToButton(binding.btnRegister)
         binding.tvLoginLink.setTextColor(ThemeManager.getThemeColorInt())
         listOf(
@@ -132,7 +179,7 @@ class RegisterActivity : AppCompatActivity() {
         password: String
     ) {
         val emailDisplay = if (email.isEmpty()) "(không nhập)" else email
-        val avatarDisplay = if (avatarUri != null) "Đã chọn ảnh" else "(không chọn)"
+        val avatarDisplay = if (avatarPath != null) "Đã chọn ảnh" else "(không chọn)"
 
         AlertDialog.Builder(this)
             .setTitle("Xác nhận thông tin đăng ký")
@@ -169,18 +216,44 @@ class RegisterActivity : AppCompatActivity() {
                 return@launch
             }
 
+            // First, insert user
             val user = UserEntity(
-                username     = username,
-                fullName     = fullName,
-                email        = email,
+                username = username,
+                fullName = fullName,
+                email = email,
                 passwordHash = PasswordUtils.hash(password),
-                avatar       = avatarUri?.toString()
+                avatarPath = null
             )
 
             val userId = withContext(Dispatchers.IO) {
                 val id = db.userDao().insert(user)
                 DatabaseInitializer.setup(id, db)
                 id
+            }
+
+            // Now, if we have an avatar, rename it to use the actual user id
+            val finalAvatarPath = if (avatarPath != null) {
+                withContext(Dispatchers.IO) {
+                    try {
+                        val avatarDir = File(filesDir, "avatars")
+                        avatarDir.mkdirs()
+                        val tempFile = File(avatarPath)
+                        val finalFile = File(avatarDir, "avatar_$userId.jpg")
+                        if (tempFile.exists()) {
+                            tempFile.renameTo(finalFile)
+                        }
+                        finalFile.absolutePath
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+            } else null
+
+            // Update user's avatarPath
+            finalAvatarPath?.let {
+                withContext(Dispatchers.IO) {
+                    db.userDao().updateAvatar(userId, it)
+                }
             }
 
             // Lưu session để SetupActivity biết user nào

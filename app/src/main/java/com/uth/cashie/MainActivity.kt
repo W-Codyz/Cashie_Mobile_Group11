@@ -13,10 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.adapter.TransactionAdapter.Companion.formatVND
 import com.uth.cashie.data.TransactionRepository
+import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivityMainBinding
 import com.uth.cashie.model.TransactionGroup
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +52,45 @@ class MainActivity : AppCompatActivity() {
         setupMenuButton()
         setupBottomNav()
         setupAvatar()
+        setupEditBalanceButton()
         refreshData()
+    }
+
+    private fun setupEditBalanceButton() {
+        binding.btnEditBalance.setOnClickListener {
+            lifecycleScope.launch {
+                val initialBalance = withContext(Dispatchers.IO) {
+                    val db = CashieDatabase.getInstance(this@MainActivity)
+                    db.userDao().getById(SessionManager.getCurrentUserId())?.initialBalance ?: 0.0
+                }
+                showEditBalanceDialog(initialBalance)
+            }
+        }
+    }
+
+    private fun showEditBalanceDialog(initialBalance: Double) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_balance, null)
+        val editText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etNewBalance)
+        val currency = SessionManager.getCurrency()
+
+        editText.setText(initialBalance.toLong().toString())
+
+        AlertDialog.Builder(this)
+            .setTitle("Chỉnh sửa số dư")
+            .setView(dialogView)
+            .setPositiveButton("Lưu") { _, _ ->
+                val newBalance = editText.text.toString().toDoubleOrNull() ?: 0.0
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val db = CashieDatabase.getInstance(this@MainActivity)
+                        val user = db.userDao().getById(SessionManager.getCurrentUserId()) ?: return@withContext
+                        db.userDao().update(user.copy(initialBalance = newBalance))
+                    }
+                    refreshData()
+                }
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 
     override fun onResume() {
@@ -65,15 +106,22 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val txList = TransactionRepository.getByMonth(monthIndex + 1, currentYear)
             currentGroups = TransactionRepository.getGroupedByDate(txList)
-            updateSummary(txList.sumOf { if (it.isIncome) it.amount else 0L },
-                          txList.sumOf { if (!it.isIncome) -it.amount else 0L })
+            val initialBalance = withContext(Dispatchers.IO) {
+                val db = CashieDatabase.getInstance(this@MainActivity)
+                db.userDao().getById(SessionManager.getCurrentUserId())?.initialBalance ?: 0.0
+            }
+            updateSummary(
+                txList.sumOf { if (it.isIncome) it.amount else 0L },
+                txList.sumOf { if (!it.isIncome) -it.amount else 0L },
+                initialBalance.toLong()
+            )
             applyFilter()
         }
     }
 
-    private fun updateSummary(income: Long, expense: Long) {
+    private fun updateSummary(income: Long, expense: Long, initialBalance: Long) {
         val currency = SessionManager.getCurrency()
-        binding.tvBalance.text      = formatVND(income - expense, currency)
+        binding.tvBalance.text      = formatVND(initialBalance + income - expense, currency)
         binding.tvTotalIncome.text  = formatVND(income, currency)
         binding.tvTotalExpense.text = formatVND(expense, currency)
     }

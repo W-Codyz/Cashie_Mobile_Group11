@@ -1,14 +1,16 @@
 package com.uth.cashie
 
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.uth.cashie.adapter.EmojiCategoryAdapter
 import com.uth.cashie.data.TransactionRepository
+import com.uth.cashie.database.CashieDatabase
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivityAddTransactionBinding
 import com.uth.cashie.model.EmojiCategory
 import com.uth.cashie.model.Transaction
@@ -24,6 +26,8 @@ class AddTransactionActivity : AppCompatActivity() {
     private var isIncome = true
     private var selectedCategory: EmojiCategory? = null
     private var selectedDateMs: Long = System.currentTimeMillis()
+    private var selectedWalletId: Long? = null
+    private var selectedWalletName: String = ""
     private var editingId: Int = -1
     private var originalTime: String? = null
 
@@ -38,6 +42,7 @@ class AddTransactionActivity : AppCompatActivity() {
 
         editingId = intent.getIntExtra(EXTRA_TRANSACTION_ID, -1)
 
+        applyTheme()
         setupCategoryRecyclerView()
         setupToggle()
         setupDatePicker()
@@ -53,6 +58,17 @@ class AddTransactionActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
+        categoryAdapter.notifyDataSetChanged()
+    }
+
+    private fun applyTheme() {
+        val themeColor = ThemeManager.getThemeColorInt()
+        binding.btnSaveTransaction.backgroundTintList = android.content.res.ColorStateList.valueOf(themeColor)
+    }
+
     // ── Category grid ──────────────────────────────────────────────────────────
 
     private fun setupCategoryRecyclerView() {
@@ -61,8 +77,17 @@ class AddTransactionActivity : AppCompatActivity() {
     }
 
     private fun loadCategories() {
-        val list = if (isIncome) EmojiCategory.INCOME else EmojiCategory.EXPENSE
-        categoryAdapter.submitList(list)
+        lifecycleScope.launch {
+            val db = CashieDatabase.getInstance(this@AddTransactionActivity)
+            val categoryRepo = com.uth.cashie.category.data.CategoryRepository(db.categoryDao())
+            val list = categoryRepo.getCategoriesByTypeOrderedByUsage(
+                SessionManager.getCurrentUserId(),
+                if (isIncome) "income" else "expense"
+            )
+            categoryAdapter.submitList(list.ifEmpty {
+                if (isIncome) EmojiCategory.INCOME else EmojiCategory.EXPENSE
+            })
+        }
     }
 
     // ── Type toggle ────────────────────────────────────────────────────────────
@@ -74,16 +99,20 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun switchType(income: Boolean, animate: Boolean = true) {
         isIncome = income
+        val themeColor = ThemeManager.getThemeColorInt()
+
         if (income) {
             binding.btnToggleIncome.setBackgroundResource(R.drawable.bg_button_primary)
+            binding.btnToggleIncome.backgroundTintList = android.content.res.ColorStateList.valueOf(themeColor)
             binding.btnToggleIncome.setTextColor(getColor(android.R.color.white))
             binding.btnToggleExpense.setBackgroundResource(android.R.color.transparent)
-            binding.btnToggleExpense.setTextColor(getColor(android.R.color.holo_red_light))
+            binding.btnToggleExpense.setTextColor(android.graphics.Color.parseColor("#888888"))
         } else {
             binding.btnToggleExpense.setBackgroundResource(R.drawable.bg_button_primary)
+            binding.btnToggleExpense.backgroundTintList = android.content.res.ColorStateList.valueOf(themeColor)
             binding.btnToggleExpense.setTextColor(getColor(android.R.color.white))
             binding.btnToggleIncome.setBackgroundResource(android.R.color.transparent)
-            binding.btnToggleIncome.setTextColor(getColor(android.R.color.holo_green_light))
+            binding.btnToggleIncome.setTextColor(android.graphics.Color.parseColor("#888888"))
         }
         // Reset category selection when type changes
         selectedCategory = null
@@ -115,12 +144,46 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.tvSelectedDate.text = displayDateFmt.format(Date(ms))
     }
 
-    // ── Wallet picker (placeholder) ────────────────────────────────────────────
+    // ── Wallet picker ────────────────────────────────────────────
 
     private fun setupWalletPicker() {
-        binding.tvSelectedWallet.text = getString(R.string.wallet_cash)
+        loadWallets()
         binding.layoutPickWallet.setOnClickListener {
-            Toast.makeText(this, "Tính năng sắp có", Toast.LENGTH_SHORT).show()
+            showWalletPickerDialog()
+        }
+    }
+
+    private fun loadWallets() {
+        lifecycleScope.launch {
+            val db = CashieDatabase.getInstance(this@AddTransactionActivity)
+            val wallets = db.walletDao().getAllByUserOnce(SessionManager.getCurrentUserId())
+            if (wallets.isNotEmpty()) {
+                val defaultWallet = wallets.firstOrNull { it.isDefault == 1 } ?: wallets.first()
+                selectedWalletId = defaultWallet.id
+                selectedWalletName = defaultWallet.name
+                binding.tvSelectedWallet.text = selectedWalletName
+            }
+        }
+    }
+
+    private fun showWalletPickerDialog() {
+        lifecycleScope.launch {
+            val db = CashieDatabase.getInstance(this@AddTransactionActivity)
+            val wallets = db.walletDao().getAllByUserOnce(SessionManager.getCurrentUserId())
+            val walletNames = wallets.map { it.name }.toTypedArray()
+            val currentSelectedIndex = wallets.indexOfFirst { it.id == selectedWalletId }
+            
+            androidx.appcompat.app.AlertDialog.Builder(this@AddTransactionActivity)
+                .setTitle("Chọn ví")
+                .setSingleChoiceItems(walletNames, if (currentSelectedIndex >= 0) currentSelectedIndex else 0) { dialog, which ->
+                    val selectedWallet = wallets[which]
+                    selectedWalletId = selectedWallet.id
+                    selectedWalletName = selectedWallet.name
+                    binding.tvSelectedWallet.text = selectedWalletName
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Hủy", null)
+                .show()
         }
     }
 
@@ -164,7 +227,9 @@ class AddTransactionActivity : AppCompatActivity() {
                     amount       = finalAmount,
                     isIncome     = isIncome,
                     time         = timeStr,
-                    date         = dateStr
+                    date         = dateStr,
+                    walletId     = selectedWalletId,
+                    walletName   = selectedWalletName
                 )
                 TransactionRepository.update(updated)
                 Toast.makeText(this@AddTransactionActivity, getString(R.string.toast_transaction_updated), Toast.LENGTH_SHORT).show()
@@ -178,7 +243,9 @@ class AddTransactionActivity : AppCompatActivity() {
                     amount       = finalAmount,
                     isIncome     = isIncome,
                     time         = timeStr,
-                    date         = dateStr
+                    date         = dateStr,
+                    walletId     = selectedWalletId,
+                    walletName   = selectedWalletName
                 )
                 TransactionRepository.add(newTx)
                 Toast.makeText(this@AddTransactionActivity, getString(R.string.toast_transaction_saved), Toast.LENGTH_SHORT).show()
@@ -212,6 +279,13 @@ class AddTransactionActivity : AppCompatActivity() {
                     selectedDateMs = parsed.time
                     updateDateDisplay(selectedDateMs)
                 }
+            }
+
+            // Pre-select wallet
+            if (tx.walletId != null) {
+                selectedWalletId = tx.walletId
+                selectedWalletName = tx.walletName ?: ""
+                binding.tvSelectedWallet.text = selectedWalletName
             }
 
             // Pre-select category after list is loaded

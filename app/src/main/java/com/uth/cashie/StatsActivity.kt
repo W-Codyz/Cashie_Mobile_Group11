@@ -1,9 +1,11 @@
 package com.uth.cashie
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -371,7 +373,7 @@ class StatsActivity : AppCompatActivity() {
 
         binding.progressBar.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
-            val fileName = ReportExporter.exportPdf(
+            val resultPair = ReportExporter.exportPdf(
                 context = this@StatsActivity,
                 result  = result,
                 month   = m,
@@ -379,12 +381,17 @@ class StatsActivity : AppCompatActivity() {
             )
             withContext(Dispatchers.Main) {
                 binding.progressBar.visibility = View.GONE
-                Toast.makeText(
-                    this@StatsActivity,
-                    if (fileName != null) "✅ Đã lưu: $fileName (Downloads)"
-                    else                  "❌ Xuất PDF thất bại",
-                    if (fileName != null) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
-                ).show()
+                if (resultPair != null) {
+                    val (fileName, fileUri) = resultPair
+                    Toast.makeText(
+                        this@StatsActivity,
+                        "✅ Đã lưu: $fileName (Downloads)",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    shareFile(fileUri, "application/pdf")
+                } else {
+                    Toast.makeText(this@StatsActivity, "❌ Xuất PDF thất bại", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -403,7 +410,7 @@ class StatsActivity : AppCompatActivity() {
 
         binding.progressBar.visibility = View.VISIBLE
         lifecycleScope.launch(Dispatchers.IO) {
-            val fileName = ExcelExporter.exportXlsx(
+            val resultPair = ExcelExporter.exportXlsx(
                 context = this@StatsActivity,
                 result  = result,
                 month   = m,
@@ -411,13 +418,32 @@ class StatsActivity : AppCompatActivity() {
             )
             withContext(Dispatchers.Main) {
                 binding.progressBar.visibility = View.GONE
-                Toast.makeText(
-                    this@StatsActivity,
-                    if (fileName != null) "✅ Đã lưu: $fileName (Downloads)"
-                    else                  "❌ Xuất CSV thất bại",
-                    if (fileName != null) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
-                ).show()
+                if (resultPair != null) {
+                    val (fileName, fileUri) = resultPair
+                    Toast.makeText(
+                        this@StatsActivity,
+                        "✅ Đã lưu: $fileName (Downloads)",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    shareFile(fileUri, "text/csv")
+                } else {
+                    Toast.makeText(this@StatsActivity, "❌ Xuất CSV thất bại", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Share File
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private fun shareFile(fileUri: Uri, mimeType: String) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = mimeType
+            putExtra(Intent.EXTRA_STREAM, fileUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(shareIntent, "Chia sẻ báo cáo"))
     }
 }

@@ -56,10 +56,19 @@ class ProfileActivity : AppCompatActivity() {
         // Gradient header card
         ThemeManager.applyToGradientCard(binding.profileHeaderCard)
 
+        // Avatar background and tint
+        val avatarBg = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.OVAL
+            setColor(colorInt)
+        }
+        binding.ivAvatar.background = avatarBg
+
         // Avatar icon tint — chỉ áp dụng khi chưa có ảnh thật
         // (khi có ảnh thật, imageTintList đã được set null trong loadProfile())
         if (binding.ivAvatar.imageTintList != null) {
-            binding.ivAvatar.imageTintList = colorStateList
+            binding.ivAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            binding.ivAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+            binding.ivAvatar.setPadding(18, 18, 18, 18)
         }
 
         // Income stat value — dùng màu theme
@@ -102,6 +111,7 @@ class ProfileActivity : AppCompatActivity() {
                     // Tắt tint xanh khi có ảnh thật
                     binding.ivAvatar.imageTintList = null
                     binding.ivAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                    binding.ivAvatar.setPadding(0, 0, 0, 0)
                 }
             }
         }

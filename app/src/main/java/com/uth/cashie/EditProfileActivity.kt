@@ -64,7 +64,14 @@ class EditProfileActivity : AppCompatActivity() {
             shape = android.graphics.drawable.GradientDrawable.OVAL
             setColor(colorInt)
         }
-        binding.viewAvatarBg.background = avatarBg
+        binding.ivEditAvatar.background = avatarBg
+
+        // Avatar icon tint — chỉ áp dụng khi chưa có ảnh thật
+        if (binding.ivEditAvatar.imageTintList != null) {
+            binding.ivEditAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            binding.ivEditAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+            binding.ivEditAvatar.setPadding(20, 20, 20, 20)
+        }
 
         ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
             binding.tvToolbarTitle, binding.btnBack)
@@ -102,6 +109,7 @@ class EditProfileActivity : AppCompatActivity() {
                     binding.ivEditAvatar.imageTintList = null
                     binding.ivEditAvatar.scaleType =
                         android.widget.ImageView.ScaleType.CENTER_CROP
+                    binding.ivEditAvatar.setPadding(0, 0, 0, 0)
                 }
             } else {
                 // icon mặc định: tô trắng trên nền xanh
@@ -109,6 +117,9 @@ class EditProfileActivity : AppCompatActivity() {
                     android.content.res.ColorStateList.valueOf(
                         android.graphics.Color.WHITE
                     )
+                binding.ivEditAvatar.scaleType =
+                    android.widget.ImageView.ScaleType.CENTER_INSIDE
+                binding.ivEditAvatar.setPadding(20, 20, 20, 20)
             }
         }
 
@@ -165,6 +176,7 @@ class EditProfileActivity : AppCompatActivity() {
                 binding.ivEditAvatar.setImageBitmap(bmp)
                 binding.ivEditAvatar.imageTintList = null
                 binding.ivEditAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                binding.ivEditAvatar.setPadding(0, 0, 0, 0)
             }
         }
     }

@@ -91,8 +91,8 @@ interface TransactionDao {
     suspend fun getSumByCategory(userId: Long, type: String, startMs: Long, endMs: Long): List<CategorySum>
 
     /** Cập nhật updated_at khi user chỉnh sửa giao dịch */
-    @Query("UPDATE transactions SET amount = :amount, note = :note, transaction_date = :date, category_id = :categoryId, updated_at = :updatedAt WHERE id = :id AND user_id = :userId")
-    suspend fun updateTransaction(id: Long, userId: Long, amount: Double, note: String?, date: Long, categoryId: Long?, updatedAt: Long = System.currentTimeMillis())
+    @Query("UPDATE transactions SET amount = :amount, note = :note, transaction_date = :date, category_id = :categoryId, wallet_id = :walletId, updated_at = :updatedAt WHERE id = :id AND user_id = :userId")
+    suspend fun updateTransaction(id: Long, userId: Long, amount: Double, note: String?, date: Long, categoryId: Long?, walletId: Long?, updatedAt: Long = System.currentTimeMillis())
 }
 
 /** Data class phụ dùng cho query thống kê theo danh mục */

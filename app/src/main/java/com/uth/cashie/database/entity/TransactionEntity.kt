@@ -24,11 +24,18 @@ import androidx.room.PrimaryKey
             parentColumns = ["id"],
             childColumns  = ["category_id"],
             onDelete      = ForeignKey.SET_NULL   // giao dịch không bị xóa khi danh mục bị xóa
+        ),
+        ForeignKey(
+            entity        = WalletEntity::class,
+            parentColumns = ["id"],
+            childColumns  = ["wallet_id"],
+            onDelete      = ForeignKey.SET_NULL
         )
     ],
     indices = [
         Index(value = ["user_id", "transaction_date"]),  // index chính cho filter theo thời gian
-        Index(value = ["category_id"])
+        Index(value = ["category_id"]),
+        Index(value = ["wallet_id"])
     ]
 )
 data class TransactionEntity(
@@ -38,11 +45,14 @@ data class TransactionEntity(
     @ColumnInfo(name = "user_id")
     val userId: Long,
 
-    /** Nullable – SET NULL khi danh mục bị xóa */
+    /** Nullable — SET NULL khi danh mục bị xóa */
     @ColumnInfo(name = "category_id")
     val categoryId: Long? = null,
 
-    /** 'income' hoặc 'expense' */
+    @ColumnInfo(name = "wallet_id")
+    val walletId: Long? = null,
+
+    /** 'income' or 'expense' */
     @ColumnInfo(name = "type")
     val type: String,
 

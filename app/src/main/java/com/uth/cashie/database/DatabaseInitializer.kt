@@ -1,8 +1,8 @@
 package com.uth.cashie.database
 
-import com.uth.cashie.database.DatabaseInitializer
 import com.uth.cashie.database.entity.AppSettingsEntity
 import com.uth.cashie.database.entity.CategoryEntity
+import com.uth.cashie.database.entity.WalletEntity
 
 
 /**
@@ -37,6 +37,12 @@ object DatabaseInitializer {
         CategoryEntity(userId = userId, name = "Khác",     iconEmoji = "💡", type = "income", color = "#607D8B", isDefault = 1),
     )
 
+    /** Ví mặc định */
+    private fun defaultWallets(userId: Long): List<WalletEntity> = listOf(
+        WalletEntity(userId = userId, name = "Tiền mặt", type = "cash", balance = 0.0, iconEmoji = "💵", isDefault = 1),
+        WalletEntity(userId = userId, name = "Tài khoản ngân hàng", type = "bank", balance = 0.0, iconEmoji = "🏦", isDefault = 0)
+    )
+
     /** Cài đặt mặc định cho user mới */
     fun defaultSettings(userId: Long) = AppSettingsEntity(
         userId         = userId,
@@ -65,6 +71,7 @@ object DatabaseInitializer {
      */
     suspend fun setup(userId: Long, db: CashieDatabase) {
         db.categoryDao().insertAll(defaultCategories(userId))
+        db.walletDao().insertAll(defaultWallets(userId))
         db.appSettingsDao().insert(defaultSettings(userId))
     }
 }

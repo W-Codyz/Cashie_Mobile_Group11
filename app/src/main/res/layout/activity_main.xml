@@ -119,35 +119,51 @@
                 android:orientation="vertical">
 
                 <!-- ── Balance Card ── -->
+            <LinearLayout
+                android:id="@+id/balanceCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_balance_card"
+                android:orientation="vertical"
+                android:padding="24dp">
+
                 <LinearLayout
-                    android:id="@+id/balanceCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginTop="14dp"
-                    android:background="@drawable/bg_balance_card"
-                    android:orientation="vertical"
-                    android:padding="24dp">
-
+                    android:gravity="center"
+                    android:orientation="horizontal">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/label_current_balance"
                         android:textSize="13sp"
                         android:textColor="#DDFFFFFF"
                         android:gravity="center" />
+                    <ImageButton
+                        android:id="@+id/btnEditBalance"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="8dp"
+                        android:padding="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@android:color/white"
+                        android:contentDescription="Chỉnh sửa số dư" />
+                </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tvBalance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:textSize="34sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/white"
-                        android:gravity="center"
-                        tools:text="11.335.000đ" />
+                <TextView
+                    android:id="@+id/tvBalance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    tools:text="11.335.000đ" />
 
                     <View
                         android:layout_width="match_parent"
@@ -342,7 +358,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="96dp"
+        android:layout_marginBottom="136dp"
         android:src="@drawable/ic_add"
         android:contentDescription="@string/cd_add_transaction"
         app:backgroundTint="@color/green_primary"

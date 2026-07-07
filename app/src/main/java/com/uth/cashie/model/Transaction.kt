@@ -10,5 +10,7 @@ data class Transaction(
     val isIncome: Boolean,
     val time: String,
     /** Ngày giao dịch dạng "yyyy-MM-dd", mặc định rỗng */
-    val date: String = ""
+    val date: String = "",
+    val walletId: Long? = null,
+    val walletName: String? = null
 )

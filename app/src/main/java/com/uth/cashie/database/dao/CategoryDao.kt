@@ -26,6 +26,16 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE user_id = :userId AND type = :type ORDER BY is_default DESC, name ASC")
     suspend fun getByTypeOnce(userId: Long, type: String): List<CategoryEntity>
 
+    @Query("""
+        SELECT c.*
+        FROM categories c
+        LEFT JOIN transactions t ON c.id = t.category_id
+        WHERE c.user_id = :userId AND c.type = :type
+        GROUP BY c.id
+        ORDER BY COUNT(t.id) DESC, is_default DESC, c.name ASC
+    """)
+    suspend fun getByTypeOrderedByUsage(userId: Long, type: String): List<CategoryEntity>
+
     @Query("SELECT * FROM categories WHERE id = :id AND user_id = :userId LIMIT 1")
     suspend fun getById(id: Long, userId: Long): CategoryEntity?
 
