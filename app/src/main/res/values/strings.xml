@@ -183,7 +183,7 @@
 
     <!-- ====== About app ====== -->
     <string name="about_title">Cashie</string>
-    <string name="about_message">Phiên bản: 1.2.0\n\nỨng dụng quản lý tài chính cá nhân\nGiúp bạn theo dõi thu chi hàng ngày\n\n© 2026 Mobile Group 11</string>
+    <string name="about_message">Phiên bản: 1.2.5\n\nỨng dụng quản lý tài chính cá nhân\nGiúp bạn theo dõi thu chi hàng ngày\n\n© 2026 Mobile Group 11</string>
 
     <!-- ====== Settings Screen ====== -->
     <string name="setting_title">Cài đặt</string>

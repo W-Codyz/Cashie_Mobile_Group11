@@ -360,7 +360,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cashie v1.2.0  ·  Nhóm 11"
+        android:text="Cashie v1.2.5  ·  Nhóm 11"
         android:textSize="12sp"
         android:textColor="@color/text_muted"
         android:gravity="center"
