@@ -131,14 +131,31 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun updateCurrencyUi() {
+        val themeColor = ThemeManager.getThemeColorInt()
+        val dp = resources.displayMetrics.density
+        val corner = 12f * dp
+
+        fun selectedBg() = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            setColor(ThemeManager.getSolidContainerColor())
+            setStroke((2 * dp).toInt(), themeColor)
+            cornerRadius = corner
+        }
+        fun defaultBg() = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.RECTANGLE
+            setColor(android.graphics.Color.WHITE)
+            setStroke((1 * dp).toInt(), android.graphics.Color.parseColor("#E0E0E0"))
+            cornerRadius = corner
+        }
+
         if (selectedCurrency == "VND") {
-            binding.cardEditVnd.setBackgroundResource(R.drawable.bg_currency_card_selected)
-            binding.cardEditUsd.setBackgroundResource(R.drawable.bg_currency_card_default)
+            binding.cardEditVnd.background = selectedBg()
+            binding.cardEditUsd.background = defaultBg()
             binding.radioEditVnd.isChecked = true
             binding.radioEditUsd.isChecked = false
         } else {
-            binding.cardEditVnd.setBackgroundResource(R.drawable.bg_currency_card_default)
-            binding.cardEditUsd.setBackgroundResource(R.drawable.bg_currency_card_selected)
+            binding.cardEditVnd.background = defaultBg()
+            binding.cardEditUsd.background = selectedBg()
             binding.radioEditVnd.isChecked = false
             binding.radioEditUsd.isChecked = true
         }

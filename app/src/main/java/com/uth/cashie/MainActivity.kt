@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.uth.cashie.ThemeManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
@@ -388,7 +389,11 @@ class MainActivity : AppCompatActivity() {
                 onMonthChanged()
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .show().also { d ->
+                val c = ThemeManager.getThemeColorInt()
+                d.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(c)
+                d.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(c)
+            }
     }
 
     // ── Filter chips ──────────────────────────────────────────────────────────

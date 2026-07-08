@@ -32,6 +32,7 @@ import com.uth.cashie.stats.report.ReportExporter
 import com.uth.cashie.stats.ui.StatsViewModel
 import com.uth.cashie.stats.view.DonutChartView
 import com.uth.cashie.database.SessionManager
+import com.uth.cashie.ThemeManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -184,7 +185,11 @@ class StatsActivity : AppCompatActivity() {
                 viewModel.setMonth(monthPicker.value + 1, yearPicker.value)
             }
             .setNegativeButton(android.R.string.cancel, null)
-            .show()
+            .show().also { d ->
+                val c = ThemeManager.getThemeColorInt()
+                d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(c)
+                d.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(c)
+            }
     }
 
     private fun setupBottomNav() {

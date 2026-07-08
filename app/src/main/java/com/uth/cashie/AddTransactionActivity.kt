@@ -135,7 +135,8 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val cal = Calendar.getInstance().apply { timeInMillis = selectedDateMs }
-        DatePickerDialog(
+        val themeColor = ThemeManager.getThemeColorInt()
+        val dpd = DatePickerDialog(
             this,
             { _, year, month, day ->
                 val picked = Calendar.getInstance().apply { set(year, month, day) }
@@ -145,7 +146,12 @@ class AddTransactionActivity : AppCompatActivity() {
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        )
+        dpd.setOnShowListener {
+            dpd.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(themeColor)
+            dpd.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(themeColor)
+        }
+        dpd.show()
     }
 
     private fun updateDateDisplay(ms: Long) {
@@ -228,7 +234,9 @@ class AddTransactionActivity : AppCompatActivity() {
                 .setTitle("Chọn ví")
                 .setView(rv)
                 .setNegativeButton("Hủy", null)
-                .show()
+                .show().also { d ->
+                    d.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ThemeManager.getThemeColorInt())
+                }
         }
     }
 

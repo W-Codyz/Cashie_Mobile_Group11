@@ -200,22 +200,40 @@ class ProfileActivity : AppCompatActivity() {
     private fun showCurrencyDialog() {
         lifecycleScope.launch {
             val user = withContext(Dispatchers.IO) { db.userDao().getById(userId) } ?: return@launch
-            val options = arrayOf("VND — Việt Nam Đồng", "USD — US Dollar")
+            val themeColor = ThemeManager.getThemeColorInt()
+            val colorList = android.content.res.ColorStateList.valueOf(themeColor)
             val current = if (user.currency == "USD") 1 else 0
 
-            AlertDialog.Builder(this@ProfileActivity)
-                .setTitle(getString(R.string.profile_menu_currency))
-                .setSingleChoiceItems(options, current) { dialog, which ->
-                    val currency = if (which == 1) "USD" else "VND"
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        db.userDao().update(user.copy(currency = currency))
-                    }
-                    SessionManager.setCurrency(currency)
-                    binding.tvCurrencyBadge.text = currency
-                    dialog.dismiss()
-                    Toast.makeText(this@ProfileActivity, getString(R.string.toast_saved), Toast.LENGTH_SHORT).show()
+            val radioGroup = android.widget.RadioGroup(this@ProfileActivity).apply {
+                orientation = android.widget.RadioGroup.VERTICAL
+                setPadding(64, 24, 64, 8)
+            }
+            arrayOf("VND — Việt Nam Đồng", "USD — US Dollar").forEachIndexed { idx, label ->
+                android.widget.RadioButton(this@ProfileActivity).apply {
+                    text = label
+                    id = idx
+                    isChecked = idx == current
+                    buttonTintList = colorList
+                    setPadding(8, 20, 8, 20)
+                    radioGroup.addView(this)
                 }
+            }
+
+            val dialog = AlertDialog.Builder(this@ProfileActivity)
+                .setTitle(getString(R.string.profile_menu_currency))
+                .setView(radioGroup)
                 .show()
+
+            radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                val currency = if (checkedId == 1) "USD" else "VND"
+                lifecycleScope.launch(Dispatchers.IO) {
+                    db.userDao().update(user.copy(currency = currency))
+                }
+                SessionManager.setCurrency(currency)
+                binding.tvCurrencyBadge.text = currency
+                dialog.dismiss()
+                Toast.makeText(this@ProfileActivity, getString(R.string.toast_saved), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
