@@ -72,8 +72,9 @@ class RegisterActivity : BaseActivity() {
                 avatarPath = path
                 val bmp = BitmapFactory.decodeFile(path)
                 binding.imgAvatar.setImageBitmap(bmp)
-                binding.imgAvatar.imageTintList = null
+                binding.imgAvatar.imageTintList = null   // bỏ tint trắng khi có ảnh thật
                 binding.imgAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                binding.imgAvatar.setPadding(0, 0, 0, 0) // bỏ padding khi có ảnh thật
             }
         }
     }
@@ -90,24 +91,22 @@ class RegisterActivity : BaseActivity() {
             binding.btnBack
         )
 
-        // Avatar section
-        val avatarBg = android.graphics.drawable.GradientDrawable().apply {
-            shape = android.graphics.drawable.GradientDrawable.OVAL
-            setColor(colorInt)
-        }
-        binding.imgAvatar.background = avatarBg
-        // Default icon tint (white)
-        if (binding.imgAvatar.imageTintList != null) {
-            binding.imgAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-            binding.imgAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
-            binding.imgAvatar.setPadding(20, 20, 20, 20)
-        }
+        // Avatar circle: nền màu theme, icon trắng ở giữa
+        binding.imgAvatar.backgroundTintList = colorList
+        binding.imgAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        binding.imgAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+        binding.imgAvatar.setPadding(24, 24, 24, 24)
+        binding.imgAvatar.clipToOutline = true
 
         // Apply theme to other views
         ThemeManager.applyToGradientCard(binding.registerHeaderCard)
-        ThemeManager.applyToButton(binding.btnChooseImage)
+
+        // btnChooseImage: set trực tiếp backgroundTintList thay vì dùng applyToButton
+        binding.btnChooseImage.backgroundTintList = colorList
+        binding.btnChooseImage.setTextColor(android.content.res.ColorStateList.valueOf(ThemeManager.getOnThemeColor()))
+
         ThemeManager.applyToButton(binding.btnRegister)
-        binding.tvLoginLink.setTextColor(ThemeManager.getThemeColorInt())
+        binding.tvLoginLink.setTextColor(colorInt)
         listOf(
             binding.edtFullName,
             binding.edtUsername,
@@ -231,18 +230,21 @@ class RegisterActivity : BaseActivity() {
                 id
             }
 
-            // Now, if we have an avatar, rename it to use the actual user id
+            // Now, if we have an avatar, copy it to use the actual user id
             val finalAvatarPath = if (avatarPath != null) {
                 withContext(Dispatchers.IO) {
                     try {
                         val avatarDir = File(filesDir, "avatars")
                         avatarDir.mkdirs()
-                        val tempFile = File(avatarPath)
+                        val tempFile = File(avatarPath!!)
                         val finalFile = File(avatarDir, "avatar_$userId.jpg")
                         if (tempFile.exists()) {
-                            tempFile.renameTo(finalFile)
+                            tempFile.copyTo(finalFile, overwrite = true)
+                            tempFile.delete()
+                            finalFile.absolutePath  // chỉ trả path khi copy thành công
+                        } else {
+                            null
                         }
-                        finalFile.absolutePath
                     } catch (e: Exception) {
                         null
                     }

@@ -102,6 +102,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_person"
                 android:scaleType="centerCrop"
+                android:clipToOutline="true"
                 app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
 
             <Button
