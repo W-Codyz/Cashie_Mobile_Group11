@@ -85,6 +85,7 @@
                     android:src="@drawable/ic_person"
                     android:scaleType="centerCrop"
                     android:contentDescription="@string/cd_avatar"
+                    android:clipToOutline="true"
                     app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
 
                 <!-- Change photo button -->
