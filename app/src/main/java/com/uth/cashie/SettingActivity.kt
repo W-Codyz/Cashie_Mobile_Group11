@@ -315,7 +315,7 @@ class SettingActivity : BaseActivity() {
     // ── Đăng xuất ─────────────────────────────────────────────────────────────
     private fun setupLogout() {
         binding.menuLogout.setOnClickListener {
-            AlertDialog.Builder(this)
+            val dialog = AlertDialog.Builder(this)
                 .setTitle(getString(R.string.setting_logout_confirm_title))
                 .setMessage(getString(R.string.setting_logout_confirm_msg))
                 .setPositiveButton(getString(R.string.setting_logout_confirm_yes)) { _, _ ->
@@ -327,6 +327,9 @@ class SettingActivity : BaseActivity() {
                 }
                 .setNegativeButton(getString(R.string.setting_logout_confirm_no), null)
                 .show()
+            val themeColor = ThemeManager.getThemeColorInt()
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(themeColor)
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(themeColor)
         }
     }
 }
