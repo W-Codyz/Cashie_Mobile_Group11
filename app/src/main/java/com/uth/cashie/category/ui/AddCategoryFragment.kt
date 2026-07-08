@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.uth.cashie.R
 import com.uth.cashie.ThemeManager
 import com.uth.cashie.category.adapter.EmojiSelectAdapter
 import com.uth.cashie.category.adapter.ColorSelectAdapter
@@ -57,7 +56,7 @@ class AddCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbar.setNavigationOnClickListener {
+        binding.btnBack.setOnClickListener {
             parentFragment?.childFragmentManager?.popBackStack()
         }
 
@@ -88,11 +87,12 @@ class AddCategoryFragment : Fragment() {
 
     private fun applyTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
-        binding.toolbar.setBackgroundColor(android.graphics.Color.WHITE)
-        binding.toolbar.title = getString(R.string.add_category_title)
-        binding.toolbar.setTitleTextColor(colorInt)
-        binding.toolbar.navigationIcon?.mutate()?.setTint(colorInt)
-        binding.btnSave.setBackgroundColor(colorInt)
+        val colorList = ColorStateList.valueOf(colorInt)
+        binding.tvToolbarTitle.setTextColor(colorInt)
+        binding.btnSave.backgroundTintList = colorList
+        binding.btnCancel.strokeColor = colorList
+        binding.btnCancel.setTextColor(colorList)
+        ThemeManager.applyToTextInput(binding.tilCategoryName)
     }
 
     private fun setupTypeButtons() {
@@ -116,19 +116,23 @@ class AddCategoryFragment : Fragment() {
 
     private fun updateTypeButtonsStyle() {
         val themeColor = ThemeManager.getThemeColorInt()
+        val themeList = ColorStateList.valueOf(themeColor)
+        val transparentList = ColorStateList.valueOf(Color.TRANSPARENT)
 
         if (selectedType == "expense") {
-            binding.btnExpense.setBackgroundColor(themeColor)
+            binding.btnExpense.backgroundTintList = themeList
             binding.btnExpense.setTextColor(ColorStateList.valueOf(Color.WHITE))
-            binding.btnIncome.setBackgroundColor(Color.TRANSPARENT)
-            binding.btnIncome.setTextColor(ColorStateList.valueOf(themeColor))
-            binding.btnIncome.setStrokeColor(ColorStateList.valueOf(themeColor))
+            binding.btnExpense.strokeColor = transparentList
+            binding.btnIncome.backgroundTintList = transparentList
+            binding.btnIncome.setTextColor(themeList)
+            binding.btnIncome.strokeColor = themeList
         } else {
-            binding.btnIncome.setBackgroundColor(themeColor)
+            binding.btnIncome.backgroundTintList = themeList
             binding.btnIncome.setTextColor(ColorStateList.valueOf(Color.WHITE))
-            binding.btnExpense.setBackgroundColor(Color.TRANSPARENT)
-            binding.btnExpense.setTextColor(ColorStateList.valueOf(themeColor))
-            binding.btnExpense.setStrokeColor(ColorStateList.valueOf(themeColor))
+            binding.btnIncome.strokeColor = transparentList
+            binding.btnExpense.backgroundTintList = transparentList
+            binding.btnExpense.setTextColor(themeList)
+            binding.btnExpense.strokeColor = themeList
         }
     }
 
