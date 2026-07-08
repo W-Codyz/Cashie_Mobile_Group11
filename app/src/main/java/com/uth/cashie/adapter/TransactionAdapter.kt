@@ -115,7 +115,8 @@ class TransactionAdapter(
             }
             val amountStr = DecimalFormat("#,###", sym).format(abs(amount))
             val suffix = if (currency == "USD") "$" else "đ"
-            return amountStr + suffix
+            val prefix = if (amount < 0) "-" else ""
+            return prefix + amountStr + suffix
         }
     }
 }

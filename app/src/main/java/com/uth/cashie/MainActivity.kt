@@ -100,7 +100,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSummary(income: Long, expense: Long, openingBalance: Long = 0L) {
         val currency = SessionManager.getCurrency()
-        binding.tvBalance.text      = formatVND(openingBalance + income - expense, currency)
+        val balance = openingBalance + income - expense
+        binding.tvBalance.text = formatVND(balance, currency)
+        binding.tvBalance.setTextColor(
+            if (balance < 0) android.graphics.Color.RED
+            else android.graphics.Color.WHITE
+        )
         binding.tvTotalIncome.text  = formatVND(income, currency)
         binding.tvTotalExpense.text = formatVND(expense, currency)
     }
