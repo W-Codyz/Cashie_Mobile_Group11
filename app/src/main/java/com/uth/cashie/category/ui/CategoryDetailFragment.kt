@@ -5,8 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.uth.cashie.adapter.TransactionAdapter
 import com.uth.cashie.category.model.Category
+import com.uth.cashie.data.TransactionRepository
+import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.FragmentCategoryDetailBinding
+import kotlinx.coroutines.launch
 
 class CategoryDetailFragment : Fragment() {
 
@@ -52,7 +58,6 @@ class CategoryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Lấy dữ liệu từ Bundle
         val id = arguments?.getInt("id") ?: 0
         val name = arguments?.getString("name") ?: ""
         val icon = arguments?.getInt("icon") ?: 0
@@ -60,24 +65,35 @@ class CategoryDetailFragment : Fragment() {
         val emoji = arguments?.getString("emoji") ?: ""
         val isDefault = arguments?.getBoolean("isDefault") ?: false
 
-        // Tạo đối tượng Category từ các trường đã lấy
         val category = Category(id, name, icon, color, emoji, isDefault)
 
-        // Set toolbar
         binding.toolbarDetail.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        // Hiển thị thông tin danh mục
         binding.tvEmoji.text = category.emoji
         binding.tvName.text = category.name
         binding.tvType.text = "Loại: ${if (category.icon == 1) "Thu nhập" else "Chi phí"}"
         binding.tvColor.text = "Màu: #${Integer.toHexString(category.color).uppercase()}"
 
-        // Tạm thời ẩn RecyclerView vì chưa có dữ liệu giao dịch
-        binding.rvTransactions.visibility = View.GONE
-        binding.tvEmpty.visibility = View.VISIBLE
+        val adapter = TransactionAdapter()
+        binding.rvTransactions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTransactions.adapter = adapter
 
-        // TODO: Sau này sẽ load danh sách giao dịch theo category.id
+        SessionManager.init(requireContext())
+        TransactionRepository.init(requireContext())
+
+        lifecycleScope.launch {
+            val transactions = TransactionRepository.getByCategory(id.toLong())
+            val groups = TransactionRepository.getGroupedByDate(transactions)
+            if (groups.isEmpty()) {
+                binding.rvTransactions.visibility = View.GONE
+                binding.tvEmpty.visibility = View.VISIBLE
+            } else {
+                binding.rvTransactions.visibility = View.VISIBLE
+                binding.tvEmpty.visibility = View.GONE
+                adapter.submitGroups(groups)
+            }
+        }
     }
 }

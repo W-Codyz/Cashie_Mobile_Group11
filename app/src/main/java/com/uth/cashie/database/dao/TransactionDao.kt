@@ -94,6 +94,10 @@ interface TransactionDao {
     @Query("UPDATE transactions SET amount = :amount, note = :note, transaction_date = :date, category_id = :categoryId, wallet_id = :walletId, updated_at = :updatedAt WHERE id = :id AND user_id = :userId")
     suspend fun updateTransaction(id: Long, userId: Long, amount: Double, note: String?, date: Long, categoryId: Long?, walletId: Long?, updatedAt: Long = System.currentTimeMillis())
 
+    /** Lọc giao dịch theo danh mục */
+    @Query("SELECT * FROM transactions WHERE user_id = :userId AND category_id = :categoryId ORDER BY transaction_date DESC, created_at DESC")
+    suspend fun getByCategoryOnce(userId: Long, categoryId: Long): List<TransactionEntity>
+
     /** Net (income - expense) của 1 ví trong khoảng thời gian */
     @Query("""
         SELECT COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END), 0)

@@ -109,6 +109,10 @@ object TransactionRepository {
         db.transactionDao().deleteById(id.toLong(), getUserId())
     }
 
+    suspend fun getByCategory(categoryId: Long): List<Transaction> = withContext(Dispatchers.IO) {
+        db.transactionDao().getByCategoryOnce(getUserId(), categoryId).map { it.toModel() }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Grouping helper
     // ─────────────────────────────────────────────────────────────────────────
