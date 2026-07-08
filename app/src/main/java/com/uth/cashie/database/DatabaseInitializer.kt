@@ -15,26 +15,26 @@ object DatabaseInitializer {
 
     /** Danh mục chi mặc định (is_default = 1) */
     private fun defaultExpenseCategories(userId: Long): List<CategoryEntity> = listOf(
-        CategoryEntity(userId = userId, name = "Ăn uống",     iconEmoji = "🍜", type = "expense", color = "#FF8C00", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Di chuyển",   iconEmoji = "🚗", type = "expense", color = "#2196F3", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Mua sắm",     iconEmoji = "🛒", type = "expense", color = "#E91E63", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Hóa đơn",     iconEmoji = "⚡", type = "expense", color = "#FFC107", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Giải trí",    iconEmoji = "🎮", type = "expense", color = "#9C27B0", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Sức khỏe",    iconEmoji = "🏥", type = "expense", color = "#F44336", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Giáo dục",    iconEmoji = "📚", type = "expense", color = "#3F51B5", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Tập thể dục", iconEmoji = "🏋", type = "expense", color = "#FF5722", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Du lịch",     iconEmoji = "✈",  type = "expense", color = "#00BCD4", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Quà tặng",    iconEmoji = "🎁", type = "expense", color = "#E91E63", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Khác",        iconEmoji = "💡", type = "expense", color = "#607D8B", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Ăn uống",     nameEn = "Food & Dining",  iconEmoji = "🍜", type = "expense", color = "#FF8C00", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Di chuyển",   nameEn = "Transport",      iconEmoji = "🚗", type = "expense", color = "#2196F3", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Mua sắm",     nameEn = "Shopping",       iconEmoji = "🛒", type = "expense", color = "#E91E63", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Hóa đơn",     nameEn = "Bills",          iconEmoji = "⚡", type = "expense", color = "#FFC107", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Giải trí",    nameEn = "Entertainment",  iconEmoji = "🎮", type = "expense", color = "#9C27B0", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Sức khỏe",    nameEn = "Health",         iconEmoji = "🏥", type = "expense", color = "#F44336", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Giáo dục",    nameEn = "Education",      iconEmoji = "📚", type = "expense", color = "#3F51B5", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Tập thể dục", nameEn = "Exercise",       iconEmoji = "🏋", type = "expense", color = "#FF5722", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Du lịch",     nameEn = "Travel",         iconEmoji = "✈",  type = "expense", color = "#00BCD4", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Quà tặng",    nameEn = "Gifts",          iconEmoji = "🎁", type = "expense", color = "#E91E63", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Khác",        nameEn = "Other",          iconEmoji = "💡", type = "expense", color = "#607D8B", isDefault = 1),
     )
 
     /** Danh mục thu mặc định (is_default = 1) */
     private fun defaultIncomeCategories(userId: Long): List<CategoryEntity> = listOf(
-        CategoryEntity(userId = userId, name = "Lương",    iconEmoji = "💰", type = "income", color = "#22CC00", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Thưởng",   iconEmoji = "🎁", type = "income", color = "#4CAF50", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Đầu tư",   iconEmoji = "📈", type = "income", color = "#00BCD4", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Thu nhập", iconEmoji = "💼", type = "income", color = "#8BC34A", isDefault = 1),
-        CategoryEntity(userId = userId, name = "Khác",     iconEmoji = "💡", type = "income", color = "#607D8B", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Lương",    nameEn = "Salary",     iconEmoji = "💰", type = "income", color = "#22CC00", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Thưởng",   nameEn = "Bonus",      iconEmoji = "🎁", type = "income", color = "#4CAF50", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Đầu tư",   nameEn = "Investment", iconEmoji = "📈", type = "income", color = "#00BCD4", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Thu nhập", nameEn = "Income",     iconEmoji = "💼", type = "income", color = "#8BC34A", isDefault = 1),
+        CategoryEntity(userId = userId, name = "Khác",     nameEn = "Other",      iconEmoji = "💡", type = "income", color = "#607D8B", isDefault = 1),
     )
 
     /** Ví mặc định */

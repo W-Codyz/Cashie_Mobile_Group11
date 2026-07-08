@@ -32,6 +32,9 @@ data class CategoryEntity(
     @ColumnInfo(name = "name")
     val name: String,
 
+    @ColumnInfo(name = "name_en")
+    val nameEn: String? = null,
+
     /** Emoji đại diện cho danh mục, VD: 🍜, 💰 */
     @ColumnInfo(name = "icon_emoji")
     val iconEmoji: String? = null,
