@@ -54,8 +54,12 @@ class SettingActivity : AppCompatActivity() {
     // ── Apply màu chủ đề lên toolbar ─────────────────────────────────────────
     private fun applyCurrentTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
-        ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
-            binding.tvToolbarTitle, binding.btnMenu)
+        // Toolbar trắng, chữ/icon màu theme
+        binding.appBarLayout.setBackgroundColor(android.graphics.Color.WHITE)
+        window.statusBarColor = android.graphics.Color.WHITE
+        androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = true
+        binding.tvToolbarTitle.setTextColor(colorInt)
         binding.bubbleNav.updateThemeColor(colorInt)
 
         // "VI"/"EN" label màu theme

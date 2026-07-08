@@ -48,14 +48,16 @@ class ProfileActivity : AppCompatActivity() {
     // ── Áp dụng màu chủ đề ───────────────────────────────────────────────────
     private fun applyTheme() {
         val colorInt      = ThemeManager.getThemeColorInt()
-        val onThemeColor  = ThemeManager.getOnThemeColor()   // trắng hoặc đen tùy độ sáng
         val containerBg   = ThemeManager.getSolidContainerColor()  // nền nhạt icon circle
         val colorStateList = android.content.res.ColorStateList.valueOf(colorInt)
 
-        // Toolbar + status bar + màu chữ toolbar tự động
-        ThemeManager.applyThemeToWindow(this, binding.appBarLayout,
-            binding.tvProfileTitle, binding.btnMenu)
-        binding.btnEdit.setTextColor(onThemeColor)
+        // Toolbar trắng, chữ/icon màu theme
+        binding.appBarLayout.setBackgroundColor(android.graphics.Color.WHITE)
+        window.statusBarColor = android.graphics.Color.WHITE
+        androidx.core.view.WindowCompat.getInsetsController(window, window.decorView)
+            .isAppearanceLightStatusBars = true
+        binding.tvProfileTitle.setTextColor(colorInt)
+        binding.btnEdit.setTextColor(colorInt)
         binding.bubbleNav.updateThemeColor(colorInt)
 
         // Gradient header card

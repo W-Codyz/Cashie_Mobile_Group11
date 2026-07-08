@@ -66,6 +66,8 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun applyTheme() {
         val themeColor = ThemeManager.getThemeColorInt()
+        binding.tvToolbarTitle.setTextColor(themeColor)
+        binding.btnSave.setTextColor(themeColor)
         binding.btnSaveTransaction.backgroundTintList = android.content.res.ColorStateList.valueOf(themeColor)
     }
 

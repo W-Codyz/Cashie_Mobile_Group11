@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.uth.cashie.R
 import com.uth.cashie.ThemeManager
 import com.uth.cashie.category.adapter.EmojiSelectAdapter
 import com.uth.cashie.category.adapter.ColorSelectAdapter
@@ -87,8 +88,10 @@ class AddCategoryFragment : Fragment() {
 
     private fun applyTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
-        binding.toolbar.setBackgroundColor(colorInt)
-        binding.toolbar.setTitleTextColor(ThemeManager.getOnThemeColor())
+        binding.toolbar.setBackgroundColor(android.graphics.Color.WHITE)
+        binding.toolbar.title = getString(R.string.add_category_title)
+        binding.toolbar.setTitleTextColor(colorInt)
+        binding.toolbar.navigationIcon?.mutate()?.setTint(colorInt)
         binding.btnSave.setBackgroundColor(colorInt)
     }
 

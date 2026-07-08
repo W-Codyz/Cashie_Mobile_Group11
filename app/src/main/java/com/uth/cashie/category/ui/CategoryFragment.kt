@@ -82,6 +82,7 @@ class CategoryFragment : Fragment() {
 
     private fun applyTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
+        binding.tvTitle.setTextColor(colorInt)
         binding.tabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT)
         binding.tabLayout.setTabTextColors(Color.parseColor("#777777"), Color.WHITE)
         binding.fabAddCategory.backgroundTintList =

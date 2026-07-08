@@ -123,6 +123,9 @@
     <string name="menu_about">Thông tin ứng dụng</string>
     <string name="cd_menu">Mở menu điều hướng</string>
 
+    <!-- ====== Category Screen ====== -->
+    <string name="add_category_title">Thêm danh mục</string>
+
     <!-- ====== Add / Edit Transaction ====== -->
     <string name="add_transaction_title">Thêm giao dịch</string>
     <string name="edit_transaction_title">Chỉnh sửa giao dịch</string>
