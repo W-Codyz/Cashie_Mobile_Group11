@@ -8,11 +8,11 @@ object SessionManager {
 
     private const val PREF_NAME = "cashie_session"
 
-    private const val KEY_USER_ID = "current_user_id"
-    private const val KEY_REMEMBER = "remember_login"
-    private const val KEY_CURRENCY = "current_currency"
+    private const val KEY_USER_ID   = "current_user_id"
+    private const val KEY_REMEMBER  = "remember_login"
+    private const val KEY_CURRENCY  = "current_currency"
 
-    private const val NO_USER = -1L
+    private const val NO_USER          = -1L
     private const val DEFAULT_CURRENCY = "VND"
 
     private lateinit var prefs: SharedPreferences

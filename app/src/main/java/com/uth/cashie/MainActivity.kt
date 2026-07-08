@@ -3,8 +3,11 @@ package com.uth.cashie
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.NumberPicker
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -124,17 +127,20 @@ class MainActivity : AppCompatActivity() {
     private fun showEditBalanceDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_balance, null)
 
-        val pickerMonth = dialogView.findViewById<NumberPicker>(R.id.pickerMonth)
-        val pickerYear  = dialogView.findViewById<NumberPicker>(R.id.pickerYear)
-        val etCash      = dialogView.findViewById<TextInputEditText>(R.id.etCashBalance)
-        val etAccount   = dialogView.findViewById<TextInputEditText>(R.id.etAccountBalance)
-        val tilCash     = dialogView.findViewById<TextInputLayout>(R.id.tilCashBalance)
-        val tilAccount  = dialogView.findViewById<TextInputLayout>(R.id.tilAccountBalance)
+        val pickerMonth    = dialogView.findViewById<NumberPicker>(R.id.pickerMonth)
+        val pickerYear     = dialogView.findViewById<NumberPicker>(R.id.pickerYear)
+        val etCash         = dialogView.findViewById<TextInputEditText>(R.id.etCashBalance)
+        val etAccount      = dialogView.findViewById<TextInputEditText>(R.id.etAccountBalance)
+        val tilCash        = dialogView.findViewById<TextInputLayout>(R.id.tilCashBalance)
+        val tilAccount     = dialogView.findViewById<TextInputLayout>(R.id.tilAccountBalance)
+        val tvCashNet      = dialogView.findViewById<TextView>(R.id.tvCashNet)
+        val tvCashFinal    = dialogView.findViewById<TextView>(R.id.tvCashFinal)
+        val tvAccountNet   = dialogView.findViewById<TextView>(R.id.tvAccountNet)
+        val tvAccountFinal = dialogView.findViewById<TextView>(R.id.tvAccountFinal)
 
-        // Match TextInputLayout stroke/hint color to current theme
-        val themeColor      = ThemeManager.getThemeColorInt()
-        val themeColorList  = ColorStateList.valueOf(themeColor)
-        val strokeColors    = ColorStateList(
+        val themeColor     = ThemeManager.getThemeColorInt()
+        val themeColorList = ColorStateList.valueOf(themeColor)
+        val strokeColors   = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_focused), intArrayOf()),
             intArrayOf(themeColor, android.graphics.Color.parseColor("#BDBDBD"))
         )
@@ -156,25 +162,99 @@ class MainActivity : AppCompatActivity() {
             wrapSelectorWheel = false
         }
 
-        // Load existing saved balance whenever month/year selection changes
+        val currency = SessionManager.getCurrency()
+        var cashNet  = 0L
+        var bankNet  = 0L
+        var cashWalletId: Long? = null
+        var bankWalletId: Long? = null
+
+        val colorGreen = android.graphics.Color.parseColor("#22CC00")
+        val colorRed   = android.graphics.Color.parseColor("#FF4444")
+        val colorText  = android.graphics.Color.parseColor("#212121")
+
+        fun updateFinalBalances() {
+            val cashOpening    = etCash.text.toString().toLongOrNull() ?: 0L
+            val accountOpening = etAccount.text.toString().toLongOrNull() ?: 0L
+            val cashFinal      = cashOpening + cashNet
+            val accountFinal   = accountOpening + bankNet
+            tvCashFinal.text = if (cashFinal < 0L) "-${formatVND(cashFinal, currency)}"
+                               else formatVND(cashFinal, currency)
+            tvCashFinal.setTextColor(if (cashFinal < 0L) colorRed else colorText)
+            tvAccountFinal.text = if (accountFinal < 0L) "-${formatVND(accountFinal, currency)}"
+                                  else formatVND(accountFinal, currency)
+            tvAccountFinal.setTextColor(if (accountFinal < 0L) colorRed else colorText)
+        }
+
         fun syncFields() {
             lifecycleScope.launch {
                 val userId = SessionManager.getCurrentUserId()
+                val month  = pickerMonth.value + 1
+                val year   = pickerYear.value
+                val db     = CashieDatabase.getInstance(applicationContext)
+
                 val entity = withContext(Dispatchers.IO) {
-                    CashieDatabase.getInstance(applicationContext)
-                        .monthlyBalanceDao()
-                        .getByMonthYear(userId, pickerMonth.value + 1, pickerYear.value)
+                    db.monthlyBalanceDao().getByMonthYear(userId, month, year)
                 }
-                etCash.setText(if ((entity?.cashBalance ?: 0L) == 0L) "" else entity!!.cashBalance.toString())
-                etAccount.setText(if ((entity?.accountBalance ?: 0L) == 0L) "" else entity!!.accountBalance.toString())
+
+                // Month range for transaction query
+                val cal = Calendar.getInstance()
+                cal.set(year, month - 1, 1, 0, 0, 0); cal.set(Calendar.MILLISECOND, 0)
+                val startMs = cal.timeInMillis
+                cal.set(year, month - 1, cal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
+                cal.set(Calendar.MILLISECOND, 999)
+                val endMs = cal.timeInMillis
+
+                cashNet = cashWalletId?.let {
+                    withContext(Dispatchers.IO) {
+                        db.transactionDao().getNetByWallet(userId, it, startMs, endMs).toLong()
+                    }
+                } ?: 0L
+
+                bankNet = bankWalletId?.let {
+                    withContext(Dispatchers.IO) {
+                        db.transactionDao().getNetByWallet(userId, it, startMs, endMs).toLong()
+                    }
+                } ?: 0L
+
+                tvCashNet.text = if (cashNet >= 0) "+${formatVND(cashNet, currency)}"
+                                 else "-${formatVND(-cashNet, currency)}"
+                tvCashNet.setTextColor(if (cashNet >= 0) colorGreen else colorRed)
+                tvAccountNet.text = if (bankNet >= 0) "+${formatVND(bankNet, currency)}"
+                                    else "-${formatVND(-bankNet, currency)}"
+                tvAccountNet.setTextColor(if (bankNet >= 0) colorGreen else colorRed)
+
+                val savedCash    = entity?.cashBalance    ?: 0L
+                val savedAccount = entity?.accountBalance ?: 0L
+                etCash.setText(if (savedCash == 0L) "" else savedCash.toString())
+                etAccount.setText(if (savedAccount == 0L) "" else savedAccount.toString())
+
+                updateFinalBalances()
             }
         }
 
-        syncFields()
+        val watcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) { updateFinalBalances() }
+        }
+        etCash.addTextChangedListener(watcher)
+        etAccount.addTextChangedListener(watcher)
+
+        // Load wallet IDs once, then run initial sync
+        lifecycleScope.launch {
+            val userId  = SessionManager.getCurrentUserId()
+            val wallets = withContext(Dispatchers.IO) {
+                CashieDatabase.getInstance(applicationContext).walletDao().getAllByUserOnce(userId)
+            }
+            cashWalletId = wallets.firstOrNull { it.type == "cash" }?.id
+            bankWalletId = wallets.firstOrNull { it.type == "bank" }?.id
+            syncFields()
+        }
+
         pickerMonth.setOnValueChangedListener { _, _, _ -> syncFields() }
         pickerYear.setOnValueChangedListener  { _, _, _ -> syncFields() }
 
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.edit_balance_title))
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok) { _, _ ->
@@ -204,6 +284,8 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(themeColor)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(themeColor)
     }
 
     // ── Theme ─────────────────────────────────────────────────────────────────

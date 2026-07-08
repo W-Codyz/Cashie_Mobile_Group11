@@ -93,6 +93,15 @@ interface TransactionDao {
     /** Cập nhật updated_at khi user chỉnh sửa giao dịch */
     @Query("UPDATE transactions SET amount = :amount, note = :note, transaction_date = :date, category_id = :categoryId, wallet_id = :walletId, updated_at = :updatedAt WHERE id = :id AND user_id = :userId")
     suspend fun updateTransaction(id: Long, userId: Long, amount: Double, note: String?, date: Long, categoryId: Long?, walletId: Long?, updatedAt: Long = System.currentTimeMillis())
+
+    /** Net (income - expense) của 1 ví trong khoảng thời gian */
+    @Query("""
+        SELECT COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END), 0)
+        FROM transactions
+        WHERE user_id = :userId AND wallet_id = :walletId
+          AND transaction_date BETWEEN :startMs AND :endMs
+    """)
+    suspend fun getNetByWallet(userId: Long, walletId: Long, startMs: Long, endMs: Long): Double
 }
 
 /** Data class phụ dùng cho query thống kê theo danh mục */

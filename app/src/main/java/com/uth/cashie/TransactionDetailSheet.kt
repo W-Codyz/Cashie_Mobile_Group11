@@ -93,6 +93,13 @@ class TransactionDetailSheet : BottomSheetDialogFragment() {
         binding.tvDetailDate.text = displayDate
         binding.tvDetailTime.text = tx.time
 
+        if (!tx.walletName.isNullOrBlank()) {
+            binding.layoutDetailWallet.visibility = View.VISIBLE
+            binding.tvDetailWallet.text = tx.walletName
+        } else {
+            binding.layoutDetailWallet.visibility = View.GONE
+        }
+
         if (tx.title.isNotBlank() && tx.title != tx.category) {
             binding.layoutDetailNote.visibility = View.VISIBLE
             binding.tvDetailNote.text = tx.title

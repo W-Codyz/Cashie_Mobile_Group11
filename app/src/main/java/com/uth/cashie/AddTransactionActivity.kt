@@ -7,14 +7,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.uth.cashie.adapter.EmojiCategoryAdapter
+import com.uth.cashie.adapter.WalletPickerAdapter
 import com.uth.cashie.data.TransactionRepository
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivityAddTransactionBinding
 import com.uth.cashie.model.EmojiCategory
 import com.uth.cashie.model.Transaction
+import com.uth.cashie.ThemeManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -170,20 +176,57 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun showWalletPickerDialog() {
         lifecycleScope.launch {
-            val db = CashieDatabase.getInstance(this@AddTransactionActivity)
-            val wallets = db.walletDao().getAllByUserOnce(SessionManager.getCurrentUserId())
-            val walletNames = wallets.map { it.name }.toTypedArray()
-            val currentSelectedIndex = wallets.indexOfFirst { it.id == selectedWalletId }
-            
-            androidx.appcompat.app.AlertDialog.Builder(this@AddTransactionActivity)
-                .setTitle("Chọn ví")
-                .setSingleChoiceItems(walletNames, if (currentSelectedIndex >= 0) currentSelectedIndex else 0) { dialog, which ->
-                    val selectedWallet = wallets[which]
-                    selectedWalletId = selectedWallet.id
-                    selectedWalletName = selectedWallet.name
-                    binding.tvSelectedWallet.text = selectedWalletName
-                    dialog.dismiss()
+            val db     = CashieDatabase.getInstance(this@AddTransactionActivity)
+            val userId = SessionManager.getCurrentUserId()
+            val wallets = withContext(Dispatchers.IO) { db.walletDao().getAllByUserOnce(userId) }
+
+            // Month range cho tháng hiện tại
+            val cal = Calendar.getInstance()
+            val year  = cal.get(Calendar.YEAR)
+            val month = cal.get(Calendar.MONTH) + 1
+            cal.set(year, month - 1, 1, 0, 0, 0); cal.set(Calendar.MILLISECOND, 0)
+            val startMs = cal.timeInMillis
+            cal.set(year, month - 1, cal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)
+            cal.set(Calendar.MILLISECOND, 999)
+            val endMs = cal.timeInMillis
+
+            val monthEntity = withContext(Dispatchers.IO) {
+                db.monthlyBalanceDao().getByMonthYear(userId, month, year)
+            }
+
+            val items = wallets.map { wallet ->
+                val opening = when (wallet.type) {
+                    "cash" -> monthEntity?.cashBalance    ?: 0L
+                    "bank" -> monthEntity?.accountBalance ?: 0L
+                    else   -> 0L
                 }
+                val net = withContext(Dispatchers.IO) {
+                    db.transactionDao().getNetByWallet(userId, wallet.id, startMs, endMs).toLong()
+                }
+                WalletPickerAdapter.WalletItem(wallet, opening + net)
+            }
+
+            // Tạo dialog trước để adapter có thể dismiss
+            var dialog: AlertDialog? = null
+
+            val rv = RecyclerView(this@AddTransactionActivity).apply {
+                layoutManager = LinearLayoutManager(this@AddTransactionActivity)
+                setPadding(40, 16, 40, 16)
+                clipToPadding = false
+            }
+
+            val adapter = WalletPickerAdapter(items, ThemeManager.getThemeColorInt()) { selected ->
+                selectedWalletId   = selected.wallet.id
+                selectedWalletName = selected.wallet.name
+                binding.tvSelectedWallet.text = selectedWalletName
+                dialog?.dismiss()
+            }
+            adapter.setSelectedId(selectedWalletId)
+            rv.adapter = adapter
+
+            dialog = AlertDialog.Builder(this@AddTransactionActivity)
+                .setTitle("Chọn ví")
+                .setView(rv)
                 .setNegativeButton("Hủy", null)
                 .show()
         }

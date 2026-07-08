@@ -69,6 +69,13 @@
     <string name="profile_menu_edit_info">Chỉnh sửa thông tin</string>
     <string name="profile_menu_change_password">Đổi mật khẩu</string>
     <string name="profile_menu_currency">Đơn vị tiền tệ</string>
+    <string name="profile_menu_converter">Chuyển tiền giữa ví</string>
+    <string name="transfer_label_from">Từ</string>
+    <string name="transfer_label_to">Đến</string>
+    <string name="transfer_hint_amount">Số tiền chuyển</string>
+    <string name="transfer_success">Đã chuyển tiền thành công</string>
+    <string name="transfer_error_amount">Vui lòng nhập số tiền hợp lệ</string>
+    <string name="transfer_error_insufficient">Số dư không đủ để chuyển</string>
     <string name="profile_menu_stats">Thống kê cá nhân</string>
     <string name="profile_menu_stats_soon">Sắp ra mắt</string>
     <string name="profile_menu_logout">Đăng xuất</string>
@@ -165,6 +172,9 @@
     <string name="label_cash_balance">Tiền mặt</string>
     <string name="label_account_balance">Tài khoản ngân hàng</string>
     <string name="hint_balance_amount">Nhập số tiền (VD: 5000000)</string>
+    <string name="hint_opening_balance">Số dư đầu kỳ</string>
+    <string name="label_transactions_month">Giao dịch trong tháng</string>
+    <string name="label_closing_balance">Số dư cuối kỳ</string>
     <string name="cd_edit_balance">Chỉnh sửa số dư</string>
     <string name="toast_balance_saved">Đã lưu số dư</string>
 

@@ -198,6 +198,34 @@
 
         </LinearLayout>
 
+        <!-- Wallet row -->
+        <LinearLayout
+            android:id="@+id/layoutDetailWallet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_wallet"
+                android:textSize="13sp"
+                android:textColor="@color/text_muted" />
+
+            <TextView
+                android:id="@+id/tvDetailWallet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
+
+        </LinearLayout>
+
         <!-- Note row (ẩn nếu trống) -->
         <LinearLayout
             android:id="@+id/layoutDetailNote"
