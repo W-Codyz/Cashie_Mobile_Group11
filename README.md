@@ -38,7 +38,17 @@
 
 ## 📸 Screenshots
 
-> *(Đang cập nhật/Updating)*
+<div align="center">
+
+| Trang chủ | Danh mục | Thống kê |
+|:---------:|:--------:|:--------:|
+| ![Trang chủ](images_app/trang_chu.jpg) | ![Danh mục](images_app/danh_muc.jpg) | ![Thống kê](images_app/thong_ke.jpg) |
+
+| Hồ sơ | Cài đặt | Điều hướng |
+|:-----:|:-------:|:----------:|
+| ![Hồ sơ](images_app/ho_so.jpg) | ![Cài đặt](images_app/cai_dat.jpg) | ![Điều hướng](images_app/dialog_nav.jpg) |
+
+</div>
 
 ---
 
