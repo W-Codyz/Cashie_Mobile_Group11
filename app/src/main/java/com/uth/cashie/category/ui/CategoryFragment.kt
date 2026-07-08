@@ -87,6 +87,24 @@ class CategoryFragment : Fragment() {
         binding.tabLayout.setTabTextColors(Color.parseColor("#777777"), Color.WHITE)
         binding.fabAddCategory.backgroundTintList =
             android.content.res.ColorStateList.valueOf(colorInt)
+
+        // Tô màu nền card tab theo theme (màu container nhạt của theme hiện tại)
+        binding.cardTabLayout.setCardBackgroundColor(ThemeManager.getSolidContainerColor())
+
+        // Re-tô màu active tab theo theme hiện tại
+        binding.tabLayout.post {
+            val strip = binding.tabLayout.getChildAt(0) as? ViewGroup ?: return@post
+            val selectedPos = binding.tabLayout.selectedTabPosition
+            for (i in 0 until strip.childCount) {
+                strip.getChildAt(i)?.background =
+                    if (i == selectedPos) tabActiveBg() else tabInactiveBg()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        applyTheme()
     }
 
     private fun tabActiveBg(): GradientDrawable {
