@@ -188,6 +188,7 @@ class ProfileActivity : BaseActivity() {
 
         binding.menuStats.setOnClickListener {
             startActivity(Intent(this, StatsActivity::class.java))
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         }
 
         binding.menuLogout.setOnClickListener {

@@ -485,4 +485,9 @@ class StatsActivity : BaseActivity() {
         }
         startActivity(Intent.createChooser(shareIntent, "Chia sẻ báo cáo"))
     }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+    }
 }
