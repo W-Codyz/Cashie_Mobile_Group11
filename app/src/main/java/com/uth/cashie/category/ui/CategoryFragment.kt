@@ -201,15 +201,15 @@ class CategoryFragment : Fragment() {
     // ===================== XÓA DANH MỤC =====================
     private fun showDeleteDialog(category: com.uth.cashie.category.model.Category) {
         if (category.isDefault) {
-            Toast.makeText(requireContext(), "Đây là danh mục mặc định, không thể xóa được", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.toast_cannot_delete_default_category, Toast.LENGTH_SHORT).show()
             return
         }
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Xóa danh mục")
-            .setMessage("Bạn có chắc muốn xóa danh mục \"${category.name}\"?")
-            .setPositiveButton("Xóa") { _, _ -> viewModel.deleteCategory(category.id.toLong()) }
-            .setNegativeButton("Hủy", null)
+            .setTitle(R.string.confirm_delete_category_title)
+            .setMessage(getString(R.string.confirm_delete_category_msg, category.name))
+            .setPositiveButton(R.string.btn_confirm) { _, _ -> viewModel.deleteCategory(category.id.toLong()) }
+            .setNegativeButton(R.string.btn_cancel, null)
             .show()
         val themeColor = ThemeManager.getThemeColorInt()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(themeColor)

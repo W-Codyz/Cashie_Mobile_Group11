@@ -137,6 +137,9 @@
 
     <!-- ====== Category Screen ====== -->
     <string name="add_category_title">Thêm danh mục</string>
+    <string name="confirm_delete_category_title">Xóa danh mục</string>
+    <string name="confirm_delete_category_msg">Bạn có chắc muốn xóa danh mục \"%s\"?</string>
+    <string name="toast_cannot_delete_default_category">Đây là danh mục mặc định, không thể xóa được</string>
 
     <!-- ====== Add / Edit Transaction ====== -->
     <string name="add_transaction_title">Thêm giao dịch</string>

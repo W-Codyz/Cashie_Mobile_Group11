@@ -137,6 +137,9 @@
 
     <!-- ====== Category Screen ====== -->
     <string name="add_category_title">Add Category</string>
+    <string name="confirm_delete_category_title">Delete Category</string>
+    <string name="confirm_delete_category_msg">Are you sure you want to delete the category \"%s\"?</string>
+    <string name="toast_cannot_delete_default_category">This is a default category and cannot be deleted</string>
 
     <!-- ====== Add / Edit Transaction ====== -->
     <string name="add_transaction_title">Add Transaction</string>
