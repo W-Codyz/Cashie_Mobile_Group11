@@ -29,10 +29,8 @@ class CategoryViewModel(
         _currentTab.value = type
     }
 
-    fun addCategory(category: com.uth.cashie.database.entity.CategoryEntity) {
-        viewModelScope.launch {
-            repository.insertCategory(category)
-        }
+    suspend fun addCategory(category: com.uth.cashie.database.entity.CategoryEntity): Long {
+        return repository.insertCategory(category)
     }
 
     fun deleteCategory(id: Long) {

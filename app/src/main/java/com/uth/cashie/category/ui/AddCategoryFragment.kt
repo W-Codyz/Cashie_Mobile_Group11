@@ -23,8 +23,7 @@ import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
 import com.uth.cashie.database.entity.CategoryEntity
 import com.uth.cashie.model.EmojiCategory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 class AddCategoryFragment : Fragment() {
@@ -221,7 +220,7 @@ class AddCategoryFragment : Fragment() {
             isDefault = 0  // Luôn là 0 khi người dùng tạo
         )
 
-        CoroutineScope(Dispatchers.Main).launch {
+        lifecycleScope.launch {
             try {
                 viewModel.addCategory(entity)
                 Toast.makeText(requireContext(), "Thêm danh mục thành công", Toast.LENGTH_SHORT).show()

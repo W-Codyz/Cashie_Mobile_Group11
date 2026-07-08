@@ -1,5 +1,7 @@
 package com.uth.cashie.category.ui
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -80,14 +82,28 @@ class CategoryFragment : Fragment() {
 
     private fun applyTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
-        // Pill tabs: ẩn indicator, text trắng khi selected
-        binding.tabLayout.setSelectedTabIndicatorColor(android.graphics.Color.TRANSPARENT)
-        binding.tabLayout.setTabTextColors(
-            android.graphics.Color.parseColor("#777777"),
-            android.graphics.Color.WHITE
-        )
+        binding.tabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT)
+        binding.tabLayout.setTabTextColors(Color.parseColor("#777777"), Color.WHITE)
         binding.fabAddCategory.backgroundTintList =
             android.content.res.ColorStateList.valueOf(colorInt)
+    }
+
+    private fun tabActiveBg(): GradientDrawable {
+        val cornerRadius = 10f * resources.displayMetrics.density
+        return GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(ThemeManager.getThemeColorInt())
+            this.cornerRadius = cornerRadius
+        }
+    }
+
+    private fun tabInactiveBg(): GradientDrawable {
+        val cornerRadius = 10f * resources.displayMetrics.density
+        return GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            setColor(Color.TRANSPARENT)
+            this.cornerRadius = cornerRadius
+        }
     }
 
     private fun setupRecyclerView() {
@@ -180,12 +196,25 @@ class CategoryFragment : Fragment() {
 
     // ===================== TAB LAYOUT =====================
     private fun setupTabLayout() {
+        // Áp dụng background động theo theme sau khi tabs được inflate
+        binding.tabLayout.post {
+            val strip = binding.tabLayout.getChildAt(0) as? ViewGroup ?: return@post
+            for (i in 0 until strip.childCount) {
+                strip.getChildAt(i)?.background = if (i == 0) tabActiveBg() else tabInactiveBg()
+            }
+        }
+
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                val strip = binding.tabLayout.getChildAt(0) as? ViewGroup ?: return
+                strip.getChildAt(tab?.position ?: 0)?.background = tabActiveBg()
                 val type = if (tab?.position == 0) "expense" else "income"
                 viewModel.switchTab(type)
             }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                val strip = binding.tabLayout.getChildAt(0) as? ViewGroup ?: return
+                strip.getChildAt(tab?.position ?: 0)?.background = tabInactiveBg()
+            }
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
