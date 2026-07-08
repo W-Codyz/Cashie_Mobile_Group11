@@ -1,7 +1,12 @@
 package com.uth.cashie
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -75,12 +80,24 @@ class LoginActivity : BaseActivity() {
     private fun applyTheme() {
         val colorInt = ThemeManager.getThemeColorInt()
         binding.tvAppName.setTextColor(colorInt)
-        binding.tvRegister.setTextColor(colorInt)
         binding.cbRemember.setTextColor(colorInt)
         binding.cbRemember.buttonTintList = android.content.res.ColorStateList.valueOf(colorInt)
         ThemeManager.applyToButton(binding.btnLogin)
         ThemeManager.applyToTextInput(binding.tilUsername)
         ThemeManager.applyToTextInput(binding.tilPassword)
+
+        val fullText = getString(R.string.login_register_prompt)
+        val registerWord = "Đăng ký"
+        val start = fullText.indexOf(registerWord)
+        if (start >= 0) {
+            val spannable = SpannableString(fullText)
+            val end = start + registerWord.length
+            spannable.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(colorInt), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            binding.tvRegister.text = spannable
+        } else {
+            binding.tvRegister.setTextColor(colorInt)
+        }
     }
 
     private fun attemptLogin() {

@@ -30,6 +30,11 @@
     <!-- Month/year display format -->
     <string name="month_year_format">%1$s %2$d</string>
 
+    <!-- ====== Login Screen ====== -->
+    <string name="login_remember">Remember me</string>
+    <string name="btn_login">Log in</string>
+    <string name="login_register_prompt">Don\'t have an account? Sign up</string>
+
     <!-- ====== Register Screen ====== -->
     <string name="register_title">Create Account</string>
     <string name="register_app_tagline">Smart personal finance</string>
