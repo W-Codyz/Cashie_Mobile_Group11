@@ -58,7 +58,7 @@
     <!-- ====== Profile Screen ====== -->
     <string name="profile_title">Hồ sơ</string>
     <string name="profile_name">Nguyễn Văn A</string>
-    <string name="profile_username">@nguyenvana</string>
+    <string name="profile_username">nguyenvana</string>
     <string name="profile_currency_badge">VND</string>
     <string name="profile_stat_income_label">Thu nhập</string>
     <string name="profile_stat_expense_label">Chi tiêu</string>
@@ -142,7 +142,7 @@
     <string name="label_date">Ngày giao dịch</string>
     <string name="label_wallet">Ví / Tài khoản</string>
     <string name="label_note">Ghi chú / Mô tả</string>
-    <string name="hint_note">Nhập mô tả giao dịch...</string>
+    <string name="hint_note">Nhập mô tả giao dịch</string>
     <string name="toggle_income">↑  Thu nhập</string>
     <string name="toggle_expense">↓  Chi tiêu</string>
     <string name="error_amount_empty">Vui lòng nhập số tiền</string>
