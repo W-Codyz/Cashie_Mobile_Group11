@@ -81,7 +81,7 @@ class TransactionDetailSheet : BottomSheetDialogFragment() {
 
         val sign  = if (tx.isIncome) "+" else "-"
         val color = if (tx.isIncome) Color.parseColor("#22CC00") else Color.parseColor("#FF4444")
-        binding.tvDetailAmount.text = "$sign${formatVND(tx.amount)}"
+        binding.tvDetailAmount.text = "$sign${formatVND(Math.abs(tx.amount))}"
         binding.tvDetailAmount.setTextColor(color)
 
         binding.tvDetailTitle.text    = tx.title

@@ -67,7 +67,7 @@ class TransactionAdapter(
             val incomeColor = ThemeManager.getThemeColorInt()
             val color      = if (group.dayNet >= 0) incomeColor else Color.parseColor("#FF4444")
             val currency = SessionManager.getCurrency()
-            binding.tvDayNet.text = "$sign${formatVND(group.dayNet, currency)}"
+            binding.tvDayNet.text = "$sign${formatVND(Math.abs(group.dayNet), currency)}"
             binding.tvDayNet.setTextColor(color)
         }
     }
@@ -97,7 +97,7 @@ class TransactionAdapter(
             val incomeColor = ThemeManager.getThemeColorInt()
             val color       = if (transaction.isIncome) incomeColor else Color.parseColor("#FF4444")
             val currency = SessionManager.getCurrency()
-            binding.tvAmount.text = "$sign${formatVND(transaction.amount, currency)}"
+            binding.tvAmount.text = "$sign${formatVND(Math.abs(transaction.amount), currency)}"
             binding.tvAmount.setTextColor(color)
 
             binding.root.setOnClickListener { onItemClick?.invoke(transaction) }
