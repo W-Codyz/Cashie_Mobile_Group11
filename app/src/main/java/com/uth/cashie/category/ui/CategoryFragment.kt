@@ -187,12 +187,15 @@ class CategoryFragment : Fragment() {
             return
         }
 
-        AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Xóa danh mục")
             .setMessage("Bạn có chắc muốn xóa danh mục \"${category.name}\"?")
             .setPositiveButton("Xóa") { _, _ -> viewModel.deleteCategory(category.id.toLong()) }
             .setNegativeButton("Hủy", null)
             .show()
+        val themeColor = ThemeManager.getThemeColorInt()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(themeColor)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(themeColor)
     }
 
     // ===================== TAB LAYOUT =====================

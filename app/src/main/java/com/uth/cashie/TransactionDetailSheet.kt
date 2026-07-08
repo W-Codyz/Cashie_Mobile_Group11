@@ -3,6 +3,7 @@ package com.uth.cashie
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import com.uth.cashie.ThemeManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,7 +110,7 @@ class TransactionDetailSheet : BottomSheetDialogFragment() {
     }
 
     private fun confirmDelete(tx: Transaction) {
-        AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.confirm_delete_title))
             .setMessage(getString(R.string.confirm_delete_msg))
             .setPositiveButton(getString(R.string.btn_confirm)) { _, _ ->
@@ -121,6 +122,9 @@ class TransactionDetailSheet : BottomSheetDialogFragment() {
             }
             .setNegativeButton(getString(R.string.btn_cancel), null)
             .show()
+        val themeColor = ThemeManager.getThemeColorInt()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(themeColor)
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(themeColor)
     }
 
     override fun onDestroyView() {
