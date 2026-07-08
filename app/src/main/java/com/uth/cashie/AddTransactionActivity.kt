@@ -54,7 +54,7 @@ class AddTransactionActivity : AppCompatActivity() {
             loadTransactionForEdit()
         } else {
             updateDateDisplay(selectedDateMs)
-            switchType(income = true, animate = false)
+            switchType(income = false, animate = false)
         }
     }
 

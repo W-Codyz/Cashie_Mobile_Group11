@@ -113,30 +113,15 @@
                         android:textColor="@color/text_muted"
                         android:layout_marginBottom="10dp" />
 
-                    <!-- Toggle pill: Thu / Chi -->
+                    <!-- Toggle pill: Chi / Thu -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
-                        android:background="@drawable/bg_balance_card"
+                        android:background="@drawable/bg_toggle_container"
                         android:orientation="horizontal"
                         android:padding="4dp">
 
-                        <!-- Thu nhập — trạng thái active mặc định -->
-                        <TextView
-                            android:id="@+id/btnToggleIncome"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="↑  Thu nhập"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/white"
-                            android:background="@drawable/bg_button_primary"
-                            android:clickable="true"
-                            android:focusable="true" />
-
-                        <!-- Chi tiêu -->
+                        <!-- Chi tiêu — trạng thái active mặc định -->
                         <TextView
                             android:id="@+id/btnToggleExpense"
                             android:layout_width="0dp"
@@ -146,7 +131,22 @@
                             android:text="↓  Chi tiêu"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="@android:color/holo_red_light"
+                            android:textColor="@android:color/white"
+                            android:background="@drawable/bg_button_primary"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- Thu nhập -->
+                        <TextView
+                            android:id="@+id/btnToggleIncome"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="↑  Thu nhập"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_muted"
                             android:clickable="true"
                             android:focusable="true" />
 

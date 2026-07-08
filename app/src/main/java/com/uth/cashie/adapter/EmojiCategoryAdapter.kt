@@ -48,15 +48,15 @@ class EmojiCategoryAdapter(
             binding.tvCategoryEmoji.text = cat.emoji
             binding.tvCategoryName.text = cat.name
 
-            // Màu nền vòng tròn: tint nhẹ từ màu chủ đề, border khi selected
             val base = ThemeManager.getThemeColorInt()
             val bg = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
                 if (isSelected) {
-                    setColor(Color.argb(40, Color.red(base), Color.green(base), Color.blue(base)))
-                    setStroke(4, base)
+                    // Nền đặc màu theme khi được chọn — nổi bật rõ ràng
+                    setColor(base)
                 } else {
-                    setColor(Color.argb(20, Color.red(base), Color.green(base), Color.blue(base)))
+                    // Nền xám nhạt trung tính khi chưa chọn
+                    setColor(Color.argb(30, 0, 0, 0))
                 }
             }
             binding.tvCategoryEmoji.background = bg
