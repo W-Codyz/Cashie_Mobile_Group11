@@ -81,12 +81,11 @@ class ProfileActivity : BaseActivity() {
         binding.ivAvatar.background = avatarBg
 
         // Avatar icon tint — chỉ áp dụng khi chưa có ảnh thật
-        // (khi có ảnh thật, imageTintList đã được set null trong loadProfile())
-        if (binding.ivAvatar.imageTintList != null) {
-            binding.ivAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
-            binding.ivAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
-            binding.ivAvatar.setPadding(18, 18, 18, 18)
-        }
+        // loadProfile() sẽ xử lý reset tint nếu có ảnh
+        binding.ivAvatar.backgroundTintList = android.content.res.ColorStateList.valueOf(colorInt)
+        binding.ivAvatar.imageTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+        binding.ivAvatar.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+        binding.ivAvatar.setPadding(18, 18, 18, 18)
 
         // Income stat value — dùng màu theme
         binding.tvStatIncomeValue.setTextColor(ThemeManager.getThemeColorInt())
