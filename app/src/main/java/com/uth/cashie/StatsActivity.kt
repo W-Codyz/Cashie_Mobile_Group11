@@ -37,7 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class StatsActivity : AppCompatActivity() {
+class StatsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityStatsBinding
     private val viewModel: StatsViewModel by viewModels()

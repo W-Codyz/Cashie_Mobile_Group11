@@ -1,7 +1,6 @@
 package com.uth.cashie
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -12,17 +11,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.databinding.ActivitySettingBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import com.uth.cashie.database.SessionManager
 
-class SettingActivity : AppCompatActivity() {
+class SettingActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySettingBinding
     private val db by lazy { CashieDatabase.getInstance(this) }
@@ -282,16 +279,30 @@ class SettingActivity : AppCompatActivity() {
                 .setTitle(getString(R.string.setting_language))
                 .setSingleChoiceItems(options, checkedItem) { dialog, which ->
                     val lang = if (which == 1) "en" else "vi"
+                    dialog.dismiss()
                     ThemeManager.setLanguage(lang)
                     updateLanguageLabel(lang)
-                    applyLocale(lang)
 
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        db.appSettingsDao().updateLanguage(userId, lang)
+                    lifecycleScope.launch {
+                        try {
+                            withContext(Dispatchers.IO) {
+                                db.appSettingsDao().updateLanguage(userId, lang)
+                            }
+                            startActivity(
+                                Intent(this@SettingActivity, MainActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                }
+                            )
+                        } catch (e: Exception) {
+                            ThemeManager.setLanguage(currentLang)
+                            updateLanguageLabel(currentLang)
+                            Toast.makeText(
+                                this@SettingActivity,
+                                getString(R.string.toast_error_save_settings),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-
-                    dialog.dismiss()
-                    Toast.makeText(this, getString(R.string.toast_language_applied), Toast.LENGTH_LONG).show()
                 }
                 .show()
         }
@@ -299,18 +310,6 @@ class SettingActivity : AppCompatActivity() {
 
     private fun updateLanguageLabel(lang: String) {
         binding.tvCurrentLanguage.text = if (lang == "en") "EN" else "VI"
-    }
-
-    /**
-     * Áp dụng locale ngay lập tức cho activity hiện tại.
-     * App cần restart để tất cả activity cập nhật ngôn ngữ.
-     */
-    private fun applyLocale(lang: String) {
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(resources.configuration)
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
     }
 
     // ── Đăng xuất ─────────────────────────────────────────────────────────────

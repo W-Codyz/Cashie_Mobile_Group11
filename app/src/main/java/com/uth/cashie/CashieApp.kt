@@ -1,6 +1,7 @@
 package com.uth.cashie
 
 import android.app.Application
+import android.content.Context
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
 
@@ -8,6 +9,10 @@ import com.uth.cashie.database.SessionManager
  * Application class – khởi tạo các singleton khi app khởi động.
  */
 class CashieApp : Application() {
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(ThemeManager.wrapContext(base))
+    }
 
     override fun onCreate() {
         super.onCreate()

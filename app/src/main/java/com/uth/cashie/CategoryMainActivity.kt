@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.uth.cashie.databinding.ActivityCategoryMainBinding
 
-class CategoryMainActivity : AppCompatActivity() {
+class CategoryMainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCategoryMainBinding
 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.uth.cashie.database.SessionManager
 
-class ChangePasswordActivity : AppCompatActivity() {
+class ChangePasswordActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChangePasswordBinding
     private val db     by lazy { CashieDatabase.getInstance(this) }

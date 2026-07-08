@@ -1,11 +1,9 @@
 package com.uth.cashie
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
@@ -15,10 +13,8 @@ import com.uth.cashie.database.util.PasswordUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Locale
-import androidx.recyclerview.widget.RecyclerView
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val db by lazy { CashieDatabase.getInstance(this) }
@@ -157,10 +153,9 @@ class LoginActivity : AppCompatActivity() {
             settings?.let {
                 ThemeManager.setThemeColor(it.themeColor)
                 ThemeManager.setLanguage(it.language)
-                applyLocale(it.language)
             }
 
-            Toast.makeText(this@LoginActivity, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@LoginActivity, getString(R.string.toast_login_success), Toast.LENGTH_SHORT).show()
             goToMain()
         }
     }
@@ -172,14 +167,5 @@ class LoginActivity : AppCompatActivity() {
             }
         )
         finish()
-    }
-
-    private fun applyLocale(lang: String) {
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        val config = Configuration(resources.configuration)
-        config.setLocale(locale)
-        @Suppress("DEPRECATION")
-        resources.updateConfiguration(config, resources.displayMetrics)
     }
 }

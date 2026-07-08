@@ -9,7 +9,7 @@ import com.uth.cashie.database.SessionManager
 import com.uth.cashie.databinding.ActivitySplashBinding
 
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySplashBinding
 

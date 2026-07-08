@@ -19,7 +19,7 @@ import java.io.File
 import java.io.FileOutputStream
 import com.uth.cashie.database.SessionManager
 
-class EditProfileActivity : AppCompatActivity() {
+class EditProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityEditProfileBinding
     private val db     by lazy { CashieDatabase.getInstance(this) }

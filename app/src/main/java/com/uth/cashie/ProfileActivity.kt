@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileBinding
     private val db by lazy { CashieDatabase.getInstance(this) }

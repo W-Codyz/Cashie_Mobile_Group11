@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.uth.cashie.databinding.ActivityAboutBinding
 import com.uth.cashie.databinding.ItemAboutMemberBinding
 
-class AboutActivity : AppCompatActivity() {
+class AboutActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAboutBinding
 

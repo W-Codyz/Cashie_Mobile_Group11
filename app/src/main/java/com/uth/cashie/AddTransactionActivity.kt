@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddTransactionActivity : AppCompatActivity() {
+class AddTransactionActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAddTransactionBinding
     private val categoryAdapter = EmojiCategoryAdapter { cat -> selectedCategory = cat }

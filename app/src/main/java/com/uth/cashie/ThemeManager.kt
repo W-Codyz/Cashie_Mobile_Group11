@@ -2,10 +2,12 @@ package com.uth.cashie
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import com.google.android.material.appbar.AppBarLayout
+import java.util.Locale
 
 /**
  * Quản lý màu chủ đề và ngôn ngữ của app.
@@ -42,6 +44,26 @@ object ThemeManager {
     fun init(context: Context) {
         prefs = context.applicationContext
             .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+    }
+
+    private fun getPrefs(context: Context): SharedPreferences {
+        if (!::prefs.isInitialized) {
+            prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        }
+        return prefs
+    }
+
+    /**
+     * Bọc context với locale đã lưu. Gọi trong attachBaseContext() của mọi Activity/Application
+     * để locale được áp dụng đúng ngay từ đầu, không cần restart.
+     */
+    fun wrapContext(context: Context): Context {
+        val lang = getPrefs(context).getString(KEY_LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(locale)
+        return context.createConfigurationContext(config)
     }
 
     // ── Màu ──────────────────────────────────────────────────────────────────

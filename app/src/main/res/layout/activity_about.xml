@@ -30,7 +30,7 @@
                 android:layout_height="44dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_arrow_left"
-                android:contentDescription="Quay lại" />
+                android:contentDescription="@string/cd_back" />
 
             <TextView
                 android:id="@+id/tvAboutTitle"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Thông tin ứng dụng"
+                android:text="@string/about_title"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
@@ -111,7 +111,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Quản lý tài chính cá nhân thông minh"
+                    android:text="@string/about_tagline"
                     android:textSize="13sp"
                     android:textColor="#DDFFFFFF" />
 
@@ -121,7 +121,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="  📚  Đồ án Lập trình Thiết bị di động  "
+                    android:text="@string/about_badge"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#22CC00"
@@ -179,7 +179,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thông tin môn học"
+                            android:text="@string/about_section_course"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />
@@ -189,17 +189,17 @@
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:layout_marginBottom="10dp">
                         <TextView android:layout_width="110dp" android:layout_height="wrap_content"
-                            android:text="Môn học" android:textSize="13sp" android:textColor="@color/text_muted" />
+                            android:text="@string/about_label_subject" android:textSize="13sp" android:textColor="@color/text_muted" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Lập trình Thiết bị di động" android:textSize="13sp"
+                            android:text="@string/about_value_subject" android:textSize="13sp"
                             android:textStyle="bold" android:textColor="@color/text_primary" />
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:layout_marginBottom="10dp">
                         <TextView android:layout_width="110dp" android:layout_height="wrap_content"
-                            android:text="Giảng viên" android:textSize="13sp" android:textColor="@color/text_muted" />
+                            android:text="@string/about_label_instructor" android:textSize="13sp" android:textColor="@color/text_muted" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="ThS. Huỳnh Thanh Việt" android:textSize="13sp"
@@ -209,22 +209,22 @@
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal" android:layout_marginBottom="10dp">
                         <TextView android:layout_width="110dp" android:layout_height="wrap_content"
-                            android:text="Trường" android:textSize="13sp" android:textColor="@color/text_muted" />
+                            android:text="@string/about_label_university" android:textSize="13sp" android:textColor="@color/text_muted" />
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="ĐH Giao thông vân tải TP.HCM" android:textSize="13sp"
+                            android:text="@string/about_value_university" android:textSize="13sp"
                             android:textStyle="bold" android:textColor="@color/text_primary" />
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView android:layout_width="110dp" android:layout_height="wrap_content"
-                            android:text="Nhóm" android:textSize="13sp" android:textColor="@color/text_muted" />
+                            android:text="@string/about_label_group" android:textSize="13sp" android:textColor="@color/text_muted" />
                         <TextView
                             android:id="@+id/tvAboutGroupName"
                             android:layout_width="0dp" android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Nhóm 11" android:textSize="13sp"
+                            android:text="@string/about_value_group" android:textSize="13sp"
                             android:textStyle="bold" android:textColor="@color/green_primary" />
                     </LinearLayout>
 
@@ -277,7 +277,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thành viên Nhóm 11"
+                            android:text="@string/about_section_members"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary" />

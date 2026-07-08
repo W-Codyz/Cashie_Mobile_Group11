@@ -34,7 +34,7 @@
                 android:layout_height="44dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_arrow_left"
-                android:contentDescription="Quay lại" />
+                android:contentDescription="@string/cd_back" />
 
             <TextView
                 android:id="@+id/tvToolbarTitle"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="4dp"
-                android:text="Thêm giao dịch"
+                android:text="@string/add_transaction_title"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary" />
@@ -51,7 +51,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lưu"
+                android:text="@string/add_transaction_save"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
@@ -108,7 +108,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loại giao dịch"
+                        android:text="@string/add_transaction_type_label"
                         android:textSize="12sp"
                         android:textColor="@color/text_muted"
                         android:layout_marginBottom="10dp" />
@@ -128,7 +128,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="↓  Chi tiêu"
+                            android:text="@string/add_transaction_type_expense"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white"
@@ -143,7 +143,7 @@
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="↑  Thu nhập"
+                            android:text="@string/add_transaction_type_income"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_muted"
@@ -174,7 +174,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Số tiền *"
+                        android:text="@string/add_transaction_amount_label"
                         android:textSize="12sp"
                         android:textColor="@color/text_muted"
                         android:layout_marginBottom="8dp" />
@@ -245,7 +245,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Danh mục *"
+                            android:text="@string/add_transaction_category_label"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted" />
 
@@ -292,7 +292,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_edit"
-                        android:contentDescription="Chọn ngày"
+                        android:contentDescription="@string/cd_pick_date"
                         android:layout_marginEnd="12dp" />
 
                     <LinearLayout
@@ -304,7 +304,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ngày giao dịch"
+                            android:text="@string/add_transaction_date_label"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted" />
 
@@ -324,7 +324,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_arrow_right"
-                        android:contentDescription="Chọn ngày" />
+                        android:contentDescription="@string/cd_pick_date" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -355,7 +355,7 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_wallet"
-                        android:contentDescription="Ví"
+                        android:contentDescription="@string/cd_wallet"
                         android:layout_marginEnd="12dp" />
 
                     <LinearLayout
@@ -367,7 +367,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ví / Tài khoản"
+                            android:text="@string/add_transaction_wallet_label"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted" />
 
@@ -387,7 +387,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_arrow_right"
-                        android:contentDescription="Chọn ví" />
+                        android:contentDescription="@string/cd_pick_wallet" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -421,12 +421,12 @@
                             android:layout_height="16dp"
                             android:src="@drawable/ic_edit"
                             android:layout_marginEnd="6dp"
-                            android:contentDescription="Ghi chú" />
+                            android:contentDescription="@string/add_transaction_note_label" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ghi chú"
+                            android:text="@string/add_transaction_note_label"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted" />
 
@@ -436,7 +436,7 @@
                         android:id="@+id/etNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Thêm ghi chú cho giao dịch..."
+                        android:hint="@string/add_transaction_note_hint"
                         android:textSize="14sp"
                         android:textColor="@android:color/black"
                         android:background="@android:color/transparent"
@@ -455,7 +455,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="24dp"
-                android:text="Lưu giao dịch"
+                android:text="@string/add_transaction_save_btn"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"

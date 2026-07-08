@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SetupActivity : AppCompatActivity() {
+class SetupActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySetupBinding
     private val db     by lazy { CashieDatabase.getInstance(this) }

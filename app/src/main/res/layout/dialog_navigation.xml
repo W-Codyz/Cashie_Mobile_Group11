@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Quản lý tài chính cá nhân"
+            android:text="@string/nav_subtitle"
             android:textSize="13sp"
             android:textColor="#DDFFFFFF" />
 
@@ -93,7 +93,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_home"
                         android:tint="#22CC00"
-                        android:contentDescription="Giao dịch" />
+                        android:contentDescription="@string/cd_transactions" />
                 </FrameLayout>
 
                 <TextView
@@ -101,7 +101,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Quản lý giao dịch"
+                    android:text="@string/nav_transactions"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary"
                     android:textStyle="bold" />
@@ -141,7 +141,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_category"
                         android:tint="#FF8C00"
-                        android:contentDescription="Danh mục" />
+                        android:contentDescription="@string/cd_categories" />
                 </FrameLayout>
 
                 <TextView
@@ -149,7 +149,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Quản lý danh mục"
+                    android:text="@string/nav_categories"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary" />
 
@@ -187,7 +187,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_bar_chart"
                         android:tint="#2196F3"
-                        android:contentDescription="Thống kê" />
+                        android:contentDescription="@string/cd_stats" />
                 </FrameLayout>
 
                 <TextView
@@ -195,7 +195,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Thống kê"
+                    android:text="@string/nav_stats"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary" />
 
@@ -233,7 +233,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_person"
                         android:tint="#9C27B0"
-                        android:contentDescription="Hồ sơ" />
+                        android:contentDescription="@string/cd_profile" />
                 </FrameLayout>
 
                 <TextView
@@ -241,7 +241,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Hồ sơ"
+                    android:text="@string/nav_profile"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary" />
 
@@ -279,7 +279,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_settings"
                         android:tint="#607D8B"
-                        android:contentDescription="Cài đặt" />
+                        android:contentDescription="@string/cd_settings" />
                 </FrameLayout>
 
                 <TextView
@@ -287,7 +287,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Cài đặt"
+                    android:text="@string/nav_settings"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary" />
 
@@ -335,14 +335,14 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_info"
                         android:tint="#00BCD4"
-                        android:contentDescription="Thông tin" />
+                        android:contentDescription="@string/cd_about" />
                 </FrameLayout>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Thông tin ứng dụng"
+                    android:text="@string/nav_about"
                     android:textSize="15sp"
                     android:textColor="@color/text_primary" />
 
