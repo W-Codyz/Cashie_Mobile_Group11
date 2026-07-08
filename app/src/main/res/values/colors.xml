@@ -15,10 +15,12 @@
     <color name="divider">#E0E0E0</color>
     <color name="text_primary">#212121</color>
     <color name="text_muted">#757575</color>
+    <color name="text_hint">#5C5C5C</color>
 
     <!-- ===== MÀU CHỦ ĐẠO (XANH LÁ) ===== -->
     <color name="green_primary">#22CC00</color>
     <color name="green_dark">#1AA300</color>
+    <color name="green_accessible">#1C8200</color>
     <color name="green_mid">#2EDD00</color>
     <color name="green_light">#55D938</color>
     <color name="green_container">#DCF7D8</color>

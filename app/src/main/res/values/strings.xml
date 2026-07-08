@@ -30,6 +30,11 @@
     <!-- Month/year display format: e.g. "Tháng 6, 2026" -->
     <string name="month_year_format">%1$s, %2$d</string>
 
+    <!-- ====== Login Screen ====== -->
+    <string name="login_remember">Nhớ thông tin đăng nhập</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="login_register_prompt">Chưa có tài khoản? Đăng ký</string>
+
     <!-- ====== Register Screen ====== -->
     <string name="register_title">Tạo tài khoản</string>
     <string name="register_app_tagline">Quản lý tài chính thông minh</string>
