@@ -66,6 +66,12 @@ class StatsViewModel : ViewModel() {
         loadStats()
     }
 
+    fun setMonth(month: Int, year: Int) {
+        _month.value = month
+        _year.value  = year
+        loadStats()
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // Private
     // ─────────────────────────────────────────────────────────────────────────

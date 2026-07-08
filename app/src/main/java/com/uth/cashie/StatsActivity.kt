@@ -149,6 +149,42 @@ class StatsActivity : AppCompatActivity() {
     private fun setupMonthNavigation() {
         binding.btnPrevMonth.setOnClickListener { viewModel.prevMonth() }
         binding.btnNextMonth.setOnClickListener { viewModel.nextMonth() }
+        binding.tvCurrentMonth.setOnClickListener { showMonthPickerDialog() }
+    }
+
+    private fun showMonthPickerDialog() {
+        val monthNames = resources.getStringArray(R.array.months)
+        val currentMonth = viewModel.month.value ?: return
+        val currentYear  = viewModel.year.value  ?: return
+
+        val monthPicker = android.widget.NumberPicker(this).apply {
+            minValue = 0; maxValue = 11
+            displayedValues = monthNames
+            value = currentMonth - 1
+            wrapSelectorWheel = false
+        }
+
+        val yearPicker = android.widget.NumberPicker(this).apply {
+            minValue = 2020; maxValue = 2030
+            value = currentYear
+            wrapSelectorWheel = false
+        }
+
+        val row = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER
+            addView(monthPicker)
+            addView(yearPicker)
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.pick_month_title))
+            .setView(row)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                viewModel.setMonth(monthPicker.value + 1, yearPicker.value)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun setupBottomNav() {
