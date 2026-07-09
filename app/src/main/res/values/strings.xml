@@ -100,6 +100,22 @@
     <string name="toast_saved">Đã lưu thay đổi</string>
     <string name="cd_camera">Thay đổi ảnh đại diện</string>
 
+    <!-- Month abbreviations (for charts) -->
+    <string-array name="months_abbr">
+        <item>T1</item>
+        <item>T2</item>
+        <item>T3</item>
+        <item>T4</item>
+        <item>T5</item>
+        <item>T6</item>
+        <item>T7</item>
+        <item>T8</item>
+        <item>T9</item>
+        <item>T10</item>
+        <item>T11</item>
+        <item>T12</item>
+    </string-array>
+
     <!-- Month names -->
     <string-array name="months">
         <item>Tháng 1</item>
@@ -124,6 +140,27 @@
     <string name="stats_monthly_summary">Tóm tắt tháng</string>
     <string name="stats_highest_expense">Chi tiêu cao nhất</string>
     <string name="stats_total_transactions">Tổng giao dịch</string>
+    <string name="stats_avg_daily_expense">TB chi/ngày</string>
+    <string name="stats_no_data">Chưa có dữ liệu</string>
+    <string name="stats_no_data_short">Chưa có</string>
+    <string name="stats_no_data_to_export">Chưa có dữ liệu để xuất</string>
+    <string name="stats_monthly_bar_title">Thu / Chi theo tháng trong năm</string>
+    <string name="stats_quarterly_title">Chi tiêu theo quý</string>
+    <string name="stats_quarterly_subtitle">Tỉ trọng chi tiêu 4 quý trong năm</string>
+    <string name="stats_q1">Quý 1</string>
+    <string name="stats_q2">Quý 2</string>
+    <string name="stats_q3">Quý 3</string>
+    <string name="stats_q4">Quý 4</string>
+    <string name="stats_export_pdf">📄 Xuất PDF</string>
+    <string name="stats_export_csv">📊 Xuất CSV</string>
+    <string name="stats_vs_last_month">so tháng trước</string>
+    <string name="stats_all_year">Cả năm</string>
+    <string name="stats_export_saved">✅ Đã lưu: %1$s (Downloads)</string>
+    <string name="stats_export_pdf_failed">❌ Xuất PDF thất bại</string>
+    <string name="stats_export_csv_failed">❌ Xuất CSV thất bại</string>
+    <string name="stats_share_report">Chia sẻ báo cáo</string>
+    <string name="toast_permission_granted">✅ Quyền đã được cấp!</string>
+    <string name="toast_permission_denied">⚠️ Vui lòng cấp quyền để xuất file!</string>
 
     <!-- ====== Navigation Menu Dialog ====== -->
     <string name="menu_title">Điều hướng</string>

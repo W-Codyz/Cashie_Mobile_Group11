@@ -44,9 +44,9 @@ class StatsActivity : BaseActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            Toast.makeText(this, "✅ Quyền đã được cấp!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_permission_granted), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "⚠️ Vui lòng cấp quyền để xuất file!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_permission_denied), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -116,7 +116,7 @@ class StatsActivity : BaseActivity() {
             setScaleEnabled(false)
             setPinchZoom(false)
             setDrawValueAboveBar(false)
-            setNoDataText("Chưa có dữ liệu")
+            setNoDataText(getString(R.string.stats_no_data))
 
             xAxis.apply {
                 position         = XAxis.XAxisPosition.BOTTOM
@@ -278,8 +278,8 @@ class StatsActivity : BaseActivity() {
         result.comparison?.let { cmp ->
             val expSign = if (cmp.expenseChange >= 0) "+" else ""
             val incSign = if (cmp.incomeChange  >= 0) "+" else ""
-            binding.tvExpenseChange.text = "$expSign${"%.1f".format(cmp.expenseChangePercent)}% so tháng trước"
-            binding.tvIncomeChange.text  = "$incSign${"%.1f".format(cmp.incomeChangePercent)}% so tháng trước"
+            binding.tvExpenseChange.text = "$expSign${"%.1f".format(cmp.expenseChangePercent)}% ${getString(R.string.stats_vs_last_month)}"
+            binding.tvIncomeChange.text  = "$incSign${"%.1f".format(cmp.incomeChangePercent)}% ${getString(R.string.stats_vs_last_month)}"
             binding.tvExpenseChange.setTextColor(
                 if (cmp.expenseChange > 0) Color.parseColor("#F44336") else Color.parseColor("#4CAF50")
             )
@@ -323,17 +323,17 @@ class StatsActivity : BaseActivity() {
         val trends = result.monthlyTrends
         if (trends.isEmpty()) { binding.barChart.clear(); return }
 
-        val labels = listOf("T1","T2","T3","T4","T5","T6","T7","T8","T9","T10","T11","T12")
+        val labels = resources.getStringArray(R.array.months_abbr).toList()
 
         // Mỗi tháng dùng 2 đơn vị trên trục X: income ở vị trí chẵn, expense ở chẵn+0.85
         val incomeEntries  = trends.mapIndexed { i, t -> BarEntry(i * 2f,        t.income.toFloat()) }
         val expenseEntries = trends.mapIndexed { i, t -> BarEntry(i * 2f + 0.85f, t.expense.toFloat()) }
 
-        val incomeSet = BarDataSet(incomeEntries, "Thu nhập").apply {
+        val incomeSet = BarDataSet(incomeEntries, getString(R.string.label_income)).apply {
             color = Color.parseColor("#22CC00")
             setDrawValues(false)
         }
-        val expenseSet = BarDataSet(expenseEntries, "Chi tiêu").apply {
+        val expenseSet = BarDataSet(expenseEntries, getString(R.string.label_expense)).apply {
             color = Color.parseColor("#FF4444")
             setDrawValues(false)
         }
@@ -370,8 +370,8 @@ class StatsActivity : BaseActivity() {
             }
         binding.donutChartQuarterly.setData(
             segments       = segments,
-            centerTitle    = "Chi tiêu",
-            centerSubtitle = "Cả năm"
+            centerTitle    = getString(R.string.label_expense),
+            centerSubtitle = getString(R.string.stats_all_year)
         )
         if (segments.isNotEmpty()) binding.donutChartQuarterly.animateIn()
 
@@ -382,7 +382,7 @@ class StatsActivity : BaseActivity() {
         )
         quarters.forEachIndexed { i, q ->
             legendViews.getOrNull(i)?.text =
-                if (q.expense > 0) formatVND(q.expense, currency) else "Chưa có"
+                if (q.expense > 0) formatVND(q.expense, currency) else getString(R.string.stats_no_data_short)
         }
     }
 
@@ -404,7 +404,7 @@ class StatsActivity : BaseActivity() {
 
     private fun exportPdf() {
         val result = viewModel.statsResult.value ?: run {
-            Toast.makeText(this, "Chưa có dữ liệu để xuất", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.stats_no_data_to_export), Toast.LENGTH_SHORT).show()
             return
         }
         val m = viewModel.month.value ?: return
@@ -424,12 +424,12 @@ class StatsActivity : BaseActivity() {
                     val (fileName, fileUri) = resultPair
                     Toast.makeText(
                         this@StatsActivity,
-                        "✅ Đã lưu: $fileName (Downloads)",
+                        getString(R.string.stats_export_saved, fileName),
                         Toast.LENGTH_LONG
                     ).show()
                     shareFile(fileUri, "application/pdf")
                 } else {
-                    Toast.makeText(this@StatsActivity, "❌ Xuất PDF thất bại", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@StatsActivity, getString(R.string.stats_export_pdf_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -441,7 +441,7 @@ class StatsActivity : BaseActivity() {
 
     private fun exportCsv() {
         val result = viewModel.statsResult.value ?: run {
-            Toast.makeText(this, "Chưa có dữ liệu để xuất", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.stats_no_data_to_export), Toast.LENGTH_SHORT).show()
             return
         }
         val m = viewModel.month.value ?: return
@@ -461,12 +461,12 @@ class StatsActivity : BaseActivity() {
                     val (fileName, fileUri) = resultPair
                     Toast.makeText(
                         this@StatsActivity,
-                        "✅ Đã lưu: $fileName (Downloads)",
+                        getString(R.string.stats_export_saved, fileName),
                         Toast.LENGTH_LONG
                     ).show()
                     shareFile(fileUri, "text/csv")
                 } else {
-                    Toast.makeText(this@StatsActivity, "❌ Xuất CSV thất bại", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@StatsActivity, getString(R.string.stats_export_csv_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -483,7 +483,7 @@ class StatsActivity : BaseActivity() {
             putExtra(Intent.EXTRA_STREAM, fileUri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        startActivity(Intent.createChooser(shareIntent, "Chia sẻ báo cáo"))
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.stats_share_report)))
     }
 
     override fun finish() {

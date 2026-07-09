@@ -31,7 +31,7 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_menu"
-                android:contentDescription="Menu điều hướng"
+                android:contentDescription="@string/cd_nav_menu"
                 android:layout_marginEnd="4dp" />
 
             <TextView
@@ -339,7 +339,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="TB chi/ngày"
+                                android:text="@string/stats_avg_daily_expense"
                                 android:textSize="11sp"
                                 android:textColor="@color/text_muted" />
                         </LinearLayout>
@@ -374,7 +374,7 @@
                             android:id="@+id/tvEmptyExpense"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chưa có dữ liệu"
+                            android:text="@string/stats_no_data"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted"
                             android:visibility="gone" />
@@ -423,7 +423,7 @@
                             android:id="@+id/tvEmptyIncome"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chưa có dữ liệu"
+                            android:text="@string/stats_no_data"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted"
                             android:visibility="gone" />
@@ -457,7 +457,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Thu / Chi theo tháng trong năm"
+                        android:text="@string/stats_monthly_bar_title"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/text_primary"
@@ -501,7 +501,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Thu nhập"
+                                    android:text="@string/label_income"
                                     android:textSize="12sp"
                                     android:textColor="@color/text_muted"
                                     android:layout_marginEnd="16dp" />
@@ -514,7 +514,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Chi tiêu"
+                                    android:text="@string/label_expense"
                                     android:textSize="12sp"
                                     android:textColor="@color/text_muted" />
                             </LinearLayout>
@@ -543,7 +543,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Chi tiêu theo quý"
+                            android:text="@string/stats_quarterly_title"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/text_primary"
@@ -551,7 +551,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tỉ trọng chi tiêu 4 quý trong năm"
+                            android:text="@string/stats_quarterly_subtitle"
                             android:textSize="12sp"
                             android:textColor="@color/text_muted"
                             android:layout_marginBottom="12dp" />
@@ -585,7 +585,7 @@
                                     android:orientation="vertical">
                                     <TextView android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Quý 1" android:textSize="11sp"
+                                        android:text="@string/stats_q1" android:textSize="11sp"
                                         android:textColor="@color/text_muted" />
                                     <TextView android:id="@+id/tvLegendQ1"
                                         android:layout_width="wrap_content"
@@ -612,7 +612,7 @@
                                     android:orientation="vertical">
                                     <TextView android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Quý 2" android:textSize="11sp"
+                                        android:text="@string/stats_q2" android:textSize="11sp"
                                         android:textColor="@color/text_muted" />
                                     <TextView android:id="@+id/tvLegendQ2"
                                         android:layout_width="wrap_content"
@@ -639,7 +639,7 @@
                                     android:orientation="vertical">
                                     <TextView android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Quý 3" android:textSize="11sp"
+                                        android:text="@string/stats_q3" android:textSize="11sp"
                                         android:textColor="@color/text_muted" />
                                     <TextView android:id="@+id/tvLegendQ3"
                                         android:layout_width="wrap_content"
@@ -666,7 +666,7 @@
                                     android:orientation="vertical">
                                     <TextView android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Quý 4" android:textSize="11sp"
+                                        android:text="@string/stats_q4" android:textSize="11sp"
                                         android:textColor="@color/text_muted" />
                                     <TextView android:id="@+id/tvLegendQ4"
                                         android:layout_width="wrap_content"
@@ -697,7 +697,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
-                        android:text="📄 Xuất PDF"
+                        android:text="@string/stats_export_pdf"
                         android:textSize="14sp"
                         app:cornerRadius="12dp"
                         app:strokeWidth="1.5dp"
@@ -709,7 +709,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
-                        android:text="📊 Xuất CSV"
+                        android:text="@string/stats_export_csv"
                         android:textSize="14sp"
                         app:cornerRadius="12dp"
                         style="@style/Widget.MaterialComponents.Button" />
