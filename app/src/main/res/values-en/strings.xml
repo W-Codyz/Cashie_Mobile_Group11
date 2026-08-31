@@ -208,6 +208,11 @@
     <string name="btn_cancel">Cancel</string>
     <string name="label_type_badge_income">Income</string>
     <string name="label_type_badge_expense">Expense</string>
+    <string name="cd_close">Close</string>
+    <string name="label_detail_category">Category</string>
+    <string name="label_detail_date">Date</string>
+    <string name="label_detail_time">Time</string>
+    <string name="label_detail_note">Note</string>
 
     <!-- ====== Month picker ====== -->
     <string name="pick_month_title">Select Month</string>

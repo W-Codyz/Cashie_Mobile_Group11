@@ -7,10 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.uth.cashie.database.CashieDatabase
 import com.uth.cashie.database.SessionManager
+import com.uth.cashie.database.entity.MonthlyBalanceEntity
 import com.uth.cashie.databinding.ActivitySetupBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class SetupActivity : BaseActivity() {
 
@@ -126,6 +128,17 @@ class SetupActivity : BaseActivity() {
                     user.copy(
                         currency       = selectedCurrency,
                         initialBalance = balance
+                    )
+                )
+                db.walletDao().updateDefaultCashBalance(userId, balance)
+                val cal = Calendar.getInstance()
+                db.monthlyBalanceDao().upsert(
+                    MonthlyBalanceEntity(
+                        userId         = userId,
+                        month          = cal.get(Calendar.MONTH) + 1,
+                        year           = cal.get(Calendar.YEAR),
+                        cashBalance    = balance.toLong(),
+                        accountBalance = 0L
                     )
                 )
                 // Lưu ngôn ngữ đã chọn vào app_settings và ThemeManager

@@ -208,6 +208,11 @@
     <string name="btn_cancel">Hủy</string>
     <string name="label_type_badge_income">Thu nhập</string>
     <string name="label_type_badge_expense">Chi tiêu</string>
+    <string name="cd_close">Đóng</string>
+    <string name="label_detail_category">Danh mục</string>
+    <string name="label_detail_date">Ngày</string>
+    <string name="label_detail_time">Giờ</string>
+    <string name="label_detail_note">Ghi chú</string>
 
     <!-- ====== Month picker ====== -->
     <string name="pick_month_title">Chọn tháng</string>

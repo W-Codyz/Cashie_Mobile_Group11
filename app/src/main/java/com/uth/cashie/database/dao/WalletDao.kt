@@ -22,4 +22,7 @@ interface WalletDao {
 
     @Query("SELECT * FROM wallets WHERE id = :id AND user_id = :userId LIMIT 1")
     suspend fun getById(id: Long, userId: Long): WalletEntity?
+
+    @Query("UPDATE wallets SET balance = :balance WHERE user_id = :userId AND type = 'cash' AND is_default = 1")
+    suspend fun updateDefaultCashBalance(userId: Long, balance: Double)
 }

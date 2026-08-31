@@ -44,7 +44,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_close"
-            android:contentDescription="Đóng" />
+            android:contentDescription="@string/cd_close" />
 
     </LinearLayout>
 
@@ -131,7 +131,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Danh mục"
+                android:text="@string/label_detail_category"
                 android:textSize="13sp"
                 android:textColor="@color/text_muted" />
 
@@ -157,7 +157,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Ngày"
+                android:text="@string/label_detail_date"
                 android:textSize="13sp"
                 android:textColor="@color/text_muted" />
 
@@ -183,7 +183,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Giờ"
+                android:text="@string/label_detail_time"
                 android:textSize="13sp"
                 android:textColor="@color/text_muted" />
 
@@ -239,7 +239,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Ghi chú"
+                android:text="@string/label_detail_note"
                 android:textSize="13sp"
                 android:textColor="@color/text_muted" />
 
